@@ -1,0 +1,7 @@
+config.php
+config.json
+client_secret.json
+google_credentials.json
+composer.lock
+/vendor/
+.phpintel/

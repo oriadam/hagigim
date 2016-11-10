@@ -1,0 +1,6 @@
+{
+    "name": "oria/hagigim",
+    "require": {
+		"google/apiclient": "^2.0"
+    }
+}
