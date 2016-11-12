@@ -1,7 +1,6 @@
 <?php
 require_once "config.php";
 global $CONFIG;
-$JSON = json_decode(file_get_contents('config.json'));
 
 // Google Drive API v3 - https://developers.google.com/drive/v3/web/quickstart/php
 require_once __DIR__ . '/vendor/autoload.php';
@@ -48,7 +47,7 @@ function getClient() {
 			mkdir(dirname($credentialsPath), 0700, true);
 		}
 		file_put_contents($credentialsPath, json_encode($accessToken));
-		printf("Credentials saved to %s\n", $credentialsPath);
+		//printf("Credentials saved to %s\n", $credentialsPath);
 	}
 	$client->setAccessToken($accessToken);
 
@@ -77,16 +76,32 @@ function expandHomeDirectory($path) {
 $client = getClient();
 $service = new Google_Service_Drive($client);
 
-// Get the names and IDs of all files
-$optParams = $JSON['list'];
+function get_files() {
+	// Get the names and IDs of all files
+	$optParams = $CONFIG_JSON['list'];
 
-$results = $service->files->listFiles($optParams);
+	$results = $service->files->listFiles($optParams);
+	return $results->getFiles();
 
-if (count($results->getFiles()) == 0) {
-	print "No files found.\n";
-} else {
-	print "Files:\n";
-	foreach ($results->getFiles() as $file) {
-		printf("%s (%s)\n", $file->getName(), $file->getId());
-	}
+	/*
+		// Usage Example:
+		if (count($results->getFiles()) == 0) {
+			print "No files found.\n";
+		} else {
+			print "Files:\n";
+			foreach ($results->getFiles() as $file) {
+				printf("%s (%s)\n", $file->getName(), $file->getId());
+			}
+	*/
+}
+
+function get_file($file, $mime = 'text/html') {
+	$id = $file->getId();
+	$optParams = array(
+		"fileId" => $id,
+		"mimeType" => $mime,
+	);
+	$results = $service->files->export($optParams);
+	print_r($results);
+	return $results;
 }

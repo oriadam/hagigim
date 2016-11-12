@@ -1,0 +1,9 @@
+<div id="file_page">
+	<h1 id="title">$NAME</h1>
+	<div id="content">$CONTENT</div>
+</div>
+
+<script>
+	turn_json = $.get('turn.json');
+	$('#content').turn(turn_json);
+</script>
