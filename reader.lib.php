@@ -1,6 +1,6 @@
 <?php
 require_once "config.php";
-global $CONFIG;
+global $CONFIG, $GOOGLE;
 
 // Google Drive API v3 - https://developers.google.com/drive/v3/web/quickstart/php
 require_once __DIR__ . '/vendor/autoload.php';
@@ -52,9 +52,14 @@ function getClient() {
 	$client->setAccessToken($accessToken);
 
 	// Refresh the token if it's expired.
-	if ($client->isAccessTokenExpired()) {
-		$client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-		file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+	try {
+		if ($client->isAccessTokenExpired()) {
+			$client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+			file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+		}
+	} catch (Exception $e) {
+		print_r($e);
+		unlink($credentialsPath);
 	}
 	return $client;
 }
@@ -73,14 +78,19 @@ function expandHomeDirectory($path) {
 }
 
 // Get the API client and construct the service object.
-$client = getClient();
-$service = new Google_Service_Drive($client);
+$GOOGLE = array();
+$GOOGLE['client'] = getClient();
+$GOOGLE['service'] = new Google_Service_Drive($GOOGLE['client']);
 
-function get_files() {
+function get_files($q = '') {
+	global $CONFIG, $GOOGLE;
 	// Get the names and IDs of all files
-	$optParams = $CONFIG_JSON['list'];
+	$optParams = $CONFIG['list'];
+	if (!empty($q)) {
+		$optParams['q'] .= " AND $q";
+	}
 
-	$results = $service->files->listFiles($optParams);
+	$results = $GOOGLE['service']->files->listFiles($optParams);
 	return $results->getFiles();
 
 	/*
@@ -96,12 +106,13 @@ function get_files() {
 }
 
 function get_file($file, $mime = 'text/html') {
+	global $CONFIG, $GOOGLE;
 	$id = $file->getId();
 	$optParams = array(
 		"fileId" => $id,
 		"mimeType" => $mime,
 	);
-	$results = $service->files->export($optParams);
+	$results = $GOOGLE['service']->files->export($optParams);
 	print_r($results);
 	return $results;
 }

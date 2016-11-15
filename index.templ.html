@@ -1,9 +1,142 @@
 <html>
 <head>
-	<title>$TITLE</title>
+	<title>$page_title</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script></head>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <body>
-	$CONTENT
+	<template id="tmpl_page">
+		<div class="page"></div>
+			<h1 class="page-title"></h1>
+			<div class="page-content"></div>
+		</div>
+	</template>
+	<template id="tmpl_cover_front">
+		<div class="hard">
+			$cover_front
+		</div>
+	<template id="tmpl_hard">
+		<div class="hard"></div>
+	</template>
+	<template id="tmpl_loading">
+		<div class="page">Loading page...</div>
+	</template>
+	<template id="tmpl_cover_back">
+		<div class="hard">
+			$cover_back			
+		</div>
+	</template>
+
+	<div class="container">
+		<label class="form-control"><input placeholder="חיפוש" type="text" class="form-control"></label>
+		<div class="form-control btn btn-small">חיפוש</div>
+		<div id="book_container"><div id="book"></div></div>
+	</div>
+
+
+	<script>
+		turn_options = {
+			// for list of options see http://www.turnjs.com/#api
+			"width":"100%",
+			"height":"100%",
+			"autoCenter":true,
+		};
+
+		var ajax_cache = {};
+		var lastQ = localStorage.getItem('turn_reader_q') || undefined;
+		var lastPage = localStorage.getItem('turn_reader_page') || 0;
+		var $book = $('#book');
+		var book_pages;
+
+		$('#book').bind('turning', function(event, page, view) {
+			var range = $(this).turn('range', page);
+			for (page = range[0]; page<=range[1]; page++)
+				addPage(page, $(this));
+			goToPage(page);
+		});
+
+		function tmpl(name){
+			return $($('#tmpl_'+name).html());
+		}
+
+		function build_book(list,current_page){
+			var pages = list.length+4;
+			book_pages = [];
+			for (var i=0;i<list.length;i++){
+				book_pages[i+2]=list[i];
+			}
+
+			$book
+				.turn('destroy')
+				.turn(turn_options)
+				.turn($.extend(turn_options,{pages:pages}));
+				.turn("addPage", tmpl('cover_front'), 1);
+				.turn("addPage", tmpl('hard'), 2);
+				.turn("addPage", tmpl('hard'), pages - 1);
+				.turn("addPage", tmpl('cover_back'), pages);
+			goToPage(current_page);
+		}
+
+		function goToPage(page){
+			if (lastPage!=page){
+				rememberPage(page);
+				$book.turn('page',page);
+			}
+		}
+
+		function rememberPage(page){
+			lastPage = page;
+			localStorage.setItem('turn_reader_page',page);
+		}
+
+		function load_book(q) {
+			if (lastQ != q) {
+				// remember last visit q and page
+				q = q || '';
+				lastQ = q;
+				localStorage.setItem('turn_reader_q',lastQ);
+
+				var url='ajax.php?f=list&q='+encodeURI(q||'');
+				ajax(url,function(list){
+					build_book(list,lastPage);
+					setPage(q ? 1:0);
+				});
+			}
+		}
+
+		function addPage(page, book) {
+			// Check if the page is not in the book
+			if (!book.turn('hasPage', page)) {
+				// Create an element for this page
+				var element = templ('loading');
+				book.turn('addPage', element, page);
+				// Get the data for this page   
+				ajax( 'ajax.php?f=content&id=' + book_pages[page].id,function(data) {
+					element.html(data.content);
+				});
+			}
+		}
+
+		function ajax(url,callback){
+			if (url in ajax_cache){
+				callback(ajax_cache[url]);
+			} else {
+				$.ajax({
+					url: url,
+					success:function(msg){
+						console.log('ajax success',url,arguments[0],arguments[1],arguments[2]);
+						ajax_cache[url] = JSON.parse(msg);
+						callback(ajax_cache[url]);
+					},
+					complete:function(){
+						console.log('ajax',url,arguments[0],arguments[1],arguments[2]);
+					}
+				});
+			}
+		}
+
+		load_book();
+	</script>
 </body>
 </html>
