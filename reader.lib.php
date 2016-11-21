@@ -11,9 +11,11 @@ define ( 'CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json' );
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/drive-php-quickstart.json
 define ( 'SCOPES', implode ( ' ', array (
+		Google_Service_Drive::DRIVE,
 		Google_Service_Drive::DRIVE_METADATA_READONLY,
-		Google_Service_Drive::DRIVE_READONLY
-) ) );
+		Google_Service_Drive::DRIVE_READONLY,
+		Google_Service_Drive::DRIVE_FILE		
+		) ) );
 function readGoogleToken($client) {
 	// Request authorization from the user.
 	$authUrl = $client->createAuthUrl ();

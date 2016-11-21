@@ -85,6 +85,7 @@ require_once "reader.lib.php";
 	$('#id-go').click(function(){
 		$('#id-go').hide();
 		$('#id-searching').show();
+		$('#id-found').text('...');
 		q = $('#id-q').val();
 		load_book(q);
 	});

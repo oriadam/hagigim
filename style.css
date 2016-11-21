@@ -9,6 +9,22 @@
 	margin:0 auto;
 }
 
+#flipbook .page-title {
+	height:3vh;
+	font-size:3vh;
+	line-height:3vh;
+}
+#flipbook .page-content {
+	overflow:auto;
+	height: calc( 100% - 4vh );
+}
+#flipbook .page-content h1,#flipbook .page-content p {
+	font-weight:normal;
+	font-size:1.8vh;
+	line-height:2.3vh;
+	margin:0;
+}
+
 body {
 	overflow: hidden;
 	font-family: 'Alef', sans-serif;
@@ -19,13 +35,13 @@ body {
 }
 
 #flipbook .page-is-loading {
-	line-height: 300px;
+	line-height: 30vh;
 }
 
 #flipbook .page {
 	vertical-align: middle;
 	background-color: white;
-	font-size: 20px;
+	font-size: 1.2vh;
 	text-align: center;
 	width: calc( 50vw - 50px );
 	height: calc( 100vh - 300px );

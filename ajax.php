@@ -38,16 +38,25 @@ switch ($func) {
 			echo $cached;
 			exit ();
 		}
-		$file = get_file_as ( $id, $mime );
-		if (empty ( $file ) || ! empty ( $file->error ) || empty ( $file->getId ) || ! $file->getId ()) {
-			fatal ( $file && @$file->error ? $file->error : 'Error fetching file' );
+		try {
+			$response = get_file_as ( $id, $mime );
+		} catch ( RequestException $e ) {
+			if ($e->hasResponse ()) {
+				fatal ( Psr7\str ( $e->getResponse () ) );
+			}
+		}
+		
+		if ($response && $response->getStatusCode () == 200) {
+			$content = ( string ) $response->getBody ();
+		} else {
+			fatal ( 'Error fetching file ' . ($response && $repsonse->getStatusCode ? $response->getReasonPhrase () . '(' . $response->getStatusCode () . ')' : '') );
 		}
 		
 		$return = array (
-				'filename' => $file->getName (),
-				'name' => name ( $file->getName () ),
-				'id' => $file->getId (),
-				'content' => content ( $file->getContent () ) 
+				// 'filename' => $file->getName (),
+				// 'name' => name ( $file->getName () ),
+				'id' => $id,
+				'content' => content ( $content ) 
 		);
 		$cached = json_encode ( $return );
 		cache_write ( $id, $mime, $cached );
@@ -100,6 +109,9 @@ function name($string) {
 // content parser
 // htmlizer
 function content($string) {
+	$string = preg_replace('/<\\/?html[^>]*>|<head>.*<\\/head>|<style>.*<\\/style>|style="[^"]*"/','',$string);
+	$string = preg_replace('/<body[^>]*>/','<div>',$string);
+	$string = preg_replace('/<\\/body[^>]*>/','<div>',$string);
 	return $string;
 }
 function fatal($string) {
