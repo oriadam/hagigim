@@ -4,6 +4,8 @@ Display books from Google Drive
 Requirements:
 
 1. Copy the `config-default.json` file to `config.json` and change any settings you need.
+It has to be a strict proper JSON - meaning no comments, no ending commas.
+Until PHP allows them. Guhhh. 
 
 1. Setup Google v3 API for PHP:<br>
 https://developers.google.com/drive/v3/web/quickstart/php<br>

@@ -13,11 +13,45 @@ define('SCOPES', implode(' ', array(
 	Google_Service_Drive::DRIVE_METADATA_READONLY)
 ));
 
+function readGoogleToken($client) {
+	// Request authorization from the user.
+	$authUrl = $client->createAuthUrl();
+	if (php_sapi_name() == 'cli') {
+		// cli mode (command line mode)
+		printf("Open the following link in your browser:\n%s\n", $authUrl);
+		print 'Enter verification code: ';
+		$authCode = trim(fgets(STDIN));
+	} else {
+		// web mode (html mode)
+		$now1 = floor(time()/60);
+		$now2 = 1+$now1;
+		$prefix = 'verificationcode';
+		
+		if (empty($_POST["$prefix-$now1"])&&empty($_POST["$prefix-$now2"])){
+			echo "Open the following link: <A target=_blank href='$authUrl'>$authUrl</a><br>";
+			echo "<form method=POST><label>Enter verification code: <input name='$prefix-$now2'></label><input type=submit value=Go></form>";
+			return false;
+		} else {
+			$authCode = @$_POST["$prefix-$now1"] ?: @$_POST["$prefix-$now2"];
+		}
+	}
+	
+	// Exchange authorization code for an access token.
+	$accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+	if (!empty($accessToken['error'])){
+		echo "Google Token Error: " . $accessToken['error'];
+		return false;
+	} else {
+		return $accessToken;
+	}
+}
+
 /**
  * Returns an authorized API client.
  * @return Google_Client the authorized client object
  */
-function getClient() {
+function getGoogleClient() {
+	
 	$client = new Google_Client();
 	$client->setApplicationName(APPLICATION_NAME);
 	$client->setScopes(SCOPES);
@@ -29,39 +63,36 @@ function getClient() {
 	if (file_exists($credentialsPath)) {
 		$accessToken = json_decode(file_get_contents($credentialsPath), true);
 	} else {
-		if (php_sapi_name() != 'cli') {
-			throw new Exception('This application must be run on the command line.');
+		$accessToken = readGoogleToken($client);
+		if ($accessToken){
+			// Store the credentials to disk.
+			if (!file_exists(dirname($credentialsPath))) {
+				mkdir(dirname($credentialsPath), 0777, true);
+			}
+			file_put_contents($credentialsPath, json_encode($accessToken));
+			chmod($credentialsPath,0777);
 		}
-
-		// Request authorization from the user.
-		$authUrl = $client->createAuthUrl();
-		printf("Open the following link in your browser:\n%s\n", $authUrl);
-		print 'Enter verification code: ';
-		$authCode = trim(fgets(STDIN));
-
-		// Exchange authorization code for an access token.
-		$accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-
-		// Store the credentials to disk.
-		if (!file_exists(dirname($credentialsPath))) {
-			mkdir(dirname($credentialsPath), 0700, true);
-		}
-		file_put_contents($credentialsPath, json_encode($accessToken));
-		//printf("Credentials saved to %s\n", $credentialsPath);
+		return false;
 	}
-	$client->setAccessToken($accessToken);
-
-	// Refresh the token if it's expired.
-	try {
-		if ($client->isAccessTokenExpired()) {
-			$client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-			file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+	if ($accessToken) {
+		$client->setAccessToken($accessToken);
+	
+		// Refresh the token if it's expired.
+		try {
+			if ($client->isAccessTokenExpired()) {
+				$client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+				file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+				chmod($credentialsPath,0777);
+			}
+		} catch (Exception $e) {
+			print_r($e);
+			unlink($credentialsPath);
+			return false;
 		}
-	} catch (Exception $e) {
-		print_r($e);
-		unlink($credentialsPath);
+		return $client;
+	} else {
+		return false;
 	}
-	return $client;
 }
 
 /**
@@ -79,7 +110,10 @@ function expandHomeDirectory($path) {
 
 // Get the API client and construct the service object.
 $GOOGLE = array();
-$GOOGLE['client'] = getClient();
+$GOOGLE['client'] = getGoogleClient();
+if (empty($GOOGLE['client'])){
+	exit;
+}
 $GOOGLE['service'] = new Google_Service_Drive($GOOGLE['client']);
 
 function get_files($q = '') {
@@ -90,8 +124,14 @@ function get_files($q = '') {
 		$optParams['q'] .= " AND $q";
 	}
 
-	$results = $GOOGLE['service']->files->listFiles($optParams);
-	return $results->getFiles();
+	try {
+		$results = $GOOGLE['service']->files->listFiles($optParams);
+		return $results->getFiles();
+	}catch(Exception $e){
+		$obj = new stdClass();
+		$obj->error = $e;
+		return $obj;
+	}
 
 	/*
 		// Usage Example:
@@ -105,9 +145,9 @@ function get_files($q = '') {
 	*/
 }
 
-function get_file($file, $mime = 'text/html') {
+function get_file_as($id, $mime = 'text/html') {
 	global $CONFIG, $GOOGLE;
-	$id = $file->getId();
+	//$id = $file->getId();
 	$optParams = array(
 		"fileId" => $id,
 		"mimeType" => $mime,
