@@ -6,160 +6,238 @@ require_once "reader.lib.php";
 ?>
 <html>
 <head>
-	<title><?=$CONFIG['page_title']?></title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script></head>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link href="style.css" rel="stylesheet">
+<title><?=$CONFIG['page_title']?></title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="http://www.turnjs.com/lib/turn.min.js"></script>
+<link href="style.css" rel="stylesheet">
 </head>
 <body>
-<template id="tmpl_page">
-	<div class="page">
+	<template id="tmpl_page">
+	<div class="content-page">
 		<h1 class="page-title"></h1>
 		<div class="page-content"></div>
 	</div>
-</template>
-<template id="tmpl_cover_front">
-	<div class="hard cover_front">
+	</template>
+	<template id="tmpl_cover_front">
+	<div class="hard">
 		<?=$CONFIG['cover_front']?>
 	</div>
-</template>
-<template id="tmpl_hard">
+	</template>
+	<template id="tmpl_hard">
 	<div class="hard"></div>
-</template>
-<template id="tmpl_loading">
-	<div class="page">Loading page...</div>
-</template>
-<template id="tmpl_cover_back">
-	<div class="hard cover_back">
+	</template>
+	<template id="tmpl_loading">
+	<div>
+		<?=$CONFIG['loading_page']?>
+	</div>
+	</template>
+	<template id="tmpl_page">
+	<div></div>
+	</template>
+	<template id="tmpl_empty">
+	<div></div>
+	</template>
+	<template id="tmpl_cover_back">
+	<div class="hard">
 		<?=$CONFIG['cover_back']?>
 	</div>
-</template>
+	</template>
 
-<div class="container">
-	<div class="form-group form-inline form-search">
-		<div class="input-append">
-			<input id="id-q" placeholder="חיפוש" type="text" class="form-control search-query">
-			<span id="id-go" class="form-control btn btn-small btn-primary">המשך</span>
+	<div class="container">
+		<div class="form-group form-inline form-search">
+			<div class="input-append">
+				<input id="id-q" placeholder="<?=$CONFIG['text_search']?>" type="text" class="form-control search-query" /> 
+				<span id="id-go" class="form-control btn btn-small btn-primary"><?=$CONFIG['text_go']?></span>
+				<span id="id-searching" class="form-control btn btn-small btn-primary disabled"><?=$CONFIG['text_searching']?></span>
+				<output id="id-found" class="text"></output>
+			</div>
 		</div>
 	</div>
 	<div id="book_container">
-		<div id="book"></div>
+		<div id="flipbook"></div>
 	</div>
-</div>
 
-<script>
-	turn_options = {
-		// for list of options see http://www.turnjs.com/#api
-		"width":"100%",
-		"height":"100%",
-		"autoCenter":true,
-	};
+	<script>
+	// for a full list of options see http://www.turnjs.com/#api
+	// width, height, pages are added automatically on build_book()
+	turn_options = <?=json_encode($CONFIG['turn_options'])?>;
 	
-	var ajax_cache = {}; // used by ajax() function
-	var q = localStorage.getItem('turn_reader_q') || '';
-	var lastQ; 
-	var page = localStorage.getItem('turn_reader_page') || 0;
-	var lastPage;
-	var $book = $('#book');
-	var book_pages;
-	var list;
+	var q = localStorage.getItem('turn_reader_q') || ''; // current search query
+	var lastQ; // previous search query 
+	var $book = $('#flipbook'); // book jQuery element
+	var $book_parent = $book.parent();
+	var pages; // number of pages (including 4 cover pages)
+	var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
+	var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
+	var loaded_pages; // remember which pages were already loaded (or currently loading)
+	var hard_cover = true; // currently - not supporting no hard covers 
+	var cover_pages_before,cover_pages_after;
+	var start_with_closed_book = <?=$CONFIG['start_with_closed_book']?1:0?>;
 
 	$('#id-q').val(q);
-	
-	$('#book').bind('turning', function(event, page, view) {
-		var range = $(this).turn('range', page);
-		for (page = range[0]; page<=range[1]; page++)
-			addPage(page, $(this));
-			goToPage(page);
-	});
-
+	$('#id-searching').hide();
 	$('#id-go').click(function(){
+		$('#id-go').hide();
+		$('#id-searching').show();
 		q = $('#id-q').val();
 		load_book(q);
 	});
 
-	function tmpl(name){
-		return $($('#tmpl_'+name).html());
+	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
+	function tmpl(name,page_number){
+		return $($('#tmpl_'+name).html()).attr('id',page_number ? 'page-'+page_number : null);
 	}
 
-	function build_book(list,current_page){
-		// reset 
-		var pages = 4 + list.length;
-		book_pages = [];
-		$book
-			.empty()
-			//.turn('destroy')
-			.turn($.extend(turn_options,{pages:pages}))
-		
-		// add front cover	
-		book_pages[1] = tmpl('cover_front');
-		book_pages[2] = tmpl('hard');
-		$book
-			.turn("addPage", book_pages[1], 1)
-			.turn("addPage", book_pages[2], 2)
-
-		// add book content
-		var i;
-		for (i=0;i<list.length;i++){
-			book_pages[i+3] = list[i];
-		}
-		// book actual content is loaded via ajax on turning event. see goToPage()
-
-		// add back cover
-		book_pages[pages - 1] = tmpl('hard');
-		book_pages[pages] = tmpl('cover_back');
-		$book
-			.turn("addPage", book_pages[pages - 1], pages - 1)
-			.turn("addPage", book_pages[pages], pages)
-	
-		// go to first (or last read) page - this also handles ajax loading of the pages
-		goToPage(current_page);
+	// attached to the "turning" event
+	function turning(event, page, view) {
+		if (page > pages - cover_pages_after || loaded_pages[page])
+			return; // page out of range, a cover page, or is already loaded
+		var range = $book.turn('range', page);
+		for (var i = range[0]; i<=range[1]; i++)
+			load_page(i);
 	}
 
-	function goToPage(page){
-		if (lastPage!=page){
-			rememberPage(page);
-			$book.turn('page',page);
-		}
-	}
-
-	function rememberPage(page){
-		lastPage = page;
-		localStorage.setItem('turn_reader_page',page);
-	}
-
+	// load a book according to a search query using ajax
 	function load_book(q) {
 		if (lastQ != q) {
-			// remember last visit q and page
+			// remember last visit q
 			q = q || '';
 			lastQ = q;
 			localStorage.setItem('turn_reader_q',q);
 
 			var url='ajax.php?f=list&q='+encodeURI(q||'');
-			ajax(url,function(list){
-				build_book(list,lastPage);
-				rememberPage(q ? 1:0);
+			ajax(url,function(data){
+				if (data.error){
+					$('#id-found').text(data.error);
+					return;
+				}
+				if (data.length){
+					book_list = data;
+					build_book();
+					// always load first page
+					load_page(1+cover_pages_before);
+					if (!start_with_closed_book){
+						// start on first page
+						$book.turn('page',2);
+					}
+					$('#id-found').html("<?=$CONFIG['text_found']?>".replace('%s',data.length));
+				} else {
+					$('#id-found').html("<?=$CONFIG['text_not_found']?>");
+				}
+				$('#id-go').show();
+				$('#id-searching').hide();						
 			});
 		}
 	}
 
-	function addPage(page, book) {
-		// Check if the page is not in the book
-		if (!book.turn('hasPage', page)) {
-			if (book_pages[page] && book_pages[page].id){
-				// Create an element for this page
-				var element = tmpl('loading');
-				book.turn('addPage', element, page);
-				// Get the data for this page
-				ajax( 'ajax.php?f=content&id=' + book_pages[page].id,function(data) {
-					element.html(data.content);
-				});
-			}
+	// populate the book. based on book_list. removes previous content if any.
+	function build_book(){
+		// reset
+		pages = book_list.length;
+		var extra_blank_page = !!(pages % 2); // for odd number of pages, add a blank page at the end
+		if (hard_cover) {
+			cover_pages_before = cover_pages_after = 2;
+		} else {
+			cover_pages_before = cover_pages_after = 0;
 		}
+		if(extra_blank_page){
+			cover_pages_after++;
+		}
+		pages += cover_pages_before + cover_pages_after;
+		
+		var id = $book[0].id;
+		try{
+			$book.turn("destroy")
+		}catch(e){}
+		$book.remove();
+		$book = $('<div id="'+id+'">').appendTo($book_parent);
+		$book.bind('turning', turning);
+		loaded_pages = [];
+
+		// append pages to book and remember which pages are already loaded
+		var append = function($elem,page){
+			$book.append($elem);
+			loaded_pages[page]=1;
+		}
+		
+		// add front cover
+		if (hard_cover){
+			append(tmpl('cover_front'),1);
+			append(tmpl('hard'),2);
+		}
+
+		// add book content placeholders
+		// book actual content will is loaded via ajax on turning event. see function turning()
+		var i;
+		for (i=0;i<book_list.length;i++){
+			var page = i + 3;
+			append(tmpl('empty'),0);
+		}
+
+		// when number of pages is odd, add another blank page to allow folding of the last page
+		if (extra_blank_page) {
+			append(tmpl('empty'),pages - 2);
+		}
+		
+		// add back cover
+		if (hard_cover){
+			append(tmpl('hard'),pages - 1);
+			append(tmpl('cover_back'), pages);
+		}
+
+		// the magic!
+		var options = turn_options;
+		options.width = $book_parent.width();
+		options.height = $book_parent.height();
+		options.width = '100%';
+		options.height = '100%';
+		options.pages = pages;
+		$book.turn(options);
+		// fix page width via css
+		$('#id-style').remove();
+		$('head').append('<style id="id-style">#flipbook .page { width:' +(options.width/2)+'px; height:' + options.height + 'px;</style>');
 	}
 
+	// load a specific page number using ajax
+	function load_page(page) {
+		if (page<=cover_pages_before || page>pages-cover_pages_after || loaded_pages[page])
+			return; // page out of range, a cover page, or is already loaded
+
+		var index = page - cover_pages_before - 1; // index is zero-based, page is one-based
+		if (book_list[index] && book_list[index].id) {
+			loaded_pages[page]=1; // do not load same page twice
+
+			// Show 'loading...' message on page
+			var element = tmpl('loading');
+			element.find('.page-title').html(book_list[index].name);
+			$('#flipbook .p'+page).empty().append(element);
+			//$book.turn('addPage', element, page);
+
+			// Get the data for that page
+			ajax( 'ajax.php?f=content&id=' + book_list[index].id,function(data) {
+				if (data.error){
+					data.content = 'Error: ' + data.error;
+					loaded_pages[page]=0;
+				}
+				
+				// Create an element for this page
+				var element = tmpl('page');
+				element.find('.page-title').html(data.name || book_list[index].name);
+				element.find('.page-content').html(data.content);
+				$('#flipbook .p'+page).empty().append(element);
+				//$book.turn('addPage', element, page);
+			});
+		}
+		
+	}
+
+	// handle ajax calls + local memory caching
 	function ajax(url,callback){
 		if (url in ajax_cache){
 			callback(ajax_cache[url]);
@@ -167,18 +245,29 @@ require_once "reader.lib.php";
 			$.ajax({
 				url: url,
 				success:function(msg){
-					console.log('ajax success',url,arguments[0],arguments[1],arguments[2]);
-					ajax_cache[url] = JSON.parse(msg);
-					callback(ajax_cache[url]);
+					var data;
+					try{
+						 data = JSON.parse(msg);
+					}catch(e){
+						console.log("AJAX Error: ", msg, url);
+						return callback({error:msg});
+					}
+					if (data.error){
+						console.log("AJAX Error: ", data.error, url);
+					} else {
+						ajax_cache[url] = data;
+					}
+					callback(data);
 				},
 				complete:function(){
-					console.log('ajax',url,arguments[0],arguments[1],arguments[2]);
+					console.log('ajax complete',url,arguments[0],arguments[1],arguments[2]);
 				}
 			});
 		}
 	}
 
+	// load initial book by the last or default query
 	load_book(q);
 	</script>
-	</body>
-	</html>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+	"page_title": "הגיגים",
+	"cover_front": "<h1>הגיגים</h1><p>ספר שירים</p>",
+	"cover_back": "<h1>תודה</h1>",
+	"loading_page" : "<h1 class='page-title'></h1><h2>העמוד בטעינה...</h2>",
+	"text_search" : "חיפוש...",
+	"text_go" : "המשך",
+	"text_searching": "רגע...",
+	"text_found" : "נמצאו %s הגיגים",
+	"text_not_found" : "אין תוצאות",
+	
+	"cache_expires": 86400,
+	"start_with_closed_book": false,
+	
+	"list": {
+		"q": "mimeType='application/vnd.google-apps.document' and '0B7cabAnVcz8xTHNUd1JieUFjQm8' in parents",
+		"pageSize": 1000,
+		"fields": "files(createdTime,description,id,modifiedTime,name,properties,starred),kind,nextPageToken"
+	},
+	
+	"turn_options" : {
+		"autoCenter": true,
+		"direction": "rtl"
+	}
+}

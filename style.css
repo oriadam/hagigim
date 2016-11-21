@@ -1,3 +1,64 @@
+@import url('https://fonts.googleapis.com/css?family=Alef');
 .form-group {
-	direction:rtl;
+	direction: rtl;
+}
+
+#book_container {
+	width: calc( 100vw - 100px );
+	height: calc( 100vh - 300px );
+	margin:0 auto;
+}
+
+body {
+	overflow: hidden;
+	font-family: 'Alef', sans-serif;
+}
+
+#flipbook {
+	border: 2px solid #bbd;
+}
+
+#flipbook .page-is-loading {
+	line-height: 300px;
+}
+
+#flipbook .page {
+	vertical-align: middle;
+	background-color: white;
+	font-size: 20px;
+	text-align: center;
+	width: calc( 50vw - 50px );
+	height: calc( 100vh - 300px );
+	direction: rtl;
+}
+#flipbook .page * {
+	user-select: none;	
+}
+
+#flipbook .page-wrapper {
+	p1erspective: 2000px;
+}
+
+#flipbook .hard {
+	background: #46a;
+	color: #eee;
+	box-shadow: inset 0 0 5px #666;
+	font-weight: bold;
+	line-height:10vh;
+	font-size:5vh;
+}
+#flipbook .hard h1 {
+	line-height:20vh;
+	font-size:10vh;
+}
+
+#flipbook .odd {
+	background-image: linear-gradient(right, #FFF 95%, #C4C4C4 100%);
+	-box-shadow: inset 0 0 5px #666;
+	border-left:1px solid #ccc;
+}
+
+#flipbook .even {
+	background-image: linear-gradient(left, #fff 95%, #dadada 100%);
+	-box-shadow: inset 0 0 5px #666;
 }
