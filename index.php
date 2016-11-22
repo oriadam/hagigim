@@ -75,18 +75,18 @@ require_once "config.php";
 	// for a full list of options see http://www.turnjs.com/#api
 	// width, height, pages are added automatically on build_book()
 	turn_options = <?=json_encode($CONFIG['turn_options'])?>;
-	
+
 	var q = localStorage.getItem('turn_reader_q') || ''; // current search query
-	var lastQ; // previous search query 
+	var lastQ; // previous search query
 	var $book = $('#flipbook'); // book jQuery element
 	var $book_parent = $book.parent();
 	var pages; // number of pages (including 4 cover pages)
 	var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
 	var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
 	var loaded_pages; // remember which pages were already loaded (or currently loading)
-	var hard_cover = true; // currently - not supporting no hard covers 
+	var hard_cover = true; // currently - not supporting no hard covers
 	var cover_pages_before,cover_pages_after;
-	var start_with_closed_book = <?=$CONFIG['start_with_closed_book']?1:0?>;
+	var start_with_closed_book = <?=$CONFIG['start_with_closed_book'] ? 1 : 0?>;
 
 	$('#id-q').val(q);
 	$('#id-searching').hide();
@@ -97,7 +97,11 @@ require_once "config.php";
 		q = $('#id-q').val();
 		load_book(q);
 	});
-
+	$('#id-q').keypress(function(e) {
+		if(e.which == 13) {
+			$('#id-go').click();
+		}
+	});
 	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 	function tmpl(name,page_number){
 		return $($('#tmpl_'+name).html()).attr('id',page_number ? 'page-'+page_number : null);
@@ -142,7 +146,7 @@ require_once "config.php";
 					$('#id-found').html("<?=$CONFIG['text_not_found']?>");
 				}
 				$('#id-go').show();
-				$('#id-searching').hide();						
+				$('#id-searching').hide();
 			});
 		}
 	}
@@ -161,7 +165,7 @@ require_once "config.php";
 			cover_pages_after++;
 		}
 		pages += cover_pages_before + cover_pages_after;
-		
+
 		var id = $book[0].id;
 		try{
 			$book.turn("destroy")
@@ -176,7 +180,7 @@ require_once "config.php";
 			$book.append($elem);
 			loaded_pages[page]=1;
 		}
-		
+
 		// add front cover
 		if (hard_cover){
 			append(tmpl('cover_front'),1);
@@ -195,7 +199,7 @@ require_once "config.php";
 		if (extra_blank_page) {
 			append(tmpl('empty'),pages - 2);
 		}
-		
+
 		// add back cover
 		if (hard_cover){
 			append(tmpl('hard'),pages - 1);
@@ -236,7 +240,7 @@ require_once "config.php";
 					data.content = 'Error: ' + data.error;
 					loaded_pages[page]=0;
 				}
-				
+
 				// Create an element for this page
 				var element = tmpl('page');
 				element.find('.page-title').html(data.name || book_list[index].name);
@@ -245,7 +249,7 @@ require_once "config.php";
 				//$book.turn('addPage', element, page);
 			});
 		}
-		
+
 	}
 
 	// handle ajax calls + local memory caching
