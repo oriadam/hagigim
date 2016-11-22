@@ -2,16 +2,13 @@
 	"page_title": "הגיגים",
 	"cover_front": "<h1>הגיגים</h1><p>ספר שירים</p>",
 	"cover_back": "<h1>תודה</h1>",
-	"loading_page" : "<h1 class='page-title'></h1><h2>העמוד בטעינה...</h2>",
-	"text_search" : "חיפוש...",
-	"text_go" : "המשך",
+	"loading_page": "<h1 class='page-title'></h1><h2>העמוד בטעינה...</h2>",
+	"text_search": "חיפוש...",
+	"text_go": "המשך",
 	"text_searching": "רגע...",
-	"text_found" : "נמצאו %s הגיגים",
-	"text_not_found" : "אין תוצאות",
-	"cache_expires":{
-		"list": 86400,
-		"googledoc_html": 2222000
-	},
+	"text_found": "נמצאו %s הגיגים",
+	"text_not_found": "אין תוצאות",
+	"list_cache_expires": 86400,
 	"start_with_closed_book": false,
 	"log_filename": "err.log",
 	"manager_password_md5": "0ff49c3123244ee5187f9130902857a0",
@@ -22,7 +19,7 @@
 		"fields": "files(createdTime,description,id,modifiedTime,name,properties,starred),kind,nextPageToken"
 	},
 	
-	"turn_options" : {
+	"turn_options": {
 		"autoCenter": true,
 		"direction": "rtl"
 	}

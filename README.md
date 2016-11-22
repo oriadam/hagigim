@@ -15,7 +15,12 @@ When done you will have the file `client_secret.json` and a folder `vendor` with
 <http://localhost/hagigim/manager.php><br>
 
 1. Requires PHP 5.5 or higher
+
+1. Content caching (of files) will refresh automatically when the file was modified on Google Drive*. <br>
+List caching (of search results and content modify date) will refresh after 24h. Changable in `config.json:list_cache_expires`.<br>
+*Note that the file modified time is saved in lists cache, so cached lists might cause a content refresh delay of up to 24h.
  
+1. Support up to 1000 pages (=Drive Files) per search. Default is up to 300. Changable in `config.json:list/pageSize`. 
 
 __Settings__
 
@@ -31,7 +36,7 @@ __Settings__
 		"text_searching": "רגע...", // text while search results are populated to book via ajax
 		"text_found" : "נמצאו %s הגיגים", // text below search box
 		"text_not_found" : "אין תוצאות", // text below search box - when nothing was found
-		"cache_expires": 86400, // how long to keep ajax requests inside 'cache' folder
+		"list_cache_expires": 86400, // how long to keep ajax list requests inside 'cache' folder
 		"start_with_closed_book": false, // after search results populated, should i we display a closed book?
 		"log_filename": "err.log", // file name for the error log. You can read the log on manager.php
 		"manager_password_md5": "0ff49c3123244ee5187f9130902857a0", // MD5 hash of the manager password. To calculate visit http://demo.adopt-media.com/static/md5.html

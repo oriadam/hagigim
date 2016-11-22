@@ -7,22 +7,12 @@ $func = @$_GET['f'];
 
 switch ($func) {
 	case 'content':
-		if (empty($_GET['id']))
-			exit();
-		
-		$id = $_GET['id'];
-		
-		// /////////////
-		// FOR DEBUG //
-		// ////////////
-		if (0) {
-			$return = array(
-					'id' => $id, 
-					'content' => '<p>הנני כאן מתחת לגדר הנני שם מעל הסיטדל</p><h1>' . rand() . '</h1>'
-			);
-			echo json_encode($return);
+		if (empty($_GET['id'])) {
 			exit();
 		}
+		
+		$id = $_GET['id'];
+		$modifiedTime = 1 * @$_GET['modifiedTime'];
 		
 		// ///////////////
 		// READ A FILE //
@@ -30,13 +20,13 @@ switch ($func) {
 		if (empty($_GET['id'])) {
 			ajax_fatal('Missing required parameter: id');
 		}
-		$cached = cache_read($id, CACHETYPE_FILE);
+		$cached = cache_read($id, CACHETYPE_FILE, $modifiedTime);
 		if ($cached) {
 			echo $cached;
 			exit();
 		}
 		try {
-			$response = get_file_as($id,'text/html');
+			$response = get_file_as($id, 'text/html');
 		} catch (RequestException $e) {
 			if ($e->hasResponse()) {
 				ajax_fatal(Psr7\str($e->getResponse()));
@@ -50,7 +40,7 @@ switch ($func) {
 		}
 		
 		$return = array(
-				'id' => $id,
+				'id' => $id, 
 				'content' => content($content)
 		);
 		$cached = json_encode($return);
@@ -66,7 +56,8 @@ switch ($func) {
 		$q = empty($_GET['q']) ? '' : $_GET['q'];
 		$q = preg_replace('@[\"\']@', '', $q);
 		$id = urlencode($q) ?: '_empty_';
-		$cached = cache_read($id, CACHETYPE_LIST);
+		$modifiedTime = time() - $CONFIG['list_cache_expires'];
+		$cached = cache_read($id, CACHETYPE_LIST, $modifiedTime);
 		if ($cached) {
 			echo $cached;
 			exit();
@@ -81,7 +72,8 @@ switch ($func) {
 		foreach ( $list as $file ) {
 			$return[] = array(
 					'name' => name($file->getName()), 
-					'id' => $file->getId()
+					'id' => $file->getId(), 
+					'modifiedTime' => strtotime($file->getModifiedTime())
 			);
 		}
 		$cached = json_encode($return);

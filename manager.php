@@ -41,12 +41,12 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 	?>
 <div class="container">
 	<form method="POST" class="form-inline">
-			<?php /* These are just honeypots: */ ?>
+			<?php /* These are just honeypots: */?>
 			<label class="not-really-here">User: <input name="user" /></label> <label
 			class="not-really-here">Pass: <input name="pass" type="password" /></label>
-			<?php /* ^ when these have values - ignore everything... */ ?>
+			<?php /* ^ when these have values - ignore everything... */?>
 			<div class="input-append">
-			<div class="form-group<?=$bad_password?' has-error':''?>">
+			<div class="form-group<?=$bad_password ? ' has-error' : ''?>">
 				<input placeholder="Enter your password" class="form-control"
 					name="po" />
 			</div>
@@ -61,63 +61,80 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 	// if manager
 } else {
 	echo $header;
-	$action = empty($_GET['f']) ? '' : preg_replace('/[^a-z\-]/', '', strtolower($_GET['f']));
+	$getaction = empty($_GET['f']) ? '' : preg_replace('/[^a-z\-;,]/', '', strtolower($_GET['f']));
+	$action = explode(';', $getaction);
+	$param = @$action[1];
+	$action = $action[0];
 	$actions = array(
-			'auth' => 'Validate Google Auth',
-			'authclear' => 'Revoke Google Credentials',
-			'testcache-list' => 'Test List Cache', 
-			'testcache-file' => 'Test File Cache', 
-			'clearcache-list' => 'Refresh List Cache',
-			'clearcache-file' => 'Refresh File Cache',
-				'log' => 'Display Logs'
+			'auth' => 'Validate Google Auth', 
+			'clearauth' => 'Revoke Google Credentials', 
+			'testcache;list' => 'Test List Cache', 
+			'testcache;file' => 'Test File Cache', 
+			'clearcache;list' => 'Clear List Cache', 
+			'clearcache;file' => 'Clear File Cache', 
+			'log;mylog' => 'Read Inner Log', 
+			'log;phplog' => 'Read PHP Log', 
+			'clearlog;mylog' => 'Clear Inner Log', 
+			'clearlog;phplog' => 'Clear PHP Log'
 	);
-	$action_name = @$actions[$action];
+	$action_name = @$actions[$getaction];
 	if ($action_name) {
-		echo "<pre id='out'>Action: $action_name\n";
-		if ($action == 'authclear'){
-			if (file_exists(REFRESH_TOKEN_PATH))
-				unlink(REFRESH_TOKEN_PATH);
-			if (file_exists(CREDENTIALS_PATH))
-				unlink(CREDENTIALS_PATH);
-			$action = 'auth';
-			echo "</pre><script>location.href='?f=$action&_=".rand()."';</script>";
+		// /////////////////////
+		// Handle parameters //
+		// /////////////////////
+		if ($param == 'mylog') {
+			$logpath = MYLOG_PATH;
 		}
+		
+		if ($param == 'phplog') {
+			$logpath = __DIR__ . '/error_log';
+		}
+		if ($param == 'list') {
+			$cachetype = CACHETYPE_LIST;
+		}
+		if ($param == 'file') {
+			$cachetype = CACHETYPE_FILE;
+		}
+		
+		// /////////////////////////////////
+		// Handle actions that redirects //
+		// /////////////////////////////////
+		
+		if ($action == 'clearauth') {
+			if (file_exists(REFRESH_TOKEN_PATH)) {
+				unlink(REFRESH_TOKEN_PATH);
+			}
+			
+			if (file_exists(CREDENTIALS_PATH)) {
+				unlink(CREDENTIALS_PATH);
+			}
+			
+			redirect('auth');
+		}
+		
+		echo "<pre id='out'>Action: $action_name\n";
 		if ($action == 'auth') {
-			require ("reader.lib.php");
+			require "reader.lib.php";
 			$list = get_files('Testing file list access');
-			if ($list===null){
+			if ($list === null) {
 				echo "\nError";
 			} else {
 				echo "OK";
 			}
 		}
 		if ($action == 'log') {
-			echo "Log path: ".MYLOG_PATH."\n";
-			if (file_exists(MYLOG_PATH)){
-				$log = file_get_contents(MYLOG_PATH);
-				$entries = explode("\n", $log);
-				for($i = count($entries); $i >= 0; $i--) {
-					echo $entries[$i] . "\n";
-				}
+			echo "Log file path: $logpath\n";
+			if (file_exists($logpath)) {
+				readfile($logpath);
 			} else {
-				echo "No log file.";
+				echo "No such file.";
 			}
 		}
-		if ($action == 'clearcache-list') {
-			$action = 'clearcache';
-			$cachetype = CACHETYPE_LIST;
-		}
-		if ($action == 'clearcache-file') {
-			$action = 'clearcache';
-			$cachetype = CACHETYPE_FILE;
-		}
-		if ($action == 'testcache-list') {
-			$action = 'testcache';
-			$cachetype = CACHETYPE_LIST;
-		}
-		if ($action == 'testcache-file') {
-			$action = 'testcache';
-			$cachetype = CACHETYPE_FILE;
+		if ($action == 'clearlog') {
+			if (file_exists($logpath)) {
+				unlink($logpath);
+			}
+			echo "\nDone.";
 		}
 		if ($action == 'clearcache') {
 			$path = CACHE_PATH . "/$cachetype";
@@ -131,12 +148,27 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 			$id = "_test_cache";
 			$content = "This is a content for testing cache";
 			echo "Cache file = " . cache_path($id, $cachetype) . "\n";
+			echo "Testing basic: ";
 			cache_write($id, $cachetype, $content);
 			$read = cache_read($id, $cachetype);
-			if ($content == $read) {
-				echo "OK";
-			} else {
+			if ($content != $read) {
 				echo "FAIL!\nContent from cache:\n" . $read;
+			} else {
+				echo "OK\n";
+				echo "Testing modified time up to date: ";
+				$read = cache_read($id, $cachetype, time() - 1000);
+				if ($read != $content) {
+					echo "FAIL";
+				} else {
+					echo "OK\n";
+					echo "Testing modified time expired: ";
+					$read = cache_read($id, $cachetype, time() + 1000);
+					if ($read !== false) {
+						echo "FAIL";
+					} else {
+						echo "OK\n";
+					}
+				}
 			}
 		}
 		
@@ -145,7 +177,7 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 	
 	echo "<h3>Select action:</h3>";
 	foreach ( $actions as $act => $name ) {
-		echo "<a href='?f=$act&_=".rand()."' class='act btn btn-default'>$name</a><br>";
+		echo "<a href='?f=$act&_=" . rand() . "' class='act btn btn-default'>$name</a><br>";
 	}
 	echo "<style>.act { width:250px;text-align:center; }</style>"?>
 
@@ -156,13 +188,18 @@ function rrmdir($dir) {
 		$objects = scandir($dir);
 		foreach ( $objects as $object ) {
 			if ($object != "." && $object != "..") {
-				if (filetype($dir . "/" . $object) == "dir")
+				if (filetype($dir . "/" . $object) == "dir") {
 					rrmdir($dir . "/" . $object);
-				else
+				} else {
 					unlink($dir . "/" . $object);
+				}
 			}
 		}
 		reset($objects);
 		rmdir($dir);
 	}
+}
+function redirect($action) {
+	echo "<script>location.href='?f=$action&_=" . rand() . "';</script>";
+	exit();
 }

@@ -56,8 +56,8 @@ require_once "config.php";
 			<div id="id-form-1" class="form-group width-50">
 				<div class="input-append">
 					<input id="id-q" placeholder="<?=$CONFIG['text_search']?>"
-						type="text" class="form-control search-query width-50" /> <span id="id-go"
-						class="form-control btn btn-small btn-primary width-50"><?=$CONFIG['text_go']?></span>
+						type="text" class="form-control search-query width-50" /> <span
+						id="id-go" class="form-control btn btn-small btn-primary width-50"><?=$CONFIG['text_go']?></span>
 					<span id="id-searching"
 						class="form-control btn btn-small btn-primary disabled width-50"><?=$CONFIG['text_searching']?></span>
 				</div>
@@ -243,7 +243,7 @@ require_once "config.php";
 			//$book.turn('addPage', element, page);
 
 			// Get the data for that page
-			ajax( 'ajax.php?f=content&id=' + book_list[index].id,function(data) {
+			ajax( 'ajax.php?f=content&id=' + book_list[index].id + '&modifiedTime=' + book_list[index].modifiedTime,function(data) {
 				if (data.error){
 					data.content = 'Error: ' + data.error;
 					loaded_pages[page]=0;
