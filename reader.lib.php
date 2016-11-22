@@ -4,47 +4,46 @@ global $CONFIG, $GOOGLE;
 
 // Google Drive API v3 - https://developers.google.com/drive/v3/web/quickstart/php
 require_once __DIR__ . '/vendor/autoload.php';
-define ( 'APPLICATION_NAME', 'Drive API PHP Quickstart' );
-define ( 'CREDENTIALS_PATH', __DIR__ . '/google_credentials.json' );
-define ( 'REFRESH_TOKEN_PATH', __DIR__ . '/google_credentials_refresh.json' );
-define ( 'CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json' );
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/drive-php-quickstart.json
-define ( 'SCOPES', implode ( ' ', array (
-		Google_Service_Drive::DRIVE,
-		Google_Service_Drive::DRIVE_METADATA_READONLY,
-		Google_Service_Drive::DRIVE_READONLY,
-		Google_Service_Drive::DRIVE_FILE		
-		) ) );
+define('SCOPES', implode(' ', array(
+		Google_Service_Drive::DRIVE, 
+		Google_Service_Drive::DRIVE_METADATA_READONLY, 
+		Google_Service_Drive::DRIVE_READONLY, 
+		Google_Service_Drive::DRIVE_FILE
+)));
 function readGoogleToken($client) {
+	global $CONFIG;
 	// Request authorization from the user.
-	$authUrl = $client->createAuthUrl ();
-	if (php_sapi_name () == 'cli') {
+	$authUrl = $client->createAuthUrl();
+	if (php_sapi_name() == 'cli') {
 		// cli mode (command line mode)
 		print "Google Auth";
-		printf ( "Open the following link in your browser:\n%s\n", $authUrl );
+		printf("Open the following link in your browser:\n%s\n", $authUrl);
 		print 'Enter verification code: ';
-		$authCode = trim ( fgets ( STDIN ) );
+		$authCode = trim(fgets(STDIN));
 	} else {
 		// web mode (html mode)
-		$now1 = floor ( time () / 60 );
+		if (empty($CONFIG[MANAGER_FLAG]))
+			return false;
+		$now1 = floor(time() / 60);
 		$now2 = 1 + $now1;
 		$prefix = 'verificationcode';
 		
-		if (empty ( $_POST ["$prefix-$now1"] ) && empty ( $_POST ["$prefix-$now2"] )) {
+		if (empty($_POST["$prefix-$now1"]) && empty($_POST["$prefix-$now2"])) {
 			echo "<h1>Google Auth</h1>";
 			echo "Open the following link: <A target=_blank href='$authUrl'>$authUrl</a><br>";
 			echo "<form method=POST><label>Enter verification code: <input name='$prefix-$now2'></label><input type=submit value=Go></form>";
 			return false;
 		} else {
-			$authCode = @$_POST ["$prefix-$now1"] ?: @$_POST ["$prefix-$now2"];
+			$authCode = @$_POST["$prefix-$now1"] ?: @$_POST["$prefix-$now2"];
 		}
 	}
 	
 	// Exchange authorization code for an access token.
-	$accessToken = $client->fetchAccessTokenWithAuthCode ( $authCode );
-	if (! empty ( $accessToken ['error'] )) {
-		echo "Google Token Error: " . $accessToken ['error'];
+	$accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+	if (! empty($accessToken['error'])) {
+		log("Google Token Error: " . $accessToken['error']);
 		return false;
 	} else {
 		return $accessToken;
@@ -57,68 +56,68 @@ function readGoogleToken($client) {
  * @return Google_Client the authorized client object
  */
 function getGoogleClient() {
-	$client = new Google_Client ();
-	$client->setApplicationName ( APPLICATION_NAME );
-	$client->setScopes ( SCOPES );
-	$client->setAuthConfig ( CLIENT_SECRET_PATH );
-	$client->setAccessType ( 'offline' );
+	global $CONFIG;
+	$client = new Google_Client();
+	$client->setApplicationName(APPLICATION_NAME);
+	$client->setScopes(SCOPES);
+	$client->setAuthConfig(CLIENT_SECRET_PATH);
+	$client->setAccessType('offline');
 	$client->setApprovalPrompt('force');
 	
 	// Load previously authorized credentials from a file.
-	$credentialsPath = expandHomeDirectory ( CREDENTIALS_PATH );
-	if (file_exists ( $credentialsPath )) {
-		$accessToken = json_decode ( file_get_contents ( $credentialsPath ), true );
+	$credentialsPath = expandHomeDirectory(CREDENTIALS_PATH);
+	if (file_exists($credentialsPath)) {
+		$accessToken = json_decode(file_get_contents($credentialsPath), true);
 	} else {
-		$accessToken = readGoogleToken ( $client );
+		$accessToken = readGoogleToken($client);
 		if ($accessToken) {
 			// Store the credentials to disk.
-			if (! file_exists ( dirname ( $credentialsPath ) )) {
-				mkdir ( dirname ( $credentialsPath ), 0777, true );
+			if (! file_exists(dirname($credentialsPath))) {
+				mkdir(dirname($credentialsPath), 0777, true);
 			}
-			file_put_contents ( $credentialsPath, json_encode ( $accessToken ) );
-			chmod ( $credentialsPath, 0777 );
+			file_put_contents($credentialsPath, json_encode($accessToken));
+			chmod($credentialsPath, 0777);
 		}
-		return false;
 	}
 	if ($accessToken) {
-		$client->setAccessToken ( $accessToken );
+		$client->setAccessToken($accessToken);
 		// handle refresh token
-		if (! file_exists ( REFRESH_TOKEN_PATH )) {
-			$refreshToken = $client->getRefreshToken ();
+		if (! file_exists(REFRESH_TOKEN_PATH)) {
+			$refreshToken = $client->getRefreshToken();
 			if ($refreshToken) {
-				file_put_contents ( REFRESH_TOKEN_PATH, json_encode ( $refreshToken ) );
-				chmod ( REFRESH_TOKEN_PATH, 0777 );
+				file_put_contents(REFRESH_TOKEN_PATH, json_encode($refreshToken));
+				chmod(REFRESH_TOKEN_PATH, 0777);
 			} else {
-				echo "Google Auth Error: client->getRefreshToken() returned empty result";
+				mylog("Google Auth Error: client->getRefreshToken() returned empty result");
 			}
 		}
 		
 		// Refresh the token if it's expired.
-		if ($client->isAccessTokenExpired ()) {
-			if (file_exists ( REFRESH_TOKEN_PATH )) {
-				$refreshToken = json_decode ( file_get_contents ( REFRESH_TOKEN_PATH ) );
-				$client->fetchAccessTokenWithRefreshToken ( $refreshToken );
-				$accessToken = $client->getAccessToken ();
+		if ($client->isAccessTokenExpired()) {
+			if (file_exists(REFRESH_TOKEN_PATH)) {
+				$refreshToken = json_decode(file_get_contents(REFRESH_TOKEN_PATH));
+				$client->fetchAccessTokenWithRefreshToken($refreshToken);
+				$accessToken = $client->getAccessToken();
 				if ($accessToken) {
-					file_put_contents ( $credentialsPath, json_encode ( $accessToken ) );
-					chmod ( $credentialsPath, 0777 );
+					file_put_contents($credentialsPath, json_encode($accessToken));
+					chmod($credentialsPath, 0777);
 				} else {
-					echo "Google Auth Error: client->fetchAccessTokenWithRefreshToken() called, getAccessToken() returned empty result";
+					mylog("Google Auth Error: client->fetchAccessTokenWithRefreshToken() called, getAccessToken() returned empty result");
 				}
 			} else {
-				if (file_exists ( $credentialsPath )) {
-					unlink ( $credentialsPath );
-					return getGoogleClient ();
+				if (file_exists($credentialsPath)) {
+					unlink($credentialsPath);
+					return getGoogleClient();
 				} else {
-					echo "Google Auth Error: no refresh token";
+					mylog("Google Auth Error: no refresh token");
 					return false;
 				}
 			}
-			$refreshToken = $client->getRefreshToken ();
+			$refreshToken = $client->getRefreshToken();
 			if ($refreshToken) {
-				$client->fetchAccessTokenWithRefreshToken ( $refreshToken );
+				$client->fetchAccessTokenWithRefreshToken($refreshToken);
 			} else {
-				echo "Google Auth Error: client->getRefreshToken() returned empty result";
+				mylog("Google Auth Error: client->getRefreshToken() returned empty result");
 			}
 		}
 		return $client;
@@ -135,33 +134,33 @@ function getGoogleClient() {
  * @return string the expanded path.
  */
 function expandHomeDirectory($path) {
-	$homeDirectory = getenv ( 'HOME' );
-	if (empty ( $homeDirectory )) {
-		$homeDirectory = getenv ( 'HOMEDRIVE' ) . getenv ( 'HOMEPATH' );
+	$homeDirectory = getenv('HOME');
+	if (empty($homeDirectory)) {
+		$homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
 	}
-	return str_replace ( '~', realpath ( $homeDirectory ), $path );
+	return str_replace('~', realpath($homeDirectory), $path);
 }
 
 // Get the API client and construct the service object.
-$GOOGLE = array ();
-$GOOGLE ['client'] = getGoogleClient ();
-if (empty ( $GOOGLE ['client'] )) {
-	exit ();
+$GOOGLE = array();
+$GOOGLE['client'] = getGoogleClient();
+if (empty($GOOGLE['client'])) {
+	exit();
 }
-$GOOGLE ['service'] = new Google_Service_Drive ( $GOOGLE ['client'] );
+$GOOGLE['service'] = new Google_Service_Drive($GOOGLE['client']);
 function get_files($q = '') {
 	global $CONFIG, $GOOGLE;
 	// Get the names and IDs of all files
-	$optParams = $CONFIG ['list'];
-	if (! empty ( $q )) {
-		$optParams ['q'] .= " AND $q";
+	$optParams = $CONFIG['list'];
+	if (! empty($q)) {
+		$optParams['q'] .= " AND $q";
 	}
 	
 	try {
-		$results = $GOOGLE ['service']->files->listFiles ( $optParams );
-		return $results->getFiles ();
-	} catch ( Exception $e ) {
-		$obj = new stdClass ();
+		$results = $GOOGLE['service']->files->listFiles($optParams);
+		return $results->getFiles();
+	} catch (Exception $e) {
+		$obj = new stdClass();
 		$obj->error = $e;
 		return $obj;
 	}
@@ -180,10 +179,10 @@ function get_files($q = '') {
 function get_file_as($id, $mime = 'text/html') {
 	global $CONFIG, $GOOGLE;
 	// $id = $file->getId();
-	$optParams = array (
-			"fileId" => $id,
-			"mimeType" => $mime 
+	$optParams = array(
+			"fileId" => $id, 
+			"mimeType" => $mime
 	);
-	$results = $GOOGLE ['service']->files->export ( $id, $mime );
+	$results = $GOOGLE['service']->files->export($id, $mime);
 	return $results;
 }

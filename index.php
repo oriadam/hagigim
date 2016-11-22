@@ -1,12 +1,14 @@
 <?php
 global $CONFIG;
 require_once "config.php";
-require_once "reader.lib.php";
+// require_once "reader.lib.php";
 
 ?>
 <html>
 <head>
 <title><?=$CONFIG['page_title']?></title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <link
@@ -49,13 +51,19 @@ require_once "reader.lib.php";
 	</div>
 	</template>
 
-	<div class="container">
-		<div class="form-group form-inline form-search">
-			<div class="input-append">
-				<input id="id-q" placeholder="<?=$CONFIG['text_search']?>" type="text" class="form-control search-query" /> 
-				<span id="id-go" class="form-control btn btn-small btn-primary"><?=$CONFIG['text_go']?></span>
-				<span id="id-searching" class="form-control btn btn-small btn-primary disabled"><?=$CONFIG['text_searching']?></span>
-				<output id="id-found" class="text"></output>
+	<div id="id-form" class="container width-100">
+		<div class="form-inline form-search">
+			<div id="id-form-1" class="form-group width-50">
+				<div class="input-append">
+					<input id="id-q" placeholder="<?=$CONFIG['text_search']?>"
+						type="text" class="form-control search-query width-50" /> <span id="id-go"
+						class="form-control btn btn-small btn-primary width-50"><?=$CONFIG['text_go']?></span>
+					<span id="id-searching"
+						class="form-control btn btn-small btn-primary disabled width-50"><?=$CONFIG['text_searching']?></span>
+				</div>
+			</div>
+			<div id="id-form-2" class="form-group width-50">
+				<output id="id-found" class="form-control text width-100"></output>
 			</div>
 		</div>
 	</div>
@@ -121,8 +129,10 @@ require_once "reader.lib.php";
 				if (data.length){
 					book_list = data;
 					build_book();
-					// always load first page
+					// always load first pages
 					load_page(1+cover_pages_before);
+					load_page(2+cover_pages_before);
+					load_page(3+cover_pages_before);
 					if (!start_with_closed_book){
 						// start on first page
 						$book.turn('page',2);
@@ -194,8 +204,8 @@ require_once "reader.lib.php";
 
 		// the magic!
 		var options = turn_options;
-		options.width = $book_parent.width();
-		options.height = $book_parent.height();
+		//options.width = $book_parent.width();
+		//options.height = $book_parent.height();
 		options.width = '100%';
 		options.height = '100%';
 		options.pages = pages;

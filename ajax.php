@@ -3,146 +3,108 @@ global $CONFIG;
 require_once "config.php";
 require_once "reader.lib.php";
 
-define ( 'CACHE_PATH', __DIR__ . '/cache' );
-
-$func = @$_GET ['f'];
+$func = @$_GET['f'];
 
 switch ($func) {
-	case 'content' :
-		if (empty ( $_GET ['id'] ))
-			exit ();
+	case 'content':
+		if (empty($_GET['id']))
+			exit();
 		
-		$id = $_GET ['id'];
+		$id = $_GET['id'];
 		
 		// /////////////
 		// FOR DEBUG //
 		// ////////////
 		if (0) {
-			$return = array (
-					'id' => $id,
-					'content' => '<p>הנני כאן מתחת לגדר הנני שם מעל הסיטדל</p><h1>' . rand () . '</h1>' 
+			$return = array(
+					'id' => $id, 
+					'content' => '<p>הנני כאן מתחת לגדר הנני שם מעל הסיטדל</p><h1>' . rand() . '</h1>'
 			);
-			echo json_encode ( $return );
-			exit ();
+			echo json_encode($return);
+			exit();
 		}
 		
 		// ///////////////
 		// READ A FILE //
 		// ///////////////
-		if (empty ( $_GET ['id'] )) {
-			fatal ( 'Missing required parameter: id' );
+		if (empty($_GET['id'])) {
+			ajax_fatal('Missing required parameter: id');
 		}
-		$mime = 'text/html';
-		$cached = cache_read ( $id, $mime );
+		$cached = cache_read($id, CACHETYPE_FILE);
 		if ($cached) {
 			echo $cached;
-			exit ();
+			exit();
 		}
 		try {
-			$response = get_file_as ( $id, $mime );
-		} catch ( RequestException $e ) {
-			if ($e->hasResponse ()) {
-				fatal ( Psr7\str ( $e->getResponse () ) );
+			$response = get_file_as($id,'text/html');
+		} catch (RequestException $e) {
+			if ($e->hasResponse()) {
+				ajax_fatal(Psr7\str($e->getResponse()));
 			}
 		}
 		
-		if ($response && $response->getStatusCode () == 200) {
-			$content = ( string ) $response->getBody ();
+		if ($response && $response->getStatusCode() == 200) {
+			$content = (string) $response->getBody();
 		} else {
-			fatal ( 'Error fetching file ' . ($response && $repsonse->getStatusCode ? $response->getReasonPhrase () . '(' . $response->getStatusCode () . ')' : '') );
+			ajax_fatal('Error fetching file ' . ($response && $repsonse->getStatusCode ? $response->getReasonPhrase() . '(' . $response->getStatusCode() . ')' : ''));
 		}
 		
-		$return = array (
-				// 'filename' => $file->getName (),
-				// 'name' => name ( $file->getName () ),
+		$return = array(
 				'id' => $id,
-				'content' => content ( $content ) 
+				'content' => content($content)
 		);
-		$cached = json_encode ( $return );
-		cache_write ( $id, $mime, $cached );
+		$cached = json_encode($return);
+		cache_write($id, CACHETYPE_FILE, $cached);
 		echo $cached;
-		exit ();
+		exit();
 		break;
 	
-	case 'list' :
+	case 'list':
 		// ////////////////
 		// SEARCH PAGES //
 		// ////////////////
-		$q = empty ( $_GET ['q'] ) ? '' : $_GET ['q'];
-		$q = preg_replace ( '@[\"\']@', '', $q );
-		$id = urlencode ( $q );
-		$mime = 'list';
-		$cached = cache_read ( $id, $mime );
+		$q = empty($_GET['q']) ? '' : $_GET['q'];
+		$q = preg_replace('@[\"\']@', '', $q);
+		$id = urlencode($q) ?: '_empty_';
+		$cached = cache_read($id, CACHETYPE_LIST);
 		if ($cached) {
 			echo $cached;
-			exit ();
+			exit();
 		}
 		
-		$list = get_files ( 'fullText contains "' . $q . '"' );
-		if (! empty ( $list ) && ! empty ( $list->error )) {
-			fatal ( 'Error with query ' . ($list ? $list->error ?: '' : '') );
+		$list = get_files('fullText contains "' . $q . '"');
+		if (! empty($list) && ! empty($list->error)) {
+			ajax_fatal('Error with query ' . ($list ? $list->error ?: '' : ''));
 		}
 		
-		$return = array ();
+		$return = array();
 		foreach ( $list as $file ) {
-			$return [] = array (
-					'name' => name ( $file->getName () ),
-					'id' => $file->getId () 
+			$return[] = array(
+					'name' => name($file->getName()), 
+					'id' => $file->getId()
 			);
 		}
-		$cached = json_encode ( $return );
-		cache_write ( $id, $mime, $cached );
+		$cached = json_encode($return);
+		cache_write($id, CACHETYPE_LIST, $cached);
 		echo $cached;
-		exit ();
+		exit();
 		break;
 	
-	default :
+	default:
 		break;
 }
 
 // file name to pretty name parser
 // change _ to spaces
 function name($string) {
-	return preg_replace ( '@[\s_]+|\.docx?@', ' ', $string );
+	return preg_replace('@[\s_]+|\.docx?@', ' ', $string);
 }
 
 // content parser
 // htmlizer
 function content($string) {
-	$string = preg_replace('/<\\/?html[^>]*>|<head>.*<\\/head>|<style>.*<\\/style>|style="[^"]*"/','',$string);
-	$string = preg_replace('/<body[^>]*>/','<div>',$string);
-	$string = preg_replace('/<\\/body[^>]*>/','<div>',$string);
+	$string = preg_replace('/<\\/?html[^>]*>|<head>.*<\\/head>|<style>.*<\\/style>|style="[^"]*"/', '', $string);
+	$string = preg_replace('/<body[^>]*>/', '<div>', $string);
+	$string = preg_replace('/<\\/body[^>]*>/', '<div>', $string);
 	return $string;
-}
-function fatal($string) {
-	$return = array ();
-	$return ['error'] = $string;
-	echo json_encode ( $return );
-	exit ();
-}
-function cache_path($id, $mime) {
-	$mime = $mime ?: 'other';
-	return CACHE_PATH . '/' . preg_replace ( '@[^a-zA-Z0-9_]@', '_', $mime ) . '/' . preg_replace ( '@[^a-zA-Z0-9_]@', '_', $id );
-}
-function cache_read($id, $mime) {
-	global $CONFIG;
-	$path = cache_path ( $id, $mime );
-	$expires = time () - $CONFIG ['cache_expires'];
-	if (! empty ( $path ))
-		if (file_exists ( $path ))
-			if (filemtime ( $path ) > $expires)
-				return file_get_contents ( $path );
-	
-	return false;
-}
-function cache_write($id, $mime, $content) {
-	$path = cache_path ( $id, $mime );
-	$dir = dirname ( $path );
-	if (! is_dir ( $dir )) {
-		mkdir ( $dir, 0777, true );
-		chmod ( $dir, 0777 );
-	}
-	
-	file_put_contents ( $path, $content );
-	chmod ( $path, 0777 );
 }

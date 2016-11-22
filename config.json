@@ -8,13 +8,14 @@
 	"text_searching": "רגע...",
 	"text_found" : "נמצאו %s הגיגים",
 	"text_not_found" : "אין תוצאות",
-	
 	"cache_expires": 86400,
 	"start_with_closed_book": false,
+	"log_filename": "err.log",
+	"manager_password_md5": "0ff49c3123244ee5187f9130902857a0",
 	
 	"list": {
 		"q": "mimeType='application/vnd.google-apps.document' and '0B7cabAnVcz8xTHNUd1JieUFjQm8' in parents",
-		"pageSize": 1000,
+		"pageSize": 300,
 		"fields": "files(createdTime,description,id,modifiedTime,name,properties,starred),kind,nextPageToken"
 	},
 	
