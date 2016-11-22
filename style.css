@@ -47,7 +47,7 @@
 
 #flipbook .page-content {
 	overflow: auto;
-	-height: calc(100% - 4vh);
+	height: 100%;
 }
 
 #flipbook .page-content h1, #flipbook .page-content p, #flipbook .page-content li
