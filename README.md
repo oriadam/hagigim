@@ -3,24 +3,33 @@ Display books from Google Drive
 
 Setup:
 
-1. Edit `config.json` and `style.css` to fit your needs. Note the manager password is stored as MD5 hash. 
-Note that the JSON file is a strict JSON format - **no comments, no ending commas**.
-(because `json_decode()` does not allow comments or ending commas. Guhhh)
-
 1. Setup Google v3 API for PHP<br>
 <https://developers.google.com/drive/v3/web/quickstart/php><br>
 When done you will have the file `client_secret.json` and a folder `vendor` with all required libraries.
 
-1. Before first run please visit the manager page, validate Google API and reset all cache folders.<br>
+1. Edit `config.json` and `style.css` to fit your needs.<br>
+Note the manager password (stored as MD5 hash).
+Note that the JSON file must be strict - **no comments, no ending commas**.
+
+1. Visit the `manager.php` page. Note the manager password you have set before on `config.json`.<br>
+Click Validate Google Auth. You will have to follow a link, approve API access, and enter the token back inside the box.<br>
+Click Validate Google Auth again, and make sure you get the OK.<br>
+Click clear cache (file, list)<br>
+Click Test cache (file, list) and make sure you get the OK.<br> 
+
+Notes::
+* Requires PHP 5.5 or higher
+
+* Before first run please visit the manager page, validate Google API and reset all cache folders.<br>
 <http://localhost/hagigim/manager.php><br>
 
-1. Requires PHP 5.5 or higher
 
-1. Content caching (of files) will refresh automatically when the file was modified on Google Drive*. <br>
+* Content caching (of files) will refresh automatically when the file was modified on Google Drive*. <br>
 List caching (of search results and content modify date) will refresh after 24h. Changable in `config.json:list_cache_expires`.<br>
 *Note that the file modified time is saved in lists cache, so cached lists might cause a content refresh delay of up to 24h.
  
-1. Support up to 1000 pages (=Drive Files) per search. Default is up to 300. Changable in `config.json:list/pageSize`. 
+* Supports up to 1000 pages (=Drive Files) per search. Default is up to 300. Changable in `config.json:list/pageSize`. 
+
 
 __Settings__
 

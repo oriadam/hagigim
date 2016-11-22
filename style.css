@@ -58,6 +58,15 @@
 	margin: 0;
 }
 
+#flipbook .page-content img {
+	max-height: 20vh;
+	max-width: 38vw;
+}
+
+#flipbook .page-content ul {
+    list-style: square inside url('data:image/gif;base64,R0lGODlhBQAKAIABAAAAAP///yH5BAEAAAEALAAAAAAFAAoAAAIIjI+ZwKwPUQEAOw==');
+}
+
 body {
 	overflow: hidden;
 	font-family: 'Alef', sans-serif;
