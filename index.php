@@ -91,10 +91,12 @@ require_once "config.php";
 	$('#id-q').val(q);
 	$('#id-searching').hide();
 	$('#id-go').click(function(){
+		q = $.trim($('#id-q').val());
+		if (q==lastQ)
+			return;
 		$('#id-go').hide();
 		$('#id-searching').show();
 		$('#id-found').text('...');
-		q = $('#id-q').val();
 		load_book(q);
 	});
 	$('#id-q').keypress(function(e) {
@@ -214,10 +216,16 @@ require_once "config.php";
 		options.height = '100%';
 		options.pages = pages;
 		$book.turn(options);
+		resize();
 		// fix page width via css
 		$('#id-style').remove();
 		$('head').append('<style id="id-style">#flipbook .page { width:' +(options.width/2)+'px; height:' + options.height + 'px;</style>');
+
 	}
+	function resize(){
+		$book.turn("size",$book_parent.width(),$book_parent.height());
+	}
+	$(window).resize(resize);
 
 	// load a specific page number using ajax
 	function load_page(page) {

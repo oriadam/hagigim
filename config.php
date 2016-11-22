@@ -20,7 +20,7 @@ function mylog($str) {
 	global $CONFIG;
 	$str = date("Y-m-d H:i:s\t") . $str;
 	file_put_contents(MYLOG_PATH, $str, FILE_APPEND | LOCK_EX);
-	if (! empty($CONFIG[MANAGER_FLAG])) {
+	if (!empty($CONFIG[MANAGER_FLAG])) {
 		echo $str;
 	}
 }
@@ -41,23 +41,26 @@ function cache_path($id, $cachetype) {
 function cache_read($id, $cachetype) {
 	global $CONFIG;
 	$path = cache_path($id, $cachetype);
-	$expires = time() - $CONFIG['cache_expires'];
-	if (! empty($path))
-		if (file_exists($path))
-			if (filemtime($path) > $expires)
+	$expires = time() - (@$CONFIG['cache_expires'][$cachetype] ?: 86400);
+	if (!empty($path)) {
+		if (file_exists($path)) {
+			if (filemtime($path) > $expires) {
 				return file_get_contents($path);
-	
+			}
+		}
+	}
+
 	return false;
 }
 // cache - save content for $id-$cachetype
 function cache_write($id, $cachetype, $content) {
 	$path = cache_path($id, $cachetype);
 	$dir = dirname($path);
-	if (! is_dir($dir)) {
+	if (!is_dir($dir)) {
 		mkdir($dir, 0777, true);
 		chmod($dir, 0777);
 	}
-	
+
 	try {
 		file_put_contents($path, $content);
 		chmod($path, 0777);

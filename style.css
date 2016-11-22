@@ -43,7 +43,7 @@
 	overflow:auto;
 	-height: calc( 100% - 4vh );
 }
-#flipbook .page-content h1,#flipbook .page-content p {
+#flipbook .page-content h1,#flipbook .page-content p,#flipbook .page-content li{
 	font-weight:normal;
 	font-size:1.8vh;
 	line-height:2.3vh;

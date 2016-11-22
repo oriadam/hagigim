@@ -8,7 +8,10 @@
 	"text_searching": "רגע...",
 	"text_found" : "נמצאו %s הגיגים",
 	"text_not_found" : "אין תוצאות",
-	"cache_expires": 86400,
+	"cache_expires":{
+		"list": 86400,
+		"googledoc_html": 2222000
+	},
 	"start_with_closed_book": false,
 	"log_filename": "err.log",
 	"manager_password_md5": "0ff49c3123244ee5187f9130902857a0",
