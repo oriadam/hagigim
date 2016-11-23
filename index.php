@@ -63,7 +63,11 @@ require_once "config.php";
 				</div>
 			</div>
 			<div id="id-form-2" class="form-group width-50">
-				<output id="id-found" class="form-control text width-100"></output>
+				<output id="id-found" class="form-control text width-50"></output>				
+				<div class="form-group width-50">
+					<span id="id-prev" class="form-control btn btn-primary width-50"><i class="glyphicon glyphicon-forward"></i></span>
+					<span id="id-next" class="form-control btn btn-primary width-50"><i class="glyphicon glyphicon-backward"></i></span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -103,6 +107,12 @@ require_once "config.php";
 		if(e.which == 13) {
 			$('#id-go').click();
 		}
+	});
+	$('#id-prev').click(function(){
+		$book.turn('previous');
+	});
+	$('#id-next').click(function(){
+		$book.turn('next');
 	});
 	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 	function tmpl(name,page_number){
@@ -291,6 +301,9 @@ require_once "config.php";
 
 	// load initial book by the last or default query
 	load_book(q);
+	setTimeout(function(){
+		$book.turn('peel','bl');
+	},2000);
 	</script>
 </body>
 </html>

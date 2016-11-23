@@ -20,7 +20,7 @@
 	},
 	
 	"turn_options": {
-		"autoCenter": true,
+		"autoCenter": false,
 		"direction": "rtl"
 	}
 }
