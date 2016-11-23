@@ -90,7 +90,9 @@ require_once "config.php";
 	var loaded_pages; // remember which pages were already loaded (or currently loading)
 	var hard_cover = true; // currently - not supporting no hard covers
 	var cover_pages_before,cover_pages_after;
-	var start_with_closed_book = <?=$CONFIG['start_with_closed_book'] ? 1 : 0?>;
+	var start_with_closed_book = <?=$CONFIG["start_with_closed_book"] ? 1 : 0?>;
+	var single_page_mode_under_width_of = <?=$CONFIG["single_page_mode_under_width_of"]?>;
+	var last_display_mode = 'double';
 
 	$('#id-q').val(q);
 	$('#id-searching').hide();
@@ -151,7 +153,7 @@ require_once "config.php";
 					load_page(3+cover_pages_before);
 					if (!start_with_closed_book){
 						// start on first page
-						$book.turn('page',2);
+						$book.turn('page',3);
 					}
 					$('#id-found').html("<?=$CONFIG['text_found']?>".replace('%s',data.length));
 				} else {
@@ -234,6 +236,11 @@ require_once "config.php";
 	}
 	function resize(){
 		$book.turn("size",$book_parent.width(),$book_parent.height());
+		var display = window.innerWidth > single_page_mode_under_width_of ? 'double' : 'single';
+		if (last_display_mode!=display){
+			last_display_mode=display;
+			$book.turn("display",display);
+		}
 	}
 	$(window).resize(resize);
 

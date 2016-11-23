@@ -12,6 +12,7 @@
 	"start_with_closed_book": false,
 	"log_filename": "err.log",
 	"manager_password_md5": "0ff49c3123244ee5187f9130902857a0",
+	"single_page_mode_under_width_of": 500,
 	
 	"list": {
 		"q": "mimeType='application/vnd.google-apps.document' and '0B7cabAnVcz8xTHNUd1JieUFjQm8' in parents",
