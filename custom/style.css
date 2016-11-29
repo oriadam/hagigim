@@ -1,0 +1,28 @@
+html #flipbook #cover_back.hard {
+    background: #1e1b16;
+    color: #fff;
+    background-image: url(img/cover-black.jpg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+html #flipbook #cover_front.hard {
+    background: #fff;
+    color: #000;
+    background-image: url(img/cover-white.jpg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+html #flipbook .hard {
+	background: #46a;
+}
+
+html #flipbook.middle_gradient .odd.hard
+{
+	background-image: linear-gradient(to right, #46a 0%, #46a 98%, #237 100%);
+}
+html #flipbook.middle_gradient .even.hard
+{
+	background-image: linear-gradient(to left, #46a 0%, #46a 98%, #237 100%);
+}

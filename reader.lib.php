@@ -155,27 +155,9 @@ function get_files($q = '') {
 	if (! empty($q)) {
 		$optParams['q'] .= " AND $q";
 	}
-	
-	try {
-		$results = $GOOGLE['service']->files->listFiles($optParams);
-		return $results->getFiles();
-	} catch (Exception $e) {
-		$obj = new stdClass();
-		$obj->error = $e;
-		return $obj;
-	}
-	
-	/*
-	 * // Usage Example:
-	 * if (count($results->getFiles()) == 0) {
-	 * print "No files found.\n";
-	 * } else {
-	 * print "Files:\n";
-	 * foreach ($results->getFiles() as $file) {
-	 * printf("%s (%s)\n", $file->getName(), $file->getId());
-	 * }
-	 */
+	return retrieveAllFiles($GOOGLE['service'],$optParams,$CONFIG["max_results"]);
 }
+
 function get_file_as($id, $mime = 'text/html') {
 	global $CONFIG, $GOOGLE;
 	// $id = $file->getId();
@@ -185,4 +167,35 @@ function get_file_as($id, $mime = 'text/html') {
 	);
 	$results = $GOOGLE['service']->files->export($id, $mime);
 	return $results;
+}
+
+/**
+ * Retrieve a list of File resources.
+ * from: https://developers.google.com/drive/v2/reference/files/list
+ *
+ * @param Google_Service_Drive $service Drive API service instance.
+ * @param Google_Service_Drive $parameters Drive API options.
+ * @param Google_Service_Drive $max_results Read pages up to this amount of results.
+ * @return Array List of Google_Service_Drive_DriveFile resources.
+ */
+function retrieveAllFiles($service, $parameters = array(), $max_results = 1000) {
+	$result = array();
+	$pageToken = NULL;
+
+	do {
+		try {
+			if ($pageToken) {
+				$parameters['pageToken'] = $pageToken;
+			}
+			$files = $service->files->listFiles($parameters);
+
+			$result = array_merge($result, $files->getFiles());
+
+			$pageToken = $files->getNextPageToken();
+		} catch (Exception $e) {
+			mylog("retrieveAllFiles error: " . $e->getMessage());
+			$pageToken = NULL;
+		}
+	} while ($pageToken && count($result)<$max_results);
+	return $result;
 }

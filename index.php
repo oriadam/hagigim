@@ -18,12 +18,27 @@ require_once "config.php";
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="http://www.turnjs.com/lib/turn.min.js"></script>
 <link href="style.css" rel="stylesheet">
+<?=$CONFIG['rtl'] ? '<link href="rtl.css" rel="stylesheet">':''?>
+<?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
+<?=$CONFIG['head']?>
 </head>
 <body>
+	<?=$CONFIG['body']?>
+	<template id="tmpl_empty_page">
+	<div></div>
+	</template>
 	<template id="tmpl_page">
 	<div class="content-page">
 		<h1 class="page-title"></h1>
 		<div class="page-content"></div>
+		<?php if ($CONFIG['page_number']) { ?>
+		<div class="page_number"></div>
+		<?php } ?>
+	</div>
+	</template>
+	<template id="tmpl_loading">
+	<div>
+		<?=$CONFIG['loading_page']?>
 	</div>
 	</template>
 	<template id="tmpl_cover_front">
@@ -31,19 +46,15 @@ require_once "config.php";
 		<?=$CONFIG['cover_front']?>
 	</div>
 	</template>
-	<template id="tmpl_hard">
-	<div class="hard"></div>
-	</template>
-	<template id="tmpl_loading">
-	<div>
-		<?=$CONFIG['loading_page']?>
+	<template id="tmpl_inside_front">
+	<div class="hard">
+		<?=$CONFIG['inside_front']?>
 	</div>
 	</template>
-	<template id="tmpl_page">
-	<div></div>
-	</template>
-	<template id="tmpl_empty">
-	<div></div>
+	<template id="tmpl_inside_back">
+	<div class="hard">
+		<?=$CONFIG['inside_back']?>
+	</div>
 	</template>
 	<template id="tmpl_cover_back">
 	<div class="hard">
@@ -51,25 +62,12 @@ require_once "config.php";
 	</div>
 	</template>
 
-	<div id="id-form" class="container width-100">
-		<div class="form-inline form-search">
-			<div id="id-form-1" class="form-group width-50">
-				<div class="input-append">
-					<input id="id-q" placeholder="<?=$CONFIG['text_search']?>"
-						type="text" class="form-control search-query width-50" /> <span
-						id="id-go" class="form-control btn btn-small btn-primary width-50"><?=$CONFIG['text_go']?></span>
-					<span id="id-searching"
-						class="form-control btn btn-small btn-primary disabled width-50"><?=$CONFIG['text_searching']?></span>
-				</div>
-			</div>
-			<div id="id-form-2" class="form-group width-50">
-				<output id="id-found" class="form-control text width-50"></output>				
-				<div class="form-group width-50">
-					<span id="id-prev" class="form-control btn btn-primary width-50"><i class="glyphicon glyphicon-forward"></i></span>
-					<span id="id-next" class="form-control btn btn-primary width-50"><i class="glyphicon glyphicon-backward"></i></span>
-				</div>
-			</div>
-		</div>
+	<div id="id-form" class="container width-100 input-append form-inline form-group">
+		<span id="id-prev" class="form-control btn btn-primary width-10"><?=$CONFIG['text_prev']?></span>
+		<input id="id-q" placeholder="<?=$CONFIG['text_search']?>" type="text" class="form-control search-query width-30" /> 
+		<span id="id-go" class="form-control btn btn-small btn-primary width-10"><?=$CONFIG['text_go']?></span>
+		<output id="id-found" class="form-control text width-40"></output>
+		<span id="id-next" class="form-control btn btn-primary width-10"><?=$CONFIG['text_next']?></span>
 	</div>
 	<div id="book_container">
 		<div id="flipbook"></div>
@@ -91,9 +89,17 @@ require_once "config.php";
 	var hard_cover = true; // currently - not supporting no hard covers
 	var cover_pages_before,cover_pages_after;
 	var start_with_closed_book = <?=$CONFIG["start_with_closed_book"] ? 1 : 0?>;
+	var page_number = <?=$CONFIG["page_number"] ? 1 : 0?>;
 	var single_page_mode_under_width_of = <?=$CONFIG["single_page_mode_under_width_of"]?>;
 	var last_display_mode = 'double';
-
+	var show_peel_corner_TO;
+	var show_peel_corner = function(){
+		clearTimeout(show_peel_corner_TO);
+		show_peel_corner_TO = setTimeout(function(){
+			if (!$book.turn('animating'))
+				$book.turn('peel','bl');
+		},2000);
+	};
 	$('#id-q').val(q);
 	$('#id-searching').hide();
 	$('#id-go').click(function(){
@@ -117,13 +123,19 @@ require_once "config.php";
 		$book.turn('next');
 	});
 	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
-	function tmpl(name,page_number){
-		return $($('#tmpl_'+name).html()).attr('id',page_number ? 'page-'+page_number : null);
+	function tmpl(name,id){
+		var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).children[0];
+		if (id)
+			clone.id = id;
+		return $(clone);
 	}
 
 	// attached to the "turning" event
 	function turning(event, page, view) {
-		if (page > pages - cover_pages_after || loaded_pages[page])
+		<?php if ($CONFIG["show_peel_corner"]) {?>
+		show_peel_corner();
+		<?php }?>
+		if (page > pages - cover_pages_after)
 			return; // page out of range, a cover page, or is already loaded
 		var range = $book.turn('range', page);
 		for (var i = range[0]; i<=range[1]; i++)
@@ -147,13 +159,16 @@ require_once "config.php";
 				if (data.length){
 					book_list = data;
 					build_book();
+					<?php if ($CONFIG["show_peel_corner"]) {?>
+					show_peel_corner();
+					<?php }?>
 					// always load first pages
 					load_page(1+cover_pages_before);
 					load_page(2+cover_pages_before);
 					load_page(3+cover_pages_before);
 					if (!start_with_closed_book){
 						// start on first page
-						$book.turn('page',3);
+						$book.turn("page",3);
 					}
 					$('#id-found').html("<?=$CONFIG['text_found']?>".replace('%s',data.length));
 				} else {
@@ -186,19 +201,27 @@ require_once "config.php";
 		}catch(e){}
 		$book.remove();
 		$book = $('<div id="'+id+'">').appendTo($book_parent);
+		/*<?php if ($CONFIG["pages_depth"]){ ?>*/
+		$book.addClass("pages_depth");
+		/*<?php } ?>*/
+		/*<?php if ($CONFIG["middle_gradient"]){ ?>*/
+		$book.addClass('middle_gradient');
+		/*<?php } ?>*/
 		$book.bind('turning', turning);
 		loaded_pages = [];
 
 		// append pages to book and remember which pages are already loaded
-		var append = function($elem,page){
+		var append = function(tmpl_name,page,id){
+			if (page && !id)
+				id = 'page-'+page;
+			var $elem = tmpl(tmpl_name,id);
 			$book.append($elem);
-			loaded_pages[page]=1;
 		}
 
 		// add front cover
 		if (hard_cover){
-			append(tmpl('cover_front'),1);
-			append(tmpl('hard'),2);
+			append('cover_front',1,'cover_front');
+			append('inside_front',2,'inside_front');
 		}
 
 		// add book content placeholders
@@ -206,18 +229,18 @@ require_once "config.php";
 		var i;
 		for (i=0;i<book_list.length;i++){
 			var page = i + 3;
-			append(tmpl('empty'),0);
+			append('empty_page',page);
 		}
 
 		// when number of pages is odd, add another blank page to allow folding of the last page
 		if (extra_blank_page) {
-			append(tmpl('empty'),pages - 2);
+			append('empty_page',pages - 2);
 		}
 
 		// add back cover
 		if (hard_cover){
-			append(tmpl('hard'),pages - 1);
-			append(tmpl('cover_back'), pages);
+			append('inside_back',pages-1,'inside_back');
+			append('cover_back',pages,'cover_back');
 		}
 
 		// the magic!
@@ -246,15 +269,20 @@ require_once "config.php";
 
 	// load a specific page number using ajax
 	function load_page(page) {
-		if (page<=cover_pages_before || page>pages-cover_pages_after || loaded_pages[page])
+		if (page<=cover_pages_before || page>pages-cover_pages_after || loaded_pages[page]){
 			return; // page out of range, a cover page, or is already loaded
+		}
+
+		if (page_number){
+			$('.p' + page + ' .page_number').html(page);
+		}
 
 		var index = page - cover_pages_before - 1; // index is zero-based, page is one-based
 		if (book_list[index] && book_list[index].id) {
 			loaded_pages[page]=1; // do not load same page twice
 
 			// Show 'loading...' message on page
-			var element = tmpl('loading');
+			var element = tmpl("loading");
 			element.find('.page-title').html(book_list[index].name);
 			$('#flipbook .p'+page).empty().append(element);
 			//$book.turn('addPage', element, page);
@@ -270,6 +298,10 @@ require_once "config.php";
 				var element = tmpl('page');
 				element.find('.page-title').html(data.name || book_list[index].name);
 				element.find('.page-content').html(data.content);
+				if (page_number){
+						element.find('.page_number').html(page);
+				}
+				
 				$('#flipbook .p'+page).empty().append(element);
 				//$book.turn('addPage', element, page);
 			});
@@ -308,9 +340,7 @@ require_once "config.php";
 
 	// load initial book by the last or default query
 	load_book(q);
-	setTimeout(function(){
-		$book.turn('peel','bl');
-	},2000);
 	</script>
+	<?=$CONFIG['footer']?>
 </body>
 </html>
