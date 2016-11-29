@@ -269,12 +269,12 @@ require_once "config.php";
 
 	// load a specific page number using ajax
 	function load_page(page) {
-		if (page<=cover_pages_before || page>pages-cover_pages_after || loaded_pages[page]){
+		if (page<=cover_pages_before || page>pages - cover_pages_after || loaded_pages[page]){
 			return; // page out of range, a cover page, or is already loaded
 		}
 
 		if (page_number){
-			$('.p' + page + ' .page_number').html(page);
+			$('.p' + page + ' .page_number').html(page - cover_pages_before);
 		}
 
 		var index = page - cover_pages_before - 1; // index is zero-based, page is one-based
@@ -299,7 +299,7 @@ require_once "config.php";
 				element.find('.page-title').html(data.name || book_list[index].name);
 				element.find('.page-content').html(data.content);
 				if (page_number){
-						element.find('.page_number').html(page);
+						element.find('.page_number').html(page - cover_pages_before);
 				}
 				
 				$('#flipbook .p'+page).empty().append(element);
