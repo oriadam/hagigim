@@ -1,5 +1,5 @@
 <?php
-global $CONFIG;
+global $CONFIG,$MANAGER_MODE;
 require_once "config.php";
 session_start();
 header("Cache-Control: no-store");
@@ -9,15 +9,20 @@ $header = '<html><head>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
+body {
+	padding-left:20px;
+}
 .not-really-here {opacity: 0;position: absolute;z-index: -1;}
+.act { width:250px;text-align:center; margin-left:20px; }
 </style>
 </head><body>';
 
 $secret_cookie = md5($CONFIG['manager_password_md5'] . floor(time() / 222200) . MANAGER_FLAG); // secret cookie lasts ~60 hours
-$CONFIG[MANAGER_FLAG] = @$_COOKIE[MANAGER_FLAG] == $secret_cookie;
+$secret_cookie2 = md5($CONFIG['manager_password_md5'] . ceil(time() / 222200) . MANAGER_FLAG); // secret cookie lasts ~60 hours
+$MANAGER_MODE = @$_COOKIE[MANAGER_FLAG] == $secret_cookie || @$_COOKIE[MANAGER_FLAG] == $secret_cookie2;
 
 $bad_password = false;
-if (empty($CONFIG[MANAGER_FLAG])) {
+if (!$MANAGER_MODE) {
 	// login flow - honeypots logic
 	if (! empty($_POST['user']) || ! empty($_POST['pass'])) {
 		// honeypots logic
@@ -25,8 +30,8 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 	} else if (! empty($_POST['po'])) {
 		// login flow - read password
 		if ($CONFIG['manager_password_md5'] == md5($_POST['po'])) {
-			setcookie(MANAGER_FLAG, $secret_cookie);
-			$CONFIG[MANAGER_FLAG] = true;
+			setcookie(MANAGER_FLAG, $secret_cookie2);
+			$MANAGER_MODE = true;
 		} else {
 			$bad_password = true;
 		}
@@ -35,7 +40,7 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 if ($bad_password) {
 	sleep(5 * rand());
 }
-if (empty($CONFIG[MANAGER_FLAG])) {
+if (!$MANAGER_MODE) {
 	// login flow - display
 	echo $header;
 	?>
@@ -66,19 +71,25 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 	$param = @$action[1];
 	$action = $action[0];
 	$actions = array(
-			'auth' => 'Validate Google Auth', 
-			'clearauth' => 'Revoke Google Credentials', 
-			'testcache;list' => 'Test List Cache', 
-			'testcache;file' => 'Test File Cache', 
-			'clearcache;list' => 'Clear List Cache', 
-			'clearcache;file' => 'Clear File Cache', 
-			'log;mylog' => 'Read Inner Log', 
-			'log;phplog' => 'Read PHP Log', 
-			'clearlog;mylog' => 'Clear Inner Log', 
-			'clearlog;phplog' => 'Clear PHP Log'
+			'config' => 'Edit Configuration',
+			'auth' => 'Validate Google Auth',
+			'clearauth' => 'Revoke Google Credentials',
+			'testcache;list' => 'Test List Cache',
+			'testcache;file' => 'Test File Cache',
+			'clearcache;list' => 'Clear List Cache',
+			'clearcache;file' => 'Clear File Cache',
+			'log;mylog' => 'Read Inner Log',
+			'log;phplog' => 'Read PHP Log',
+			'clearlog;mylog' => 'Clear Inner Log',
+			'clearlog;phplog' => 'Clear PHP Log',
 	);
-	$action_name = @$actions[$getaction];
-	if ($action_name) {
+	if (array_key_exists($getaction,$actions)) {
+		$action_name = $actions[$getaction];
+		if ($action == 'config') {
+			include("manager-config.include.php");
+			exit();
+		}
+
 		// /////////////////////
 		// Handle parameters //
 		// /////////////////////
@@ -179,9 +190,7 @@ if (empty($CONFIG[MANAGER_FLAG])) {
 	foreach ( $actions as $act => $name ) {
 		echo "<a href='?f=$act&_=" . rand() . "' class='act btn btn-default'>$name</a><br>";
 	}
-	echo "<style>.act { width:250px;text-align:center; }</style>"?>
 
-	<?php
 } // else manager
 function rrmdir($dir) {
 	if (is_dir($dir)) {

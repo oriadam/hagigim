@@ -27,10 +27,10 @@ function config_for_js(){
 
 // our personal logger
 function mylog($str) {
-	global $CONFIG;
+	global $CONFIG,$MANAGER_MODE;
 	$str = date("Y-m-d H:i:s\t") . $str . "\n";
 	file_put_contents(MYLOG_PATH, $str, FILE_APPEND | LOCK_EX);
-	if (! empty($CONFIG[MANAGER_FLAG])) {
+	if (!empty($MANAGER_MODE)) {
 		echo $str;
 	}
 }

@@ -13,7 +13,7 @@ define('SCOPES', implode(' ', array(
 		Google_Service_Drive::DRIVE_FILE
 )));
 function readGoogleToken($client) {
-	global $CONFIG;
+	global $CONFIG,$MANAGER_MODE;
 	// Request authorization from the user.
 	$authUrl = $client->createAuthUrl();
 	if (php_sapi_name() == 'cli') {
@@ -24,7 +24,7 @@ function readGoogleToken($client) {
 		$authCode = trim(fgets(STDIN));
 	} else {
 		// web mode (html mode)
-		if (empty($CONFIG[MANAGER_FLAG]))
+		if (empty($MANAGER_MODE))
 			return false;
 		$now1 = floor(time() / 60);
 		$now2 = 1 + $now1;

@@ -1,7 +1,7 @@
 {
     "google_drive_query": {},
     "list_cache_expires": {
-        "name": "Cache for",
+        "name": "Cache search results for",
         "desc": "Time to keep search results in cache",
         "options": {
             "1 hour": 3600,
@@ -10,9 +10,10 @@
         }
     },
     "start_with_closed_book": {
+        "name":"Start at",
         "options": {
-            "Yes": true,
-            "No": false
+            "Front cover": true,
+            "First page": false
         }
     },
     "hard_cover" :{
@@ -22,15 +23,15 @@
         }
     },
     "single_page_mode_under_width_of": {
-        "name": "Double pages",
+        "name": "Double page view",
         "options": {
-            "On Desktop": 720,
-            "Always": true,
-            "Never": false
+            "Double on Desktop, Single on Mobile": 720,
+            "Always Double": true,
+            "Always Single": false
         }
     },
     "show_peel_corner": {
-        "name": "Automatically fold a corner",
+        "name": "Fold a corner after 2 seconds",
         "options": {
             "Yes": true,
             "No": false
@@ -64,54 +65,6 @@
             "Off": false
         }
     },
-    "page_title": {
-        "name": "HTML Text: Page title"
-    },
-    "head": {
-        "name": "HTML Text: inside <head> tag"
-    },
-    "body": {
-        "name": "HTML Text: first thing inside <body>"
-    },
-    "footer": {
-        "name": "HTML Text: footer (last thing inside <body>"
-    },
-    "cover_front": {
-        "name": "HTML Text: Front cover"
-    },
-    "inside_front": {
-        "name": "HTML Text: Inside page front"
-    },
-    "inside_back": {
-        "name": "HTML Text: Inside page back"
-    },
-    "cover_back": {
-        "name": "HTML Text: Back cover"
-    },
-    "text_search": {
-        "name": "HTML Text: Search here"
-    },
-    "text_go": {
-        "name": "HTML Text: Go"
-    },
-    "text_next": {
-        "name": "HTML Text: Next"
-    },
-    "text_prev": {
-        "name": "HTML Text: Previous"
-    },
-    "text_searching": {
-        "name": "HTML Text: Searching..."
-    },
-    "text_found": {
-        "name": "HTML Text: Found %s results"
-    },
-    "text_found_in": {
-        "name": "HTML Text: Reading %s1 of %s2 results"
-    },
-    "text_not_found": {
-        "name": "HTML Text: No results found"
-    },
     "search_or_filter": {
         "name": "Search or filter?",
         "options": {
@@ -124,5 +77,70 @@
             "Yes": true,
             "No": false
         }
+    },
+
+    "page_title": {
+        "name": "Text: Page title",
+        "type": "text"
+    },
+    "head": {
+        "name": "HTML Text: inside <head> tag",
+        "type": "html"
+    },
+    "body": {
+        "name": "HTML Text: first thing inside <body>",
+        "type": "html"
+    },
+    "footer": {
+        "name": "HTML Text: footer (last thing inside <body>",
+        "type": "html"
+    },
+    "cover_front": {
+        "name": "HTML Text: Front cover",
+        "type": "html"
+    },
+    "inside_front": {
+        "name": "HTML Text: Inside page front",
+        "type": "html"
+    },
+    "inside_back": {
+        "name": "HTML Text: Inside page back",
+        "type": "html"
+    },
+    "cover_back": {
+        "name": "HTML Text: Back cover",
+        "type": "html"
+    },
+    "text_search": {
+        "name": "HTML Text: Search here",
+        "type": "html"
+    },
+    "text_go": {
+        "name": "HTML Text: Go",
+        "type": "html"
+    },
+    "text_next": {
+        "name": "HTML Text: Next",
+        "type": "html"
+    },
+    "text_prev": {
+        "name": "HTML Text: Previous",
+        "type": "html"
+    },
+    "text_searching": {
+        "name": "HTML Text: Searching...",
+        "type": "html"
+    },
+    "text_found": {
+        "name": "HTML Text: Found %s results",
+        "type": "html"
+    },
+    "text_found_in": {
+        "name": "HTML Text: Reading %s1 of %s2 results",
+        "type": "html"
+    },
+    "text_not_found": {
+        "name": "HTML Text: No results found",
+        "type": "html"
     }
 }
