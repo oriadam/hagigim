@@ -61,8 +61,29 @@
     "show_page_number": {
         "name": "Page numbers",
         "options": {
-            "On": true,
-            "Off": false
+            "Yes": true,
+            "No": false
+        }
+    },
+    "show_page_title": {
+        "name": "Page titles",
+        "options": {
+            "Yes": true,
+            "No": false
+        }
+    },
+    "remove_first_row_if_identical_to_page_title": {
+        "name": "Remove first line if same as title",
+        "options": {
+            "Yes": true,
+            "No": false
+        }
+    },
+    "bold_first_content_line": {
+        "name": "Bigger first line",
+        "options": {
+            "Yes": true,
+            "No": false
         }
     },
     "search_or_filter": {

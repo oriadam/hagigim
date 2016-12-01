@@ -94,6 +94,12 @@
 	}
 }
 
+#flipbook .content-page.show_page_title0 .page-title {
+	display: none;
+}
+#flipbook .content-page.show_page_title0 {
+	padding-top: 20px;
+}
 #flipbook .page-title {
 	height: 3vh;
 	font-size: 3vh;
@@ -230,3 +236,9 @@ body {
 	right:11px;
 }*/
 
+#flipbook .first_content_line,
+#flipbook .first_content_line *{
+	font-weight:bold;
+	font-size: 2.1vh;
+	line-height: 3vh;
+}

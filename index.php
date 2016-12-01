@@ -35,8 +35,10 @@ require_once "config.php";
 	<div class="skip_me"></div>
 	</template>
 	<template id="tmpl_page">
-	<div class="content-page">
+	<div class="content-page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
+		<?php if ($CONFIG["show_page_title"]) { ?>
 		<h1 class="page-title"></h1>
+		<?php } ?>
 		<div class="page-content"></div>
 		<?php if ($CONFIG["show_page_number"]) { ?>
 		<div class="page_number_wrapper">
@@ -525,10 +527,22 @@ require_once "config.php";
 				}
 
 				// Create an element for this page
+				var title = $.trim(data.name || book_list[index].name);
 				var element = tmpl('page');
-				element.find('.page-title').html(data.name || book_list[index].name);
+				if (CONFIG["show_page_title"]){
+					element.find('.page-title').html(title);
+				}
 				var page_content = element.find('.page-content');
 				page_content.html(data.content);
+				if (CONFIG["remove_first_row_if_identical_to_page_title"] || CONFIG["bold_first_content_line"]){
+					var first_content_line = get_first_content_line(page_content[0]);
+					first_content_line.className+=' first_content_line';
+				}
+				if (CONFIG["remove_first_row_if_identical_to_page_title"]){
+					if ($.trim(first_content_line.textContent)==title){
+						first_content_line.style.display = 'none';
+					}
+				}
 				if (CONFIG["show_page_number"]){
 					element.find('.page_number').html(page - cover_pages_before);
 				}
@@ -536,6 +550,37 @@ require_once "config.php";
 				$('#flipbook .p'+page).empty().append(element);
 			});
 		}
+	}
+
+	// helper for remove_first_row_if_identical_to_page_title and bold_first_content_line
+	function get_first_content_line(element){
+		if (element.children.length==0){
+			var content = $.trim(element.textContent);
+			if (content){
+				return get_display_block_parent(element,content);
+			}
+		} else {
+			// traverse all children
+			for (var i=0;i<element.children.length;i++){
+				var value = get_first_content_line(element.children[i]);
+				if (value!==undefined){
+					// stop when element is found (return element), or when we past the first element (return false)
+					return value;
+				}
+			}
+		}
+	}
+
+	// helper for get_first_content_line - find the display:block parent
+	function get_display_block_parent(element,content){
+		while(getComputedStyle(element)['display']!='block'){
+			var parent = element.parentElement;
+			if ($.trim(parent.textContent)!=content){
+				return element;
+			}
+			element = parent;
+		}
+		return element;
 	}
 
 	// handle scrollable pages
