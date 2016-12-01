@@ -496,9 +496,11 @@ require_once "config.php";
 			last_display_mode = display;
 			if (last_display_mode=='single'){
 				$book.removeClass('middle_gradient');
+				go_to_page(current_page()); // make sure not to dispaly skip_me pages
 			} else {
-				if (CONFIG["middle_gradient"])
-				$book.addClass('middle_gradient');
+				if (CONFIG["middle_gradient"]){
+					$book.addClass('middle_gradient');
+				}
 			}
 			$book.turn("display",display);
 		}
