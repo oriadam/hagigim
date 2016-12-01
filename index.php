@@ -82,7 +82,7 @@ require_once "config.php";
 	// width, height, pages are added automatically on build_book()
 	var CONFIG = <?=json_encode(config_for_js())?>;
 
-	var q = localStorage.getItem('turn_reader_q') || ''; // current search query
+	var q = '';
 	var lastQ; // previous search query
 	var $book = $('#flipbook'); // book jQuery element
 	var $book_parent = $book.parent();
@@ -105,6 +105,9 @@ require_once "config.php";
 				// bug: srcolling stuck when peel animation
 				$book.turn('peel','bl');
 		},2000);
+	};
+	if (CONFIG["remember_last_search"]){
+		q = localStorage.getItem('turn_reader_q') || ''; // current search query
 	};
 	$('#id-q').prop('placeholder',CONFIG["text_search"]).val(q);
 	$('#id-go').click(function(){
@@ -250,7 +253,9 @@ require_once "config.php";
 			}
 			q = q || '';
 			lastQ = q;
-			localStorage.setItem('turn_reader_q',q);
+			if (CONFIG["remember_last_search"]){
+				localStorage.setItem('turn_reader_q',q);
+			}
 			if (CONFIG["search_or_filter"]=='search'){
 				load_search(q,callback);
 			} else {
