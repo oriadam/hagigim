@@ -53,28 +53,54 @@ switch ($func) {
 		// ////////////////
 		// SEARCH PAGES //
 		// ////////////////
-		$q = empty($_GET['q']) ? '' : $_GET['q'];
+		$q = isset($_GET["q"]) ? $_GET["q"] : '';
 		$q = preg_replace('@[\"\']@', '', $q);
 		$id = urlencode($q) ?: '_empty_';
-		$modifiedTime = time() - $CONFIG['list_cache_expires'];
+		$modifiedTime = time() - $CONFIG["list_cache_expires"];
 		$cached = cache_read($id, CACHETYPE_LIST, $modifiedTime);
 		if ($cached) {
 			echo $cached;
 			exit();
 		}
 		
-		$list = get_files('fullText contains "' . $q . '"');
-		if (! empty($list) && ! empty($list->error)) {
+		$list_query = $CONFIG["google_drive_query"];
+		if (!empty($q)){
+			if (!empty($list_query)){
+				$list_query .= " AND ";
+			}
+			$list_query .= "fullText contains \" $q \"";
+		}
+		$list = get_files($list_query);
+		if (!empty($list) && !empty($list->error)) {
 			ajax_fatal('Error with query ' . ($list ? $list->error ?: '' : ''));
+			exit();
 		}
 		
 		$return = array();
 		foreach ( $list as $file ) {
-			$return[] = array(
-					'name' => name($file->getName()), 
-					'id' => $file->getId(), 
+			// For Debug:
+			//$methods = get_class_methods($file);
+			//var_export($methods);
+			$row = array(
+					'name' => name($file->getName()),
+					'id' => $file->getId(),
 					'modifiedTime' => strtotime($file->getModifiedTime())
 			);
+			if ($val=$file->getCreatedTime()){
+				$row['createdTime'] = strtotime($val);
+			}
+			get_if_not_null($row,$file,'getContentHints');
+			get_if_not_null($row,$file,'getDescription');
+			get_if_not_null($row,$file,'getParents');
+			get_if_not_null($row,$file,'getQuotaBytesUsed');
+			get_if_not_null($row,$file,'getSize');
+			get_if_not_null($row,$file,'getStarred');
+			get_if_not_null($row,$file,'getTrashed');
+			get_if_not_null($row,$file,'getVersion');
+			get_if_not_null($row,$file,'getWebContentLink');
+			get_if_not_null($row,$file,'getWebViewLink');
+			get_if_not_null($row,$file,'getThumbnail');
+			$return[] = $row;
 		}
 		$cached = json_encode($return);
 		cache_write($id, CACHETYPE_LIST, $cached);
@@ -99,4 +125,15 @@ function content($string) {
 	$string = preg_replace('/<body[^>]*>/', '<div>', $string);
 	$string = preg_replace('/<\\/body[^>]*>/', '<div>', $string);
 	return $string;
+}
+
+// add method result to array if not null
+function get_if_not_null(&$row,$class,$method){
+	if (method_exists($class,$method)){
+		$val = $class->$method();
+		if ($val !== null){
+			$property =	strtolower(str_replace('get','',$method));
+			$row[$property] = $val;
+		}
+	}
 }

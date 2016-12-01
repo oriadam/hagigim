@@ -8,7 +8,7 @@ html #flipbook #cover_back.hard {
 
 html #flipbook #cover_front.hard {
     background: #fff;
-    color: #000;
+    color: #333;
     background-image: url(img/cover-white.jpg);
     background-repeat: no-repeat;
     background-position: bottom;

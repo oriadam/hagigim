@@ -15,10 +15,20 @@ define('CREDENTIALS_PATH', __DIR__ . '/google_credentials.json');
 define('REFRESH_TOKEN_PATH', __DIR__ . '/google_credentials_refresh.json');
 define('CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json');
 
+// for the JS config object
+function config_for_js(){
+	global $CONFIG;
+	$copy = array();
+	foreach($CONFIG["options_for_js"] as $name){
+		$copy[$name]=$CONFIG[$name];
+	}
+	return $copy;
+}
+
 // our personal logger
 function mylog($str) {
 	global $CONFIG;
-	$str = date("Y-m-d H:i:s\t") . $str;
+	$str = date("Y-m-d H:i:s\t") . $str . "\n";
 	file_put_contents(MYLOG_PATH, $str, FILE_APPEND | LOCK_EX);
 	if (! empty($CONFIG[MANAGER_FLAG])) {
 		echo $str;

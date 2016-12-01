@@ -1,0 +1,27 @@
+/* empty page loading spinner */
+.empty_page {
+	text-align:center;
+    vertical-align: middle;
+	padding-top:20vh;
+}
+.empty_page_content {
+	display:inline-block;
+	width:6vh;
+	height:6vh;
+    border: #ddd 4px solid;
+    border-color: #777 #777 transparent transparent;
+    border-radius: 50%;
+    overflow: hidden;
+    padding:0;
+    margin:0;
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

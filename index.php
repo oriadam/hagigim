@@ -6,7 +6,7 @@ require_once "config.php";
 ?>
 <html>
 <head>
-<title><?=$CONFIG['page_title']?></title>
+<title><?=$CONFIG["page_title"]?></title>
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
 <script
@@ -18,65 +18,69 @@ require_once "config.php";
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="http://www.turnjs.com/lib/turn.min.js"></script>
 <link href="style.css" rel="stylesheet">
-<?=$CONFIG['rtl'] ? '<link href="rtl.css" rel="stylesheet">':''?>
+<?=$CONFIG["rtl"] ? '<link href="rtl.css" rel="stylesheet">':''?>
 <?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
-<?=$CONFIG['head']?>
+<?=$CONFIG["head"]?>
 </head>
 <body>
-	<?=$CONFIG['body']?>
+	<?=$CONFIG["body"]?>
 	<template id="tmpl_empty_page">
-	<div></div>
+	<div>
+		<div class="empty_page">
+			<div class="empty_page_content"></div>
+		</div>
+	</div>
+	</template>
+	<template id="tmpl_extra_page">
+	<div class="skip_me"></div>
 	</template>
 	<template id="tmpl_page">
 	<div class="content-page">
 		<h1 class="page-title"></h1>
 		<div class="page-content"></div>
-		<?php if ($CONFIG['page_number']) { ?>
-		<div class="page_number"></div>
+		<?php if ($CONFIG["show_page_number"]) { ?>
+		<div class="page_number_wrapper">
+			<div class="page_number"></div>
+		</div>
 		<?php } ?>
-	</div>
-	</template>
-	<template id="tmpl_loading">
-	<div>
-		<?=$CONFIG['loading_page']?>
 	</div>
 	</template>
 	<template id="tmpl_cover_front">
 	<div class="hard">
-		<?=$CONFIG['cover_front']?>
+		<?=$CONFIG["cover_front"]?>
 	</div>
 	</template>
 	<template id="tmpl_inside_front">
-	<div class="hard">
-		<?=$CONFIG['inside_front']?>
+	<div class="hard skip_me">
+		<?=$CONFIG["inside_front"]?>
 	</div>
 	</template>
 	<template id="tmpl_inside_back">
-	<div class="hard">
-		<?=$CONFIG['inside_back']?>
+	<div class="hard skip_me">
+		<?=$CONFIG["inside_back"]?>
 	</div>
 	</template>
 	<template id="tmpl_cover_back">
 	<div class="hard">
-		<?=$CONFIG['cover_back']?>
+		<?=$CONFIG["cover_back"]?>
 	</div>
 	</template>
 
-	<div id="id-form" class="container width-100 input-append form-inline form-group">
-		<span id="id-prev" class="form-control btn btn-primary width-10"><?=$CONFIG['text_prev']?></span>
-		<input id="id-q" placeholder="<?=$CONFIG['text_search']?>" type="text" class="form-control search-query width-30" /> 
-		<span id="id-go" class="form-control btn btn-small btn-primary width-10"><?=$CONFIG['text_go']?></span>
+	<div id="id-form" class="container book_container_width input-append form-inline form-group">
+		<input id="id-q" placeholder="" type="text" class="form-control search-query width-30" />
+		<span id="id-go" class="form-control btn btn-small btn-primary width-10"></span>
 		<output id="id-found" class="form-control text width-40"></output>
-		<span id="id-next" class="form-control btn btn-primary width-10"><?=$CONFIG['text_next']?></span>
+		<span id="id-prev" class="form-control btn btn-primary width-10"></span>
+		<span id="id-next" class="form-control btn btn-primary width-10"></span>
 	</div>
-	<div id="book_container">
+	<div id="book_container" class="book_container_width">
 		<div id="flipbook"></div>
 	</div>
 
 	<script>
 	// for a full list of options see http://www.turnjs.com/#api
 	// width, height, pages are added automatically on build_book()
-	turn_options = <?=json_encode($CONFIG['turn_options'])?>;
+	var CONFIG = <?=json_encode(config_for_js())?>;
 
 	var q = localStorage.getItem('turn_reader_q') || ''; // current search query
 	var lastQ; // previous search query
@@ -85,42 +89,40 @@ require_once "config.php";
 	var pages; // number of pages (including 4 cover pages)
 	var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
 	var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
-	var loaded_pages; // remember which pages were already loaded (or currently loading)
-	var hard_cover = true; // currently - not supporting no hard covers
+	var loaded_pages = []; // remember which pages were already loaded (or currently loading)
+	var search_results = []; // array of search results (relevant on "search" mode, irrelevant on "filter" mode)
+	var search_position = 0; // position in current search results (relevant on "search" mode, irrelevant on "filter" mode)
 	var cover_pages_before,cover_pages_after;
-	var start_with_closed_book = <?=$CONFIG["start_with_closed_book"] ? 1 : 0?>;
-	var page_number = <?=$CONFIG["page_number"] ? 1 : 0?>;
-	var single_page_mode_under_width_of = <?=$CONFIG["single_page_mode_under_width_of"]?>;
+	var page_content_scroll_hide_page_number = null;
 	var last_display_mode = 'double';
 	var show_peel_corner_TO;
+	var pause_turn_events;
 	var show_peel_corner = function(){
 		clearTimeout(show_peel_corner_TO);
 		show_peel_corner_TO = setTimeout(function(){
 			if (!$book.turn('animating'))
+				// bug when activating peel animation while moving pages or showing another peel
+				// bug: srcolling stuck when peel animation
 				$book.turn('peel','bl');
 		},2000);
 	};
-	$('#id-q').val(q);
-	$('#id-searching').hide();
+	$('#id-q').prop('placeholder',CONFIG["text_search"]).val(q);
 	$('#id-go').click(function(){
 		q = $.trim($('#id-q').val());
 		if (q==lastQ)
 			return;
-		$('#id-go').hide();
-		$('#id-searching').show();
-		$('#id-found').text('...');
-		load_book(q);
+		handle_search(q);
 	});
 	$('#id-q').keypress(function(e) {
 		if(e.which == 13) {
 			$('#id-go').click();
 		}
 	});
-	$('#id-prev').click(function(){
-		$book.turn('previous');
+	$('#id-prev').html(CONFIG["text_prev"]).click(function(){
+		search_next_prev('previous');
 	});
-	$('#id-next').click(function(){
-		$book.turn('next');
+	$('#id-next').html(CONFIG["text_next"]).click(function(){
+		search_next_prev('next');
 	});
 	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 	function tmpl(name,id){
@@ -132,52 +134,262 @@ require_once "config.php";
 
 	// attached to the "turning" event
 	function turning(event, page, view) {
-		<?php if ($CONFIG["show_peel_corner"]) {?>
-		show_peel_corner();
-		<?php }?>
+		clearTimeout(show_peel_corner_TO);
+		if (pause_turn_events){
+			return;
+		}
 		if (page > pages - cover_pages_after)
 			return; // page out of range, a cover page, or is already loaded
 		var range = $book.turn('range', page);
-		for (var i = range[0]; i<=range[1]; i++)
+		for (var i = range[0]; i<=range[1]; i++){
 			load_page(i);
+		}
+	}
+	// attached to the "turned" event
+	function turned(event, page, view) {
+		if (pause_turn_events){
+			return;
+		}
+		var visible_scrollable;
+		for (var i = 0; i<=view.length; i++){
+			if (handle_scrollable_pages(view[i])){
+				visible_scrollable=1;
+			}
+		}
+		if (CONFIG["show_peel_corner"] && !visible_scrollable){
+			// bug: showing peel disables the scrolling
+			show_peel_corner();
+		}
+		set_buttons_state();
 	}
 
-	// load a book according to a search query using ajax
-	function load_book(q) {
+	// hide page numbers when scrolling down a page content
+	if (CONFIG["show_page_number"]){
+		page_content_scroll_hide_page_number = function(ev){
+			var scrolled = !!ev.target.scrollTop;
+			if (ev.target['data-scrolled'] != scrolled){
+				ev.target['data-scrolled'] = scrolled;
+				$(ev.target.parentElement).toggleClass('scrolled',scrolled);
+			}
+		};
+	}
+
+	// disable/enable prev/next buttons
+	function set_buttons_state(){
+		if (search_results.length){
+			$('#id-next').toggleClass('disabled',search_position>=search_results.length-1);
+			$('#id-prev').toggleClass('disabled',search_position<=0);
+		} else {
+			$('#id-next').toggleClass('disabled',current_page()>=pages);
+			$('#id-prev').toggleClass('disabled',current_page()<=1);
+		}
+	}
+
+	// wrapper for $book.turn('page',page)
+	// handles skipping of cover pages on single page mode
+	function go_to_page(page){
+		if (page == 'prev'){
+			page = 'previous';
+		}
+		if (page == 'next' || page == 'previous' ){
+			if (last_display_mode=='single'){
+				var direction = page == 'previous' ? -1 : 1;
+				var new_page = current_page()+direction;
+				if ($('.p'+new_page+'.skip_me').length){
+					// activate skipping empty pages method below
+					page = new_page;
+				}
+			}
+		}
+		if (last_display_mode == 'single'){
+			var direction = current_page()>page ? -1 : 1;
+			// skipping empty pages when need to
+			while ($('.p'+page+'.skip_me').length){
+				page+=direction;
+			}
+		}
+		if (page == 'next' || page == 'previous') {
+			$book.turn(page);
+		} else {
+			$book.turn('page',page);
+		}
+	}
+
+	// wrapper for $book.turn('page')
+	function current_page() {
+		return $book.turn('page');
+	}
+
+	// populate search results text
+	function set_found_text(results_or_text){
+		if (typeof results_or_text == 'string') {
+			$('#id-found').html(results_or_text);
+		} else if (typeof results_or_text == 'number') {
+			if (results_or_text>0){
+				$('#id-found').html(CONFIG["text_found"].replace('%s',results_or_text));
+			} else {
+				$('#id-found').html(CONFIG["text_not_found"]);
+			}
+		} else {
+			$('#id-found').html("");
+		}
+	}
+
+	// set status of currently searching
+	function set_searching_state(state){
+		$('#id-go').toggleClass('disabled',state).html( state? CONFIG["text_searching"]:CONFIG["text_go"] );
+	}
+
+	// handle search query
+	function handle_search(q){
 		if (lastQ != q) {
 			// remember last visit q
+			set_searching_state(true);
+			var callback = function () {
+				set_searching_state(false);
+			}
 			q = q || '';
 			lastQ = q;
 			localStorage.setItem('turn_reader_q',q);
+			if (CONFIG["search_or_filter"]=='search'){
+				load_search(q,callback);
+			} else {
+				// filter mode
+				load_book(q,callback);
+			}
+		}
+	}
 
+	// search mode
+	function load_search(q,callback){
+		if (!q){
+			// clear search
+			set_found_text("");
+			populate_search_results(false);
+			if (callback){
+				callback();
+			}
+		} else {
+			// do search
 			var url='ajax.php?f=list&q='+encodeURI(q||'');
 			ajax(url,function(data){
 				if (data.error){
 					$('#id-found').text(data.error);
 					return;
 				}
-				if (data.length){
-					book_list = data;
-					build_book();
-					<?php if ($CONFIG["show_peel_corner"]) {?>
-					show_peel_corner();
-					<?php }?>
-					// always load first pages
-					load_page(1+cover_pages_before);
-					load_page(2+cover_pages_before);
-					load_page(3+cover_pages_before);
-					if (!start_with_closed_book){
-						// start on first page
-						$book.turn("page",3);
-					}
-					$('#id-found').html("<?=$CONFIG['text_found']?>".replace('%s',data.length));
-				} else {
-					$('#id-found').html("<?=$CONFIG['text_not_found']?>");
+				populate_search_results(data);
+				if (callback){
+					callback();
 				}
-				$('#id-go').show();
-				$('#id-searching').hide();
 			});
 		}
+	}
+
+	// populate search results
+	function populate_search_results(data){
+		// sort and populate results by page numbers
+		var pages = [];
+		var length;
+		if (data) {
+			length = data.length;
+			for (var i=0;i<data.length;i++){
+				var id = data[i].id;
+				pages[id_to_page(id)]=id;
+			}
+		}
+		search_results = [];
+		for(var i=0;i<pages.length;i++){
+			if (pages[i]){
+				search_results[search_results.length] = {
+					id:pages[i],
+					page:i
+				};
+			}
+		}
+		search_position = 0;
+		set_found_text(length);
+		set_searching_state(false);
+		if (length){
+			// go to first result
+			go_to_search_position();
+		}
+		set_buttons_state();
+	}
+
+	function go_to_search_position(){
+		set_found_text(CONFIG["text_found_in"].replace('%s1',search_position+1).replace('%s2',search_results.length));
+		var page = search_results[search_position].page;
+		if (page){
+			// animate pages flow
+			//pause_turn_events = true;
+
+			//pause_turn_events = false;
+
+			// go to actual page
+			go_to_page(page);
+		}
+	}
+
+	function id_to_page(id){
+		for(var i=0;i<book_list.length;i++){
+			if (book_list[i].id==id)
+				return 1 + i + cover_pages_before;
+		}
+	}
+
+	// next/prev buttons
+	function search_next_prev(next_or_prev){
+		if (next_or_prev=='prev')
+			next_or_prev='previous';
+		if (search_results.length){
+			// next/prev search result
+			if ((next_or_prev=='next' && search_position<search_results.length-1)
+				|| (next_or_prev=='previous' && search_position>0 )){
+					search_position += next_or_prev == 'next' ? 1 : -1;
+				go_to_search_position();
+			}
+		} else {
+			// next/prev page
+			go_to_page(next_or_prev);
+		}
+		set_buttons_state();
+	}
+
+	// load a book according to a search query using ajax
+	// used: filter mode + on first run
+	function load_book(q,callback) {
+		set_found_text("");
+		set_searching_state(true);
+		var url='ajax.php?f=list&q='+encodeURI(q||'');
+		ajax(url,function(data){
+			set_searching_state(false);
+			search_results = [];
+			search_position = 0;
+			if (data.error){
+				set_found_text(data.error);
+				return;
+			}
+			set_found_text(data.length);
+			if (data.length){
+				book_list = data;
+				build_book();
+				if (CONFIG["show_peel_corner"]) {
+					show_peel_corner();
+				}
+				// always load first pages
+				load_page(1+cover_pages_before);
+				load_page(2+cover_pages_before);
+				load_page(3+cover_pages_before);
+				if (!CONFIG["start_with_closed_book"]){
+					// start on first page
+					go_to_page(3);
+				}
+			}
+			if (callback){
+				callback();
+			}
+			set_buttons_state();
+		});
 	}
 
 	// populate the book. based on book_list. removes previous content if any.
@@ -185,7 +397,7 @@ require_once "config.php";
 		// reset
 		pages = book_list.length;
 		var extra_blank_page = !!(pages % 2); // for odd number of pages, add a blank page at the end
-		if (hard_cover) {
+		if (CONFIG["hard_cover"]) {
 			cover_pages_before = cover_pages_after = 2;
 		} else {
 			cover_pages_before = cover_pages_after = 0;
@@ -201,13 +413,18 @@ require_once "config.php";
 		}catch(e){}
 		$book.remove();
 		$book = $('<div id="'+id+'">').appendTo($book_parent);
-		/*<?php if ($CONFIG["pages_depth"]){ ?>*/
-		$book.addClass("pages_depth");
-		/*<?php } ?>*/
-		/*<?php if ($CONFIG["middle_gradient"]){ ?>*/
-		$book.addClass('middle_gradient');
-		/*<?php } ?>*/
+		if (CONFIG["pages_depth"]){
+			if (last_display_mode!='single'){
+				$book.addClass("pages_depth");
+			}
+		}
+		if (CONFIG["middle_gradient"]){
+			if (last_display_mode!='single'){
+				$book.addClass('middle_gradient');
+			}
+		}
 		$book.bind('turning', turning);
+		$book.bind('turned', turned);
 		loaded_pages = [];
 
 		// append pages to book and remember which pages are already loaded
@@ -219,7 +436,7 @@ require_once "config.php";
 		}
 
 		// add front cover
-		if (hard_cover){
+		if (CONFIG["hard_cover"]){
 			append('cover_front',1,'cover_front');
 			append('inside_front',2,'inside_front');
 		}
@@ -234,34 +451,48 @@ require_once "config.php";
 
 		// when number of pages is odd, add another blank page to allow folding of the last page
 		if (extra_blank_page) {
-			append('empty_page',pages - 2);
+			append('extra_page',pages - 2);
 		}
 
 		// add back cover
-		if (hard_cover){
+		if (CONFIG["hard_cover"]){
 			append('inside_back',pages-1,'inside_back');
 			append('cover_back',pages,'cover_back');
 		}
 
-		// the magic!
-		var options = turn_options;
+		// the turnjs magic!
+		var turn_options = CONFIG["turn_options"];
 		//options.width = $book_parent.width();
 		//options.height = $book_parent.height();
-		options.width = '100%';
-		options.height = '100%';
-		options.pages = pages;
-		$book.turn(options);
+		turn_options.width = '100%';
+		turn_options.height = '100%';
+		turn_options.pages = pages;
+		turn_options.direction = CONFIG["rtl"]?"rtl":"ltr";
+		$book.turn(turn_options);
 		resize();
 		// fix page width via css
 		$('#id-style').remove();
-		$('head').append('<style id="id-style">#flipbook .page { width:' +(options.width/2)+'px; height:' + options.height + 'px;</style>');
+		$('head').append('<style id="id-style">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
 
 	}
 	function resize(){
 		$book.turn("size",$book_parent.width(),$book_parent.height());
-		var display = window.innerWidth > single_page_mode_under_width_of ? 'double' : 'single';
+		var display;
+		if (CONFIG["single_page_mode_under_width_of"]===true){
+			display = 'single';
+		} else if (!CONFIG["single_page_mode_under_width_of"]){
+			display = 'double';
+		} else {
+			display = window.innerWidth > CONFIG["single_page_mode_under_width_of"] ? 'double' : 'single';
+		}
 		if (last_display_mode!=display){
-			last_display_mode=display;
+			last_display_mode = display;
+			if (last_display_mode=='single'){
+				$book.removeClass('middle_gradient');
+			} else {
+				if (CONFIG["middle_gradient"])
+				$book.addClass('middle_gradient');
+			}
 			$book.turn("display",display);
 		}
 	}
@@ -273,7 +504,7 @@ require_once "config.php";
 			return; // page out of range, a cover page, or is already loaded
 		}
 
-		if (page_number){
+		if (CONFIG["show_page_number"]){
 			$('.p' + page + ' .page_number').html(page - cover_pages_before);
 		}
 
@@ -281,32 +512,42 @@ require_once "config.php";
 		if (book_list[index] && book_list[index].id) {
 			loaded_pages[page]=1; // do not load same page twice
 
-			// Show 'loading...' message on page
-			var element = tmpl("loading");
-			element.find('.page-title').html(book_list[index].name);
-			$('#flipbook .p'+page).empty().append(element);
-			//$book.turn('addPage', element, page);
-
 			// Get the data for that page
 			ajax( 'ajax.php?f=content&id=' + book_list[index].id + '&modifiedTime=' + book_list[index].modifiedTime,function(data) {
 				if (data.error){
 					data.content = 'Error: ' + data.error;
-					loaded_pages[page]=0;
+					loaded_pages[page]=0; // allow retry loading by turning pages
 				}
 
 				// Create an element for this page
 				var element = tmpl('page');
 				element.find('.page-title').html(data.name || book_list[index].name);
-				element.find('.page-content').html(data.content);
-				if (page_number){
-						element.find('.page_number').html(page - cover_pages_before);
+				var page_content = element.find('.page-content');
+				page_content.html(data.content);
+				if (CONFIG["show_page_number"]){
+					element.find('.page_number').html(page - cover_pages_before);
 				}
 				
 				$('#flipbook .p'+page).empty().append(element);
-				//$book.turn('addPage', element, page);
 			});
 		}
+	}
 
+	// handle scrollable pages
+	function handle_scrollable_pages(page){
+		var scrollable;
+		var page_content = document.querySelector('.p'+page+' .page-content');
+		if (page_content){
+			scrollable = page_content.scrollHeight > page_content.offsetHeight;
+			if (scrollable){
+				var $page_content = $(page_content);
+				$page_content.addClass('scrollable');
+				if (page_content_scroll_hide_page_number){
+					$page_content.scroll(page_content_scroll_hide_page_number);
+				}
+			}
+		}
+		return scrollable;
 	}
 
 	// handle ajax calls + local memory caching
@@ -339,8 +580,16 @@ require_once "config.php";
 	}
 
 	// load initial book by the last or default query
-	load_book(q);
+	if (CONFIG["search_or_filter"] == 'search'){
+		// load entire book
+		load_book('',function(){
+			load_search(q);
+		});
+	} else {
+		// load only search results
+		load_book(q);
+	}
 	</script>
-	<?=$CONFIG['footer']?>
+	<?=$CONFIG["footer"]?>
 </body>
 </html>

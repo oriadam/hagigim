@@ -151,9 +151,9 @@ $GOOGLE['service'] = new Google_Service_Drive($GOOGLE['client']);
 function get_files($q = '') {
 	global $CONFIG, $GOOGLE;
 	// Get the names and IDs of all files
-	$optParams = $CONFIG['list'];
+	$optParams = $CONFIG["list"];
 	if (! empty($q)) {
-		$optParams['q'] .= " AND $q";
+		$optParams['q'] .= " AND ($q)";
 	}
 	return retrieveAllFiles($GOOGLE['service'],$optParams,$CONFIG["max_results"]);
 }
@@ -181,6 +181,10 @@ function get_file_as($id, $mime = 'text/html') {
 function retrieveAllFiles($service, $parameters = array(), $max_results = 1000) {
 	$result = array();
 	$pageToken = NULL;
+	if (isset($parameters['q']) && stripos($parameters['q'],'fullText contains')!==false){
+		// google does not support orderBy when there's a fullText search going on
+		unset($parameters['orderBy']);
+	}
 
 	do {
 		try {
