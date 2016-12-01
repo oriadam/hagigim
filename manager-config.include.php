@@ -66,7 +66,7 @@ foreach($options as $k=>$v){
         var option = options[key];
         option.name = option.name || fcwords(key.replace(/_/g,' '));
         var $label = $('<label class="form-label" for="'+id+'">').html(option.name);
-        var $group = $('<div class="form-group">');
+        var $group = $('<div class="form-group" data-key="'+key+'">');
         $group.append($label);
         var current_value = updated[key];
         if (option.options){
@@ -149,6 +149,9 @@ if ($CONFIG["rtl"]){
     ?>
     input.form-control[type="text"]{
         direction:rtl;
+    }
+    .form-group[data-key="google_drive_query"] input.form-control[type="text"]{
+        direction:ltr;
     }
     <?php
 }
