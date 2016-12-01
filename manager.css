@@ -1,0 +1,38 @@
+body {
+	padding-left:20px;
+}
+.not-really-here {opacity: 0;position: absolute;z-index: -1;}
+.act { 
+    width:250px;
+    text-align:center; 
+    margin-left:20px; 
+}
+
+#form_wrapper {
+    -max-width:900px;
+}
+.form-label {
+    width:300px;
+}
+.form-group {
+    margin:4px 0;
+    background: #fefefe;
+}
+.form-group:nth-child(odd) {
+    background: #fbfbfb;
+}
+.form-control
+{
+    width:400px !important;
+}
+.form-group {
+    display:block !important;
+    margin-left:20px;
+}
+#submits {
+    margin-top:20px;
+    margin-bottom:50px;
+}
+#submits .btn {
+    width:400px;
+}

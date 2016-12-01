@@ -8,13 +8,7 @@ $header = '<html><head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<style>
-body {
-	padding-left:20px;
-}
-.not-really-here {opacity: 0;position: absolute;z-index: -1;}
-.act { width:250px;text-align:center; margin-left:20px; }
-</style>
+<link href="manager.css" rel="stylesheet">
 </head><body>';
 
 $secret_cookie = md5($CONFIG['manager_password_md5'] . floor(time() / 222200) . MANAGER_FLAG); // secret cookie lasts ~60 hours

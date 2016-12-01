@@ -143,27 +143,3 @@ foreach($options as $k=>$v){
         document.querySelector('#backform').submit();
     });
 </script>
-<style>
-    #form_wrapper {
-        -max-width:900px;
-    }
-    .form-label {
-        width:300px;
-    }
-    input.form-control,
-    textarea.form-control {
-        width:500px !important;
-    }
-    .form-group {
-        display:block !important;
-        margin-left:20px;
-    }
-    #submits {
-        margin-top:20px;
-        margin-bottom:50px;
-    }
-    #submits .btn {
-        width:400px;
-
-    }
-</style>
