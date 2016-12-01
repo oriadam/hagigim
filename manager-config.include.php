@@ -143,3 +143,14 @@ foreach($options as $k=>$v){
         document.querySelector('#backform').submit();
     });
 </script>
+<style>
+<?php
+if ($CONFIG["rtl"]){
+    ?>
+    input.form-control[type="text"]{
+        direction:rtl;
+    }
+    <?php
+}
+?>
+</style>
