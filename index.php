@@ -143,11 +143,16 @@ require_once "config.php";
 		if (pause_turn_events){
 			return;
 		}
-		if (page > pages - cover_pages_after)
-			return; // page out of range, a cover page, or is already loaded
-		var range = $book.turn('range', page);
-		for (var i = range[0]; i<=range[1]; i++){
-			load_page(i);
+		if (is_page_skip_me(page)){
+    		event.preventDefault();
+			go_to_page(page);
+		} else {
+			if (page > pages - cover_pages_after)
+				return; // page out of range, a cover page, or is already loaded
+			var range = $book.turn('range', page);
+			for (var i = range[0]; i<=range[1]; i++){
+				load_page(i);
+			}
 		}
 	}
 	// attached to the "turned" event
@@ -190,6 +195,11 @@ require_once "config.php";
 		}
 	}
 
+	// check if page cannot be moved to
+	function is_page_skip_me(page){
+		return last_display_mode=='single' && !!$('.p'+page+'.skip_me').length;
+	}
+
 	// wrapper for $book.turn('page',page)
 	// handles skipping of cover pages on single page mode
 	function go_to_page(page){
@@ -200,7 +210,7 @@ require_once "config.php";
 			if (last_display_mode=='single'){
 				var direction = page == 'previous' ? -1 : 1;
 				var new_page = current_page()+direction;
-				if ($('.p'+new_page+'.skip_me').length){
+				if (is_page_skip_me(new_page)){
 					// activate skipping empty pages method below
 					page = new_page;
 				}
@@ -209,7 +219,7 @@ require_once "config.php";
 		if (last_display_mode == 'single'){
 			var direction = current_page()>page ? -1 : 1;
 			// skipping empty pages when need to
-			while ($('.p'+page+'.skip_me').length){
+			while (is_page_skip_me(page)){
 				page+=direction;
 			}
 		}
