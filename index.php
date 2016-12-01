@@ -554,19 +554,21 @@ require_once "config.php";
 
 	// helper for remove_first_row_if_identical_to_page_title and bold_first_content_line
 	function get_first_content_line(element){
-		if (element.children.length==0){
-			var content = $.trim(element.textContent);
-			if (content){
-				return get_display_block_parent(element,content);
-			}
-		} else {
+		var children = $(element).find(':not(:empty)');
+		if (children.length){
 			// traverse all children
-			for (var i=0;i<element.children.length;i++){
-				var value = get_first_content_line(element.children[i]);
+			for (var i=0;i<children.length;i++){
+				var value = get_first_content_line(children[i]);
 				if (value!==undefined){
 					// stop when element is found (return element), or when we past the first element (return false)
 					return value;
 				}
+			}
+		} else {
+			// check current element
+			var content = $.trim(element.textContent);
+			if (content){
+				return get_display_block_parent(element,content);
 			}
 		}
 	}
