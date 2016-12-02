@@ -10,24 +10,24 @@
         }
     },
     "start_with_closed_book": {
-        "name":"Start at",
+        "name": "Start at",
         "options": {
             "Front cover": true,
             "First page": false
         }
     },
-    "hard_cover" :{
+    "hard_cover": {
         "options": {
             "Yes": true,
             "No": false
         }
     },
-    "single_page_mode_under_width_of": {
-        "name": "Double page view",
+    "single_page_mode": {
+        "name": "Pages in view",
         "options": {
-            "Double on Desktop, Single on Mobile": 720,
-            "Always Double": true,
-            "Always Single": false
+            "Double on Desktop, Single on Mobile": "mobile",
+            "Always Double": "never",
+            "Always Single": "always"
         }
     },
     "show_peel_corner": {
@@ -100,35 +100,39 @@
         }
     },
 
-    "page_title": {
-        "name": "Text: Page title",
+    "text_window_title": {
+        "name": "Text: Window title",
         "type": "text"
     },
-    "cover_front": {
+    "html_cover_front": {
         "name": "HTML: Front cover",
         "type": "html"
     },
-    "inside_front": {
+    "html_inside_front": {
         "name": "HTML: Inside page front",
         "type": "html"
     },
-    "inside_back": {
+    "html_inside_back": {
         "name": "HTML: Inside page back",
         "type": "html"
     },
-    "cover_back": {
+    "html_cover_back": {
         "name": "HTML: Back cover",
         "type": "html"
     },
-    "head": {
+    "html_page_top": {
+        "name": "HTML: Page top",
+        "type": "html"
+    },
+    "html_head": {
         "name": "HTML: inside <head> tag",
         "type": "html"
     },
-    "body": {
+    "html_body": {
         "name": "HTML: first thing inside <body>",
         "type": "html"
     },
-    "footer": {
+    "html_footer": {
         "name": "HTML: footer, last thing inside <body>",
         "type": "html"
     },

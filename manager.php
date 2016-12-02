@@ -2,7 +2,7 @@
 global $CONFIG,$MANAGER_MODE;
 require_once "config.php";
 session_start();
-header("Cache-Control: no-store");
+header("Cache-Control: no-store, no-cache, must-revalidate");
 
 $header = '<html><head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -25,7 +25,8 @@ if (!$MANAGER_MODE) {
 		// login flow - read password
 		if ($CONFIG['manager_password_md5'] == md5($_POST['po'])) {
 			setcookie(MANAGER_FLAG, $secret_cookie2);
-			$MANAGER_MODE = true;
+			header("Location: ?logged-in");
+			exit();
 		} else {
 			$bad_password = true;
 		}
@@ -39,16 +40,15 @@ if (!$MANAGER_MODE) {
 	echo $header;
 	?>
 <div class="container">
-	<form method="POST" class="form-inline">
-			<?php /* These are just honeypots: */?>
-			<label class="not-really-here">User: <input name="user" /></label> <label
-			class="not-really-here">Pass: <input name="pass" type="password" /></label>
-			<?php /* ^ when these have values - ignore everything... */?>
-			<div class="input-append">
-			<div class="form-group<?=$bad_password ? ' has-error' : ''?>">
-				<input placeholder="Enter your password" class="form-control"
-					name="po" />
-			</div>
+	<form method="POST" class="form-inline" action="?logging">
+		<?php /* START HONEYPOTS */?>
+		<h1>Manager Login</h1>
+		<label class="not-really-here">User: <input name="user" /></label> <label
+		class="not-really-here">Pass: <input name="pass" type="password" /></label>
+		<?php /* ^ when these have values - ignore everything... */?>
+		<?php /* END HONEYPOTS */?>
+		<div class="input-append form-group <?=$bad_password ? 'has-error' : ''?>">
+			<input placeholder="Enter your password" class="form-control <?=$bad_password ? 'has-error' : ''?>" name="po"  />
 			<input type="submit" value="Go" class="form-control">
 		</div>
 	</form>
@@ -60,12 +60,13 @@ if (!$MANAGER_MODE) {
 	// if manager
 } else {
 	echo $header;
-	$getaction = empty($_GET['f']) ? '' : preg_replace('/[^a-z\-;,]/', '', strtolower($_GET['f']));
+	$getaction = @$_GET['f'];
 	$action = explode(';', $getaction);
 	$param = @$action[1];
 	$action = $action[0];
 	$actions = array(
 			'config' => 'Edit Configuration',
+			'edit;custom/style.css' => 'Edit style.css',
 			'auth' => 'Validate Google Auth',
 			'clearauth' => 'Revoke Google Credentials',
 			'testcache;list' => 'Test List Cache',
@@ -76,12 +77,25 @@ if (!$MANAGER_MODE) {
 			'log;phplog' => 'Read PHP Log',
 			'clearlog;mylog' => 'Clear Inner Log',
 			'clearlog;phplog' => 'Clear PHP Log',
+			'logout' => 'Log out',
 	);
 	if (array_key_exists($getaction,$actions)) {
 		$action_name = $actions[$getaction];
 		if ($action == 'config') {
 			include("manager-config.include.php");
 			exit();
+		}
+		if ($action == 'edit') {
+			global $FILENAME;
+			$FILENAME = $param;
+			include("manager-edit.include.php");
+			exit();
+		}
+
+		if ($action == 'logout') {
+			setcookie(MANAGER_FLAG, '');
+			header("Location: ?");
+			exit();			
 		}
 
 		// /////////////////////
@@ -182,7 +196,7 @@ if (!$MANAGER_MODE) {
 	
 	echo "<h3>Select action:</h3>";
 	foreach ( $actions as $act => $name ) {
-		echo "<a href='?f=$act&_=" . rand() . "' class='act btn btn-default'>$name</a><br>";
+		echo "<a href='?f=$act' class='act btn btn-default'>$name</a><br>";
 	}
 
 } // else manager

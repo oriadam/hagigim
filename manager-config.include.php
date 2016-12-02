@@ -29,10 +29,8 @@ if (!empty($_POST['configjson'])){
         }
 	}
     if ($changed){
-        // backup when necessary
-        if (!file_exists(CONFIG_BACKUP_FN)||md5_file(CONFIG_BACKUP_FN)!=md5_file(CONFIG_FN)){
-            copy(CONFIG_FN,CONFIG_BACKUP_FN);
-        }
+        // create backup
+        copy(CONFIG_FN,CONFIG_BACKUP_FN);
         // write new configuration to config.json
         file_put_contents(CONFIG_FN,json_encode($copy,JSON_PRETTY_PRINT));
     }
@@ -44,14 +42,49 @@ foreach($options as $k=>$v){
 }
 ?>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/runmode/colorize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/fold/xml-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/show-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/html-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/javascript-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/css-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/anyword-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/matchtags.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/search/match-highlighter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/link/lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/link/javascript-lint.min.js"></script>
+<script>
+    var codeMirrorOptions = {
+        mode: "text/html",
+        inputStyle: "textarea",
+        lineNumbers: false,
+        indentUnit: 1,
+        indentWithTabs: true,
+        smartIndent: true,
+        electricChars: true,
+        flattenSpans: false,
+        matchBrackets: true,
+        matchTags: {bothTags: true},
+        autoCloseTags: true,
+        highlightSelectionMatches: true,
+        lint:true,
+    }
+</script>
+
 <h3>Configuration:</h3>
-<form id='backform' method='POST'><input name='configjson' type='hidden'/></form>
-<div id="form_wrapper" class="form-container form-inline">
+<form id='frm' method='POST'><input name='configjson' type='hidden'/></form>
+<div id="form_wrapper" class="configuration form-container form-inline">
     <div id="inputs"></div>
     <div id="submits" class="form-group">
-        <div id="save_config" class='form-control btn btn-primary'>Save configuration</div>
+        <div id="save" class='form-control btn btn-primary'>Save configuration</div>
         &nbsp;&nbsp;
-        <a id="cancel_config" class='form-control btn btn-default' href='?'>Exit without saving</a>
+        <a id="cancel" class='form-control btn btn-default' href='?'>Exit without saving</a>
     </div>
 </div>
 <script>
@@ -138,20 +171,25 @@ foreach($options as $k=>$v){
     }
     update();
 
-    $('#save_config').click(function(){
-        $('#save_config,#cancel_config').addClass('disabled');
-        document.querySelector('#backform').submit();
+    $('#save').click(function(){
+        $('#save,#cancel').addClass('disabled');
+        document.querySelector('#frm').submit();
     });
+
+    var myCodeMirror = [];
+    var html_fields = document.querySelectorAll('[data-key*="html_"] textarea');
+    for (var i=0;i<html_fields.length;i++){
+        myCodeMirror[i] = CodeMirror.fromTextArea(html_fields[i],codeMirrorOptions);
+        myCodeMirror[i].on('change',html_fields[i].change());
+    }
+    
 </script>
 <style>
 <?php
 if ($CONFIG["rtl"]){
     ?>
-    input.form-control[type="text"]{
+    .form-group[data-key*="text_"] input.form-control[type="text"]{
         direction:rtl;
-    }
-    .form-group[data-key="google_drive_query"] input.form-control[type="text"]{
-        direction:ltr;
     }
     <?php
 }

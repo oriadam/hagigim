@@ -1,5 +1,6 @@
 .*
 *.log
+*.backup
 config-backup.json
 client_secret.json
 google_credentials.json

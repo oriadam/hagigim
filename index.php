@@ -6,7 +6,7 @@ require_once "config.php";
 ?>
 <html>
 <head>
-<title><?=$CONFIG["page_title"]?></title>
+<title><?=$CONFIG["text_window_title"]?></title>
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
 <script
@@ -18,53 +18,58 @@ require_once "config.php";
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="http://www.turnjs.com/lib/turn.min.js"></script>
 <link href="style.css" rel="stylesheet">
-<?=$CONFIG["rtl"] ? '<link href="rtl.css" rel="stylesheet">':''?>
 <?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
-<?=$CONFIG["head"]?>
+<?=file_exists('custom/style.css.php') ? '<link href="custom/style.css.php" rel="stylesheet">':''?>
+<?=$CONFIG["html_head"]?>
 </head>
-<body>
-	<?=$CONFIG["body"]?>
+<body class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?>">
+	<?=$CONFIG["html_body"]?>
 	<template id="tmpl_empty_page">
-	<div>
+	<div class="page_outer_wrap">
 		<div class="empty_page">
 			<div class="empty_page_content"></div>
 		</div>
 	</div>
 	</template>
 	<template id="tmpl_extra_page">
-	<div class="skip_me"></div>
+	<div class="skip_me page_wrap"></div>
 	</template>
 	<template id="tmpl_page">
-	<div class="content-page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
-		<?php if ($CONFIG["show_page_title"]) { ?>
-		<h1 class="page-title"></h1>
-		<?php } ?>
-		<div class="page-content"></div>
-		<?php if ($CONFIG["show_page_number"]) { ?>
-		<div class="page_number_wrapper">
-			<div class="page_number"></div>
+	<div class="page_wrap">
+		<div class="content_page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
+			<div class="page_top">
+				<div class='page_top_content'><?=$CONFIG["html_page_top"]?></div>
+				<?php if ($CONFIG["show_page_title"]) { ?>
+				<h1 class="page_title"></h1>
+				<?php } ?>
+			</div>
+			<div class="page_content"></div>
+			<?php if ($CONFIG["show_page_number"]) { ?>
+			<div class="page_number_wrapper">
+				<div class="page_number"></div>
+			</div>
+			<?php } ?>
 		</div>
-		<?php } ?>
-	</div>
+	</div>	
 	</template>
 	<template id="tmpl_cover_front">
-	<div class="hard">
-		<?=$CONFIG["cover_front"]?>
+	<div class="hard page_wrap cover_front">
+		<?=$CONFIG["html_cover_front"]?>
 	</div>
 	</template>
 	<template id="tmpl_inside_front">
-	<div class="hard skip_me">
-		<?=$CONFIG["inside_front"]?>
+	<div class="hard skip_me page_wrap inside_front">
+		<?=$CONFIG["html_inside_front"]?>
 	</div>
 	</template>
 	<template id="tmpl_inside_back">
-	<div class="hard skip_me">
-		<?=$CONFIG["inside_back"]?>
+	<div class="hard skip_me page_wrap inside_back">
+		<?=$CONFIG["html_inside_back"]?>
 	</div>
 	</template>
 	<template id="tmpl_cover_back">
-	<div class="hard">
-		<?=$CONFIG["cover_back"]?>
+	<div class="hard page_wrap cover_back">
+		<?=$CONFIG["html_cover_back"]?>
 	</div>
 	</template>
 
@@ -96,7 +101,8 @@ require_once "config.php";
 	var search_position = 0; // position in current search results (relevant on "search" mode, irrelevant on "filter" mode)
 	var cover_pages_before,cover_pages_after;
 	var page_content_scroll_hide_page_number = null;
-	var last_display_mode = 'double';
+	var turn_display_mode; // 'single' or 'double' pages view
+	var mobile_mode; // intentionally start undefined
 	var show_peel_corner_TO;
 	var pause_turn_events;
 	var show_peel_corner = function(){
@@ -197,7 +203,7 @@ require_once "config.php";
 
 	// check if page cannot be moved to
 	function is_page_skip_me(page){
-		return last_display_mode=='single' && !!$('.p'+page+'.skip_me').length;
+		return turn_display_mode=='single' && !!$('.p'+page+'.skip_me').length;
 	}
 
 	// wrapper for $book.turn('page',page)
@@ -207,7 +213,7 @@ require_once "config.php";
 			page = 'previous';
 		}
 		if (page == 'next' || page == 'previous' ){
-			if (last_display_mode=='single'){
+			if (turn_display_mode=='single'){
 				var direction = page == 'previous' ? -1 : 1;
 				var new_page = current_page()+direction;
 				if (is_page_skip_me(new_page)){
@@ -216,7 +222,7 @@ require_once "config.php";
 				}
 			}
 		}
-		if (last_display_mode == 'single'){
+		if (turn_display_mode == 'single'){
 			var direction = current_page()>page ? -1 : 1;
 			// skipping empty pages when need to
 			while (is_page_skip_me(page)){
@@ -431,14 +437,12 @@ require_once "config.php";
 		$book.remove();
 		$book = $('<div id="'+id+'">').appendTo($book_parent);
 		if (CONFIG["pages_depth"]){
-			if (last_display_mode!='single'){
+			if (turn_display_mode!='single'){
 				$book.addClass("pages_depth");
 			}
 		}
 		if (CONFIG["middle_gradient"]){
-			if (last_display_mode!='single'){
-				$book.addClass('middle_gradient');
-			}
+			$book.addClass('middle_gradient');
 		}
 		$book.bind('turning', turning);
 		$book.bind('turned', turned);
@@ -488,32 +492,41 @@ require_once "config.php";
 		$book.turn(turn_options);
 		resize();
 		// fix page width via css
-		$('#id-style').remove();
-		$('head').append('<style id="id-style">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
+		$('#id-style-fix-pages').remove();
+		$('head').append('<style id="id-style-fix-pages">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
+	}//build_book
 
-	}
+	// detect and handle single/double pages view mode. 
+	// called by set_mode_mode() when mobile mode has changed
+	function set_display_mode() {
+		var mode = CONFIG["single_page_mode"]=="always" || (mobile_mode && CONFIG["single_page_mode"]=="mobile") ? 'single' : 'double';
+		if (turn_display_mode!==mode) {
+			// single/double mode change + on init
+			turn_display_mode=mode;
+			$('body').toggleClass('display-single',turn_display_mode=='single').toggleClass('display-double',turn_display_mode=='double');
+			if (turn_display_mode=='single'){
+				go_to_page(current_page()); // make sure not to dispaly skip_me pages
+			}
+			$book.turn("display",turn_display_mode);
+		}
+	}//set_display_mode
+
+	// detect and handle mobile mode
+	// called by resize()
+	function set_mobile_mode() {
+		var mode = window.innerWidth <= CONFIG["mobile_width"];
+		if (mobile_mode !== mode){
+			// desktop/mobile mode change + on init
+			mobile_mode = mode;
+			$('body').toggleClass('mobile',mobile_mode).toggleClass('desktop',!mobile_mode);		
+			set_display_mode();
+		}
+	}//set_mobile_mode
+
+	// resize event - redetect mobile state, and reset the book size
 	function resize(){
 		$book.turn("size",$book_parent.width(),$book_parent.height());
-		var display;
-		if (CONFIG["single_page_mode_under_width_of"]===true){
-			display = 'single';
-		} else if (!CONFIG["single_page_mode_under_width_of"]){
-			display = 'double';
-		} else {
-			display = window.innerWidth > CONFIG["single_page_mode_under_width_of"] ? 'double' : 'single';
-		}
-		if (last_display_mode!=display){
-			last_display_mode = display;
-			if (last_display_mode=='single'){
-				$book.removeClass('middle_gradient');
-				go_to_page(current_page()); // make sure not to dispaly skip_me pages
-			} else {
-				if (CONFIG["middle_gradient"]){
-					$book.addClass('middle_gradient');
-				}
-			}
-			$book.turn("display",display);
-		}
+		set_mobile_mode();
 	}
 	$(window).resize(resize);
 
@@ -542,9 +555,9 @@ require_once "config.php";
 				var title = $.trim(data.name || book_list[index].name);
 				var element = tmpl('page');
 				if (CONFIG["show_page_title"]){
-					element.find('.page-title').html(title);
+					element.find('.page_title').html(title);
 				}
-				var page_content = element.find('.page-content');
+				var page_content = element.find('.page_content');
 				page_content.html(data.content);
 				if (CONFIG["remove_first_row_if_identical_to_page_title"] || CONFIG["bold_first_content_line"]){
 					var first_content_line = get_first_content_line(page_content[0]);
@@ -600,7 +613,7 @@ require_once "config.php";
 	// handle scrollable pages
 	function handle_scrollable_pages(page){
 		var scrollable;
-		var page_content = document.querySelector('.p'+page+' .page-content');
+		var page_content = document.querySelector('.p'+page+' .page_content');
 		if (page_content){
 			scrollable = page_content.scrollHeight > page_content.offsetHeight;
 			if (scrollable){
@@ -654,6 +667,6 @@ require_once "config.php";
 		load_book(q);
 	}
 	</script>
-	<?=$CONFIG["footer"]?>
+	<?=$CONFIG["html_footer"]?>
 </body>
 </html>
