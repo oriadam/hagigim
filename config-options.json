@@ -45,11 +45,19 @@
         }
     },
     "pages_depth": {
-        "name": "Book has depth",
+        "name": "Book pages depth effect",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
+    },
+    "pages_depth_paper_thickness": {
+        "name": "Book pages depth: Paper thickness",
+        "type": "number"
+    },
+    "pages_depth_max_width": {
+        "name": "Book pages depth: Max width",
+        "type": "number"
     },
     "rtl": {
         "name": "Language Direction",

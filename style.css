@@ -239,6 +239,48 @@ body {
     line-height: 3vh;
 }
 
+.pages_depth_element {
+    display: none;
+}
+
+.display-double .pages_depth_element {
+    display: inline-block;
+    height: 100%;
+    padding: 0;
+    transition: width 200ms;
+    z-index: 100;
+    background-color: fff;
+    background-image: linear-gradient(90deg, #555 50%, #fff 50%);
+    background-size: 2px;
+}
+
+#flipbook_parent {
+    margin: 0;
+    z-index: 1000;
+}
+
+.display-double #book_container {
+    white-space: nowrap;
+}
+
+.display-double #book_container>div {
+    display: inline-block;
+}
+
+#pages_depth_l {
+    background-image: linear-gradient(to left, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 100%), linear-gradient(to left, #fff 50%, #888 50%);
+    background-size: 100%, 2px;
+    -box-shadow: 4px 0 10px 0px #fff inset;
+    margin-right: -5px;
+}
+
+#pages_depth_r {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 100%), linear-gradient(to left, #fff 50%, #888 50%);
+    background-size: 100%, 2px;
+    -box-shadow: -4px 0 10px 0px #fff inset;
+    margin-left: -5px;
+}
+
 
 /* ON MOBILE DEVICES */
 

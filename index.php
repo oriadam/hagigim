@@ -81,7 +81,11 @@ require_once "config.php";
 		<span id="id-next" class="form-control btn btn-primary width-10"></span>
 	</div>
 	<div id="book_container" class="book_container_width">
-		<div id="flipbook"></div>
+		<div id="pages_depth_l" class="pages_depth_element"></div>
+		<div id="flipbook_parent">
+			<div id="flipbook"></div>
+		</div>
+		<div id="pages_depth_r" class="pages_depth_element"></div>
 	</div>
 
 	<script>
@@ -92,7 +96,8 @@ require_once "config.php";
 	var q = '';
 	var lastQ; // previous search query
 	var $book = $('#flipbook'); // book jQuery element
-	var $book_parent = $book.parent();
+	var $book_parent = $('#flipbook_parent');
+	var $size_parent = $('#book_container');
 	var pages; // number of pages (including 4 cover pages)
 	var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
 	var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
@@ -101,8 +106,9 @@ require_once "config.php";
 	var search_position = 0; // position in current search results (relevant on "search" mode, irrelevant on "filter" mode)
 	var cover_pages_before,cover_pages_after;
 	var page_content_scroll_hide_page_number = null;
-	var turn_display_mode; // 'single' or 'double' pages view
-	var mobile_mode; // intentionally start undefined
+	var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
+	var mobile_mode; // mobile device mode true/false. intentionally start as undefined
+	var pages_depth_width; // width of pages_depth elements together. 0 for off. intentionally start as undefined
 	var show_peel_corner_TO;
 	var pause_turn_events;
 	var show_peel_corner = function(){
@@ -159,6 +165,7 @@ require_once "config.php";
 			for (var i = range[0]; i<=range[1]; i++){
 				load_page(i);
 			}
+			pages_depth_turning();
 		}
 	}
 	// attached to the "turned" event
@@ -234,6 +241,7 @@ require_once "config.php";
 		} else {
 			$book.turn('page',page);
 		}
+		pages_depth_turning();
 	}
 
 	// wrapper for $book.turn('page')
@@ -436,11 +444,6 @@ require_once "config.php";
 		}catch(e){}
 		$book.remove();
 		$book = $('<div id="'+id+'">').appendTo($book_parent);
-		if (CONFIG["pages_depth"]){
-			if (turn_display_mode!='single'){
-				$book.addClass("pages_depth");
-			}
-		}
 		if (CONFIG["middle_gradient"]){
 			$book.addClass('middle_gradient');
 		}
@@ -483,8 +486,8 @@ require_once "config.php";
 
 		// the turnjs magic!
 		var turn_options = CONFIG["turn_options"];
-		//options.width = $book_parent.width();
-		//options.height = $book_parent.height();
+		//options.width = $size_parent.width();
+		//options.height = $size_parent.height();
 		turn_options.width = '100%';
 		turn_options.height = '100%';
 		turn_options.pages = pages;
@@ -494,6 +497,7 @@ require_once "config.php";
 		// fix page width via css
 		$('#id-style-fix-pages').remove();
 		$('head').append('<style id="id-style-fix-pages">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
+		handle_pages_depth();
 	}//build_book
 
 	// detect and handle single/double pages view mode. 
@@ -511,6 +515,42 @@ require_once "config.php";
 		}
 	}//set_display_mode
 
+	// handle book depth display/hide
+	// called by resize() and build_book()
+	function handle_pages_depth() {
+		if (!CONFIG["pages_depth"]){
+			return;
+		}
+		var width = turn_display_mode=='double' && Math.floor(pages*CONFIG["pages_depth_paper_thickness"]);
+		width = Math.min(width,innerWidth - $book_parent.width(),CONFIG["pages_depth_max_width"]);
+		if (pages_depth_width !== width){
+			pages_depth_width = width;
+			var visible = !!pages_depth_width;
+			$('.pages_depth_element').toggle(visible);
+			$('body').toggleClass('pages_depth',visible);
+			if (visible){
+				pages_depth_turning();
+			}
+			console.log('pages_depth_width=',pages_depth_width);
+		}
+	}
+
+	// handle book depth effect, width of both sides
+	// called by turned()
+	function pages_depth_turning() {
+		if (pages_depth_width){
+			var percent_of_book = current_page()/pages; 
+			if (CONFIG["rtl"]){
+				percent_of_book = 1-percent_of_book;
+			}
+			var width_l = pages_depth_width * percent_of_book; 
+			var width_r = pages_depth_width - width_l;
+			$('#pages_depth_l').width(width_l).css('margin-left' ,width_r).toggleClass('has_width',!!width_l);
+			$('#pages_depth_r').width(width_r).css('margin-right',width_l).toggleClass('has_width',!!width_r);
+			console.log('pages_depth_width: ',width_l,width_r)
+		}
+	}
+
 	// detect and handle mobile mode
 	// called by resize()
 	function set_mobile_mode() {
@@ -525,8 +565,9 @@ require_once "config.php";
 
 	// resize event - redetect mobile state, and reset the book size
 	function resize(){
-		$book.turn("size",$book_parent.width(),$book_parent.height());
+		$book.turn("size",$size_parent.width(),$size_parent.height());
 		set_mobile_mode();
+		handle_pages_depth();
 	}
 	$(window).resize(resize);
 
