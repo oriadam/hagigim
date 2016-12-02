@@ -1,7 +1,7 @@
 {
     "manager_password_md5": "0ff49c3123244ee5187f9130902857a0",
     "log_filename": "err.log",
-    "google_drive_query": "'0B7cabAnVcz8xTHNUd1JieUFjQm8' in parents",
+    "google_drive_query": "'0B7cabAnVcz8xTHNUd1JieUFjQm8' in parents and trashed = false",
     "list_cache_expires": 86400,
     "start_with_closed_book": false,
     "hard_cover": true,

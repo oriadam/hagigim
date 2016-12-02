@@ -72,7 +72,7 @@ if (!$MANAGER_MODE) {
 			'testcache;list' => 'Test List Cache',
 			'testcache;file' => 'Test File Cache',
 			'clearcache;list' => 'Clear List Cache',
-			'clearcache;file' => 'Clear File Cache',
+			//'clearcache;file' => 'Clear File Cache',
 			'log;mylog' => 'Read Inner Log',
 			'log;phplog' => 'Read PHP Log',
 			'clearlog;mylog' => 'Clear Inner Log',
