@@ -576,7 +576,7 @@ require_once "config.php";
 		handle_pages_depth();
 		var width = $size_parent.width() - pages_depth_width;
 		$book_parent.width(width);
-		$book.turn("size",width,$book_parent.height());
+		$book.turn("size",width,$size_parent.height());
 	}
 	$(window).resize(resize);
 
