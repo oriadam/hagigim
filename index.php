@@ -95,6 +95,7 @@ require_once "config.php";
 
 	var q = '';
 	var lastQ; // previous search query
+	var $body = $('body');
 	var $book = $('#flipbook'); // book jQuery element
 	var $book_parent = $('#flipbook_parent');
 	var $size_parent = $('#book_container');
@@ -108,6 +109,7 @@ require_once "config.php";
 	var page_content_scroll_hide_page_number = null;
 	var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
 	var mobile_mode; // mobile device mode true/false. intentionally start as undefined
+	var mobile_orientation; // 'p' for portrait, 'l' for landscape. intentionally start as undefined
 	var pages_depth_width = CONFIG["pages_depth"] ? undefined : 0; // width of pages_depth elements together. 0 for off. intentionally start as undefined
 	var pages_depth_height;
 	var show_peel_corner_TO;
@@ -454,6 +456,7 @@ require_once "config.php";
 		}
 		$book.bind('turning', turning);
 		$book.bind('turned', turned);
+		$book.bind('start', start_event);
 		loaded_pages = [];
 
 		// append pages to book and remember which pages are already loaded
@@ -510,7 +513,7 @@ require_once "config.php";
 		if (turn_display_mode!==mode) {
 			// single/double mode change + on init
 			turn_display_mode=mode;
-			$('body').toggleClass('display-single',turn_display_mode=='single').toggleClass('display-double',turn_display_mode=='double');
+			$body.toggleClass('display-single',turn_display_mode=='single').toggleClass('display-double',turn_display_mode=='double');
 			if (turn_display_mode=='single'){
 				go_to_page(current_page()); // make sure not to dispaly skip_me pages
 			}
@@ -534,7 +537,7 @@ require_once "config.php";
 			pages_depth_width = width;
 			var visible = !!pages_depth_width;
 			$('.pages_depth_element').toggle(visible);
-			$('body').toggleClass('pages_depth',visible);
+			$body.toggleClass('pages_depth',visible);
 			if (visible){
 				pages_depth_turning();
 			}
@@ -568,10 +571,22 @@ require_once "config.php";
 		if (mobile_mode !== mode){
 			// desktop/mobile mode change + on init
 			mobile_mode = mode;
-			$('body').toggleClass('mobile',mobile_mode).toggleClass('desktop',!mobile_mode);		
+			$body.toggleClass('mobile',mobile_mode).toggleClass('desktop',!mobile_mode);
 			set_display_mode();
 		}
+		var orientation = mobile_mode ? (innerWidth>innerHeight ? 'p':'l') : undefined;
+		if (mobile_orientation !== orientation) {
+			mobile_orientation = orientation;
+			$body.toggleClass('orientation-p',orientation=='p').toggleClass('orientation-l',orientation=='l');
+		}
+
 	}//set_mobile_mode
+
+	function start_event(event, pageObject, corner) {
+		if (mobile_mode && mobile_orientation=='p' && corner=="tr") {
+			event.preventDefault();
+		}
+	};
 
 	// resize event - redetect mobile state, and reset the book size
 	function resize(){

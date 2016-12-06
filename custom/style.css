@@ -165,3 +165,28 @@ html * {
         font-size: 9px;
     }
 }
+
+@media only screen and (max-height: 500px) {
+    #flipbook .page_top,
+    #flipbook .page_number_wrapper {
+        display: none;
+    }
+    #flipbook .page_content h1,
+    #flipbook .page_content p,
+    #flipbook .page_content li {
+        font-size: 11px;
+        line-height: 12px;
+    }
+    #flipbook .first_content_line,
+    #flipbook .first_content_line * {
+        font-size: 13px;
+        line-height: 15px;
+    }
+    #flipbook .page_content {
+        height: calc(100% - 20px);
+    }
+}
+
+.mobile.orientation-p #id-form {
+    padding: 0 8px;
+}
