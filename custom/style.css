@@ -83,22 +83,30 @@
     width: calc(100% - 20px);
 }
 
-#flipbook .even .page_number_wrapper,
-#flipbook .even .page_top_content {
-    text-align: right;
-}
-
-#flipbook .odd .page_number_wrapper,
-#flipbook .odd .page_top_content {
-    text-align: left;
-}
-
-#flipbook .even .page_top_content:after {
+.display-double #flipbook .even .page_top_content:after {
     content: "הגיגים";
 }
 
-#flipbook .odd .page_top_content:after {
+.display-double #flipbook .odd .page_top_content:after {
     content: "שמעון עובד";
+}
+
+.display-single #flipbook .page_top_content:after {
+    content: "הגיגים - שמעון עובד";
+}
+
+
+/* Page numbers on corners */
+
+.display-single #flipbook .page_number_wrapper,
+#flipbook .even .page_number_wrapper,
+.display-double #flipbook .even .page_top_content {
+    text-align: right;
+}
+
+.display-double #flipbook .odd .page_number_wrapper,
+.display-double #flipbook .odd .page_top_content {
+    text-align: left;
 }
 
 #flipbook .page_number_wrapper:hover {
@@ -116,18 +124,23 @@
     color: #fff;
 }
 
+.display-single #flipbook .page_number,
 #flipbook .even .page_number {
     text-align: left;
     border-radius: 10px 0 0 10px;
 }
 
-#flipbook .odd .page_number {
+.display-double #flipbook .odd .page_number {
     text-align: right;
     border-radius: 0 10px 10px 0;
 }
 
 #flipbook .first_content_line {
     margin-bottom: 13px !important;
+}
+
+.display-single #flipbook .page_top {
+    text-align: left;
 }
 
 @media only screen and (min-width: 1100px) {

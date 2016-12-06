@@ -48,17 +48,17 @@ foreach($options as $k=>$v){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/runmode/colorize.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/fold/xml-fold.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/show-hint.js.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.js.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/html-hint.js.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/javascript-hint.js.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/css-hint.js.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/anyword-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/html-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/javascript-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/css-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/anyword-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/matchtags.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/closetag.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/search/match-highlighter.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/link/lint.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/link/javascript-lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/lint/lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/lint/javascript-lint.min.js"></script>
 <script>
     var codeMirrorOptions = {
         mode: "text/html",
@@ -146,6 +146,13 @@ foreach($options as $k=>$v){
                 console.log("ERROR: Unknown type at ",option);
             }
         }
+
+        ["autocomplete","height","width","list","min","max","multiple","pattern","placeholder","required","step",].forEach(function(k){
+            if (option[k]!==undefined){
+                $input.prop(k,option[k]);
+            }
+        })       
+        
         $inputs.append($group);
     });
 
@@ -180,7 +187,7 @@ foreach($options as $k=>$v){
     var html_fields = document.querySelectorAll('[data-key*="html_"] textarea');
     for (var i=0;i<html_fields.length;i++){
         myCodeMirror[i] = CodeMirror.fromTextArea(html_fields[i],codeMirrorOptions);
-        myCodeMirror[i].on('change',html_fields[i].change());
+        myCodeMirror[i].on('change',$(html_fields[i]).change());
     }
     
 </script>

@@ -74,11 +74,11 @@ require_once "config.php";
 	</template>
 
 	<div id="id-form" class="container book_container_width input-append form-inline form-group">
-		<input id="id-q" placeholder="" type="text" class="form-control search-query width-30" />
-		<span id="id-go" class="form-control btn btn-small btn-primary width-10"></span>
-		<output id="id-found" class="form-control text width-40"></output>
-		<span id="id-prev" class="form-control btn btn-primary width-10"></span>
-		<span id="id-next" class="form-control btn btn-primary width-10"></span>
+		<input id="id-q" placeholder="" type="text" class="form-control search-query top-form-element" />
+		<span id="id-go" class="form-control btn btn-small btn-primary top-form-element top-form-button"></span>
+		<output id="id-found" class="form-control text top-form-element"></output>
+		<span id="id-prev" class="form-control btn btn-primary top-form-element top-form-button"></span>
+		<span id="id-next" class="form-control btn btn-primary top-form-element top-form-button"></span>
 	</div>
 	<div id="book_container" class="book_container_width">
 		<div id="pages_depth_l" class="pages_depth_element"></div>
@@ -108,16 +108,19 @@ require_once "config.php";
 	var page_content_scroll_hide_page_number = null;
 	var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
 	var mobile_mode; // mobile device mode true/false. intentionally start as undefined
-	var pages_depth_width; // width of pages_depth elements together. 0 for off. intentionally start as undefined
+	var pages_depth_width = CONFIG["pages_depth"] ? undefined : 0; // width of pages_depth elements together. 0 for off. intentionally start as undefined
 	var show_peel_corner_TO;
 	var pause_turn_events;
+	var search_results_clicked;
 	var show_peel_corner = function(){
 		clearTimeout(show_peel_corner_TO);
 		show_peel_corner_TO = setTimeout(function(){
-			if (!$book.turn('animating'))
+			if (!$book.turn('animating')&&!search_results_clicked){
 				// bug when activating peel animation while moving pages or showing another peel
 				// bug: srcolling stuck when peel animation
 				$book.turn('peel','bl');
+			}
+			search_results_clicked = false;
 		},2000);
 	};
 	if (CONFIG["remember_last_search"]){
@@ -373,6 +376,7 @@ require_once "config.php";
 		if (next_or_prev=='prev')
 			next_or_prev='previous';
 		if (search_results.length){
+			search_results_clicked = true;
 			// next/prev search result
 			if ((next_or_prev=='next' && search_position<search_results.length-1)
 				|| (next_or_prev=='previous' && search_position>0 )){
@@ -486,17 +490,15 @@ require_once "config.php";
 
 		// the turnjs magic!
 		var turn_options = CONFIG["turn_options"];
-		//options.width = $size_parent.width();
-		//options.height = $size_parent.height();
-		turn_options.width = '100%';
-		turn_options.height = '100%';
+		turn_options.width = $size_parent.width() - pages_depth_width;
+		turn_options.height = $size_parent.height();
 		turn_options.pages = pages;
 		turn_options.direction = CONFIG["rtl"]?"rtl":"ltr";
 		$book.turn(turn_options);
 		resize();
 		// fix page width via css
-		$('#id-style-fix-pages').remove();
-		$('head').append('<style id="id-style-fix-pages">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
+		//$('#id-style-fix-pages').remove();
+		//$('head').append('<style id="id-style-fix-pages">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
 		handle_pages_depth();
 	}//build_book
 
@@ -521,8 +523,10 @@ require_once "config.php";
 		if (!CONFIG["pages_depth"]){
 			return;
 		}
-		var width = turn_display_mode=='double' && Math.floor(pages*CONFIG["pages_depth_paper_thickness"]);
-		width = Math.min(width,innerWidth - $book_parent.width(),CONFIG["pages_depth_max_width"]);
+		var width = 0;
+		if (turn_display_mode=='double') {
+			width = Math.min(CONFIG["pages_depth_max_width"],Math.floor(pages*CONFIG["pages_depth_paper_thickness"]));
+		}
 		if (pages_depth_width !== width){
 			pages_depth_width = width;
 			var visible = !!pages_depth_width;
@@ -531,7 +535,6 @@ require_once "config.php";
 			if (visible){
 				pages_depth_turning();
 			}
-			console.log('pages_depth_width=',pages_depth_width);
 		}
 	}
 
@@ -543,11 +546,15 @@ require_once "config.php";
 			if (CONFIG["rtl"]){
 				percent_of_book = 1-percent_of_book;
 			}
-			var width_l = pages_depth_width * percent_of_book; 
+			var width_l = pages_depth_width * percent_of_book;
 			var width_r = pages_depth_width - width_l;
-			$('#pages_depth_l').width(width_l).css('margin-left' ,width_r).toggleClass('has_width',!!width_l);
-			$('#pages_depth_r').width(width_r).css('margin-right',width_l).toggleClass('has_width',!!width_r);
-			console.log('pages_depth_width: ',width_l,width_r)
+			$('#pages_depth_l').width(width_l).toggleClass('has_width',!!pages_depth_width);
+			$('#pages_depth_r').width(width_r).toggleClass('has_width',!!pages_depth_width);
+			if (CONFIG["pages_depth_fix_margin"]){
+				$('#pages_depth_l').css('margin-left' ,width_r);
+				$('#pages_depth_r').css('margin-right',width_l);
+			}
+			$size_parent.toggleClass('pages_depth',!!pages_depth_width);
 		}
 	}
 
@@ -565,9 +572,11 @@ require_once "config.php";
 
 	// resize event - redetect mobile state, and reset the book size
 	function resize(){
-		$book.turn("size",$size_parent.width(),$size_parent.height());
 		set_mobile_mode();
 		handle_pages_depth();
+		var width = $size_parent.width() - pages_depth_width;
+		$book_parent.width(width);
+		$book.turn("size",width,$book_parent.height());
 	}
 	$(window).resize(resize);
 

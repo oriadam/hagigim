@@ -18,8 +18,8 @@
     },
     "hard_cover": {
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "single_page_mode": {
@@ -33,15 +33,15 @@
     "show_peel_corner": {
         "name": "Fold a corner after 2 seconds",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "middle_gradient": {
         "name": "Shadow in the middle of the book",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "pages_depth": {
@@ -49,15 +49,21 @@
         "options": {
             "On": true,
             "Off": false
-        }
+        },
+        "size": 2
     },
     "pages_depth_paper_thickness": {
         "name": "Book pages depth: Paper thickness",
-        "type": "number"
+        "type": "number",
+        "min": 0,
+        "max": 10,
+        "step": 0.01
     },
     "pages_depth_max_width": {
         "name": "Book pages depth: Max width",
-        "type": "number"
+        "type": "number",
+        "min": 0,
+        "step": 5
     },
     "rtl": {
         "name": "Language Direction",
@@ -69,42 +75,42 @@
     "show_page_number": {
         "name": "Page numbers",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "show_page_title": {
         "name": "Page titles",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "remove_first_row_if_identical_to_page_title": {
         "name": "Remove first line if same as title",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "bold_first_content_line": {
         "name": "Bigger first line",
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
     "search_or_filter": {
         "name": "Search or filter?",
         "options": {
-            "Load entire book, search inside complete book": "search",
-            "Load only search results as the book content": "filter"
+            "Load entire book, search results in book": "search",
+            "Load search results as book content": "filter"
         }
     },
     "remember_last_search": {
         "options": {
-            "Yes": true,
-            "No": false
+            "On": true,
+            "Off": false
         }
     },
 
@@ -133,15 +139,15 @@
         "type": "html"
     },
     "html_head": {
-        "name": "HTML: inside <head> tag",
+        "name": "HTML: inside &lt;head> tag",
         "type": "html"
     },
     "html_body": {
-        "name": "HTML: first thing inside <body>",
+        "name": "HTML: first thing inside &lt;body>",
         "type": "html"
     },
     "html_footer": {
-        "name": "HTML: footer, last thing inside <body>",
+        "name": "HTML: footer, last thing inside &lt;body>",
         "type": "html"
     },
     "text_search": {

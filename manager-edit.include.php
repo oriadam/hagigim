@@ -27,30 +27,30 @@ if (!empty($_POST['filecontent'])){
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/show-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/show-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/runmode/colorize.min.js"></script>
 <?php if ($ext=='js') { ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/javascript/javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/matchbrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/link/lint.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/link/javascript-lint.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/javascript-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/lint/lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/lint/javascript-lint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/javascript-hint.min.js"></script>
 <?php } if ($ext=='css') { ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/css/css.min.js"></script>
 <?php } if ($ext=='xml') { ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.min.js"></script>
 <?php } if ($ext=='html') { ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.js.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/html-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/xml-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/html-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/runmode/colorize.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/fold/xml-fold.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/matchtags.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/edit/closetag.min.js"></script>
 <?php } else { ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/anyword-hint.js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/hint/anyword-hint.min.js"></script>
 <?php } ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/addon/search/match-highlighter.min.js"></script>
 
