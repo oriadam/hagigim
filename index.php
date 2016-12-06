@@ -548,8 +548,8 @@ require_once "config.php";
 			}
 			var width_l = pages_depth_width * percent_of_book;
 			var width_r = pages_depth_width - width_l;
-			$('#pages_depth_l').width(width_l).toggleClass('has_width',!!pages_depth_width);
-			$('#pages_depth_r').width(width_r).toggleClass('has_width',!!pages_depth_width);
+			$('#pages_depth_l').width(width_l).toggleClass('has_width',!!pages_depth_width).height($size_parent.height());
+			$('#pages_depth_r').width(width_r).toggleClass('has_width',!!pages_depth_width).height($size_parent.height());
 			if (CONFIG["pages_depth_fix_margin"]){
 				$('#pages_depth_l').css('margin-left' ,width_r);
 				$('#pages_depth_r').css('margin-right',width_l);
