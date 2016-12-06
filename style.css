@@ -11,6 +11,11 @@
     padding: 0;
 }
 
+.mobile #id-form {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
 #id-found {
     display: inline-block;
 }
@@ -225,7 +230,17 @@ body {
 .display-double #flipbook .odd .page_number {
     text-align: right;
     border-radius: 0 10px 10px 0;
-}*/
+}
+
+@media only screen and (max-width: 720px) {
+    #flipbook .page_number {
+        width:49px;
+        height:15px;
+        line-height:15px;
+        font-size:9px;
+    }
+}
+*/
 
 #flipbook .first_content_line,
 #flipbook .first_content_line * {

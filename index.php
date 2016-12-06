@@ -109,6 +109,7 @@ require_once "config.php";
 	var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
 	var mobile_mode; // mobile device mode true/false. intentionally start as undefined
 	var pages_depth_width = CONFIG["pages_depth"] ? undefined : 0; // width of pages_depth elements together. 0 for off. intentionally start as undefined
+	var pages_depth_height;
 	var show_peel_corner_TO;
 	var pause_turn_events;
 	var search_results_clicked;
@@ -527,7 +528,9 @@ require_once "config.php";
 		if (turn_display_mode=='double') {
 			width = Math.min(CONFIG["pages_depth_max_width"],Math.floor(pages*CONFIG["pages_depth_paper_thickness"]));
 		}
-		if (pages_depth_width !== width){
+		var height = $size_parent.height();
+		if (pages_depth_width !== width || pages_depth_height !== height){
+			pages_depth_height = height;
 			pages_depth_width = width;
 			var visible = !!pages_depth_width;
 			$('.pages_depth_element').toggle(visible);
@@ -548,8 +551,8 @@ require_once "config.php";
 			}
 			var width_l = pages_depth_width * percent_of_book;
 			var width_r = pages_depth_width - width_l;
-			$('#pages_depth_l').width(width_l).toggleClass('has_width',!!pages_depth_width).height($size_parent.height());
-			$('#pages_depth_r').width(width_r).toggleClass('has_width',!!pages_depth_width).height($size_parent.height());
+			$('#pages_depth_l').width(width_l).toggleClass('has_width',!!pages_depth_width).height(pages_depth_height);
+			$('#pages_depth_r').width(width_r).toggleClass('has_width',!!pages_depth_width).height(pages_depth_height);
 			if (CONFIG["pages_depth_fix_margin"]){
 				$('#pages_depth_l').css('margin-left' ,width_r);
 				$('#pages_depth_r').css('margin-right',width_l);
