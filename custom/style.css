@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Alef');
+html * {
+    font-family: 'Alef', sans-serif;
+}
+
 #flipbook #cover_back.hard {
     background: #1e1b16;
     color: #fff;
@@ -27,19 +32,19 @@
 }
 
 .desktop #flipbook .page {
-    background-image: url(img/45-degree-fabric-dark.png);
     background-color: #fffff1;
+    background-image: url(img/page-bg.png);
 }
 
 
 /* For page patterns see https://www.transparenttextures.com and http://lea.verou.me/css3patterns */
 
 .display-double.desktop #flipbook.middle_gradient .page:not(.hard).odd {
-    background-image: url(img/45-degree-fabric-dark.png), linear-gradient(to right, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
+    background-image: url(img/page-bg.png), linear-gradient(to right, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
 }
 
 .display-double.desktop #flipbook.middle_gradient .page:not(.hard).even {
-    background-image: url(img/45-degree-fabric-dark.png), linear-gradient(to left, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
+    background-image: url(img/page-bg.png), linear-gradient(to left, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
 }
 
 
