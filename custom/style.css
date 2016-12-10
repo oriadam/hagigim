@@ -190,3 +190,12 @@ html * {
 .mobile.orientation-p #id-form {
     padding: 0 8px;
 }
+
+.mobile.orientation-p #flipbook .content_page {
+    margin-left: 30px;
+}
+
+.rtl.mobile.orientation-p #flipbook .content_page {
+    margin-left: 0px;
+    margin-right: 30px;
+}

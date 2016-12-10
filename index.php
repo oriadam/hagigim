@@ -108,6 +108,7 @@ require_once "config.php";
 	var cover_pages_before,cover_pages_after;
 	var page_content_scroll_hide_page_number = null;
 	var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
+	var direction = CONFIG["rtl"] ? 'rtl' : 'ltr';
 	var mobile_mode; // mobile device mode true/false. intentionally start as undefined
 	var mobile_orientation; // 'p' for portrait, 'l' for landscape. intentionally start as undefined
 	var pages_depth_width = CONFIG["pages_depth"] ? undefined : 0; // width of pages_depth elements together. 0 for off. intentionally start as undefined
@@ -497,7 +498,7 @@ require_once "config.php";
 		turn_options.width = $size_parent.width() - pages_depth_width;
 		turn_options.height = $size_parent.height();
 		turn_options.pages = pages;
-		turn_options.direction = CONFIG["rtl"]?"rtl":"ltr";
+		turn_options.direction = direction;
 		$book.turn(turn_options);
 		resize();
 		// fix page width via css
@@ -577,14 +578,15 @@ require_once "config.php";
 		var orientation = mobile_mode ? (innerWidth>innerHeight ? 'p':'l') : undefined;
 		if (mobile_orientation !== orientation) {
 			mobile_orientation = orientation;
-			$body.toggleClass('orientation-p',orientation=='p').toggleClass('orientation-l',orientation=='l');
+			$body.toggleClass('orientation-p',orientation == 'p').toggleClass('orientation-l',orientation=='l');
 		}
 
 	}//set_mobile_mode
 
 	function start_event(event, pageObject, corner) {
-		if (mobile_mode && mobile_orientation=='p' && corner=="tr") {
+		if (mobile_mode && mobile_orientation == 'p' && corner && corner[1]==direction[0]) {
 			event.preventDefault();
+			return false;
 		}
 	};
 
