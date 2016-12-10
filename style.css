@@ -75,7 +75,7 @@
 
 /* show_page_title */
 
-#flipbook .content_page.show_page_title0 .page-title {
+#flipbook .content_page.show_page_title0 .page_title {
     display: none;
 }
 
@@ -86,7 +86,7 @@
     display: none;
 }
 
-#flipbook .page-title {
+#flipbook .page_title {
     height: 3vh;
     font-size: 3vh;
     line-height: 3vh;
@@ -137,10 +137,6 @@ body {
 
 #flipbook .page * {
     user-select: none;
-}
-
-#flipbook .page-wrapper {
-    perspective: 2000px;
 }
 
 #flipbook .hard {
@@ -342,4 +338,17 @@ body {
 .hr_read_more_clickable {
     cursor: pointer;
     text-decoration: underline;
+}
+
+#pages_depth_tooltip {
+    position: fixed;
+    display: block;
+    background: #bbb;
+    border-radius: 4px;
+    color: #333;
+    font-size: 15px;
+    line-height: 15px;
+    padding: 3px 10px;
+    cursor: col-resize;
+    cursor: crosshair;
 }

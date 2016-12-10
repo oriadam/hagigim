@@ -113,6 +113,8 @@ require_once "config.php";
 	var mobile_orientation; // 'p' for portrait, 'l' for landscape. intentionally start as undefined
 	var pages_depth_width = CONFIG["pages_depth"] ? undefined : 0; // width of pages_depth elements together. 0 for off. intentionally start as undefined
 	var pages_depth_height;
+	var $pages_depth_tooltip;
+	var pages_depth_tooltip_page;
 	var show_peel_corner_TO;
 	var pause_turn_events;
 	var search_results_clicked;
@@ -148,6 +150,59 @@ require_once "config.php";
 	$('#id-next').html(CONFIG["text_next"]).click(function(){
 		search_next_prev('next');
 	});
+	$pages_depth_tooltip = $('<div id="pages_depth_tooltip">').hide().appendTo($body);
+	if (CONFIG["browse_via_pages_depth"]){
+		$('#pages_depth_l,#pages_depth_r').on('mousemove',function(){
+			var $elem = $(this);
+			var width = $elem.width();
+			var offset = $elem.offset();
+			var pos = event.pageX - offset.left;
+			var lr = this.id[this.id.length-1]; // 'l' or 'r'
+			var percent = 1 - ((width - pos) / width);
+			if (direction == "rtl") {
+				lr = lr == 'l' ? 'r':'l';
+				percent = 1 - percent;
+			}
+			var relevant_pages,pages_offset;
+			if (lr=='l') {
+				// handle left side (right on rtl)
+				pages_offset = 1;
+				relevant_pages = current_page() - 1;
+				if (relevant_pages > pages_offset){
+					pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
+				} else {
+					pages_depth_tooltip_page = 0;
+				}
+			} else {
+				// handle right side (left on rtl)
+				pages_offset = current_page() + 1;
+				relevant_pages = pages - pages_offset - 1;
+				if (relevant_pages > 0) {
+					pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
+				} else {
+					pages_depth_tooltip_page = 0;
+				}
+			}
+			if (pages_depth_tooltip_page){
+				$pages_depth_tooltip.html(pages_depth_tooltip_page).show().offset({
+					left : event.pageX - ($pages_depth_tooltip.width()),
+					top: event.pageY - $pages_depth_tooltip.height()*2,
+				})
+			} else {
+				$pages_depth_tooltip.hide();
+			}
+		}).on('mouseenter',function(){
+			$pages_depth_tooltip.show();
+		}).on('mouseleave',function(){
+			$pages_depth_tooltip.hide();
+		}).on('click',function(){
+			console.log(pages_depth_tooltip_page);
+			if (pages_depth_tooltip_page){
+				go_to_page(pages_depth_tooltip_page);
+			}
+		})
+	}
+
 	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 	function tmpl(name,id){
 		var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).children[0];
@@ -175,6 +230,7 @@ require_once "config.php";
 			pages_depth_turning();
 		}
 	}
+
 	// attached to the "turned" event
 	function turned(event, page, view) {
 		if (pause_turn_events){
@@ -399,8 +455,8 @@ require_once "config.php";
 	function load_book(q,callback) {
 		set_found_text("");
 		set_searching_state(true);
-		var url='ajax.php?f=list&q='+encodeURI(q||'');
-		ajax(url,function(data){
+		var url = 'ajax.php?f=list&q='+encodeURI(q||'');
+		var ajax_object = ajax(url,function(data){
 			set_searching_state(false);
 			search_results = [];
 			search_position = 0;
@@ -428,6 +484,8 @@ require_once "config.php";
 				callback();
 			}
 			set_buttons_state();
+			var args = arguments;
+			args.callee.name = 'load_book_ready';
 		});
 	}
 
@@ -543,14 +601,14 @@ require_once "config.php";
 				pages_depth_turning();
 			}
 		}
-	}
+	}//handle_pages_depth
 
 	// handle book depth effect, width of both sides
 	// called by turned()
 	function pages_depth_turning() {
 		if (pages_depth_width){
 			var percent_of_book = current_page()/pages; 
-			if (CONFIG["rtl"]){
+			if (direction == "rtl"){
 				percent_of_book = 1-percent_of_book;
 			}
 			var width_l = pages_depth_width * percent_of_book;
@@ -600,6 +658,7 @@ require_once "config.php";
 	}
 	$(window).resize(resize);
 
+	// make changes to a page
 	function process_page(page,page_element,page_content,title){
 		if (CONFIG["hr_to_read_more"]){
 			var hr = page_element.find("hr:first");
@@ -622,6 +681,8 @@ require_once "config.php";
 		if (CONFIG["show_page_number"]){
 			page_element.find('.page_number').html(page - cover_pages_before);
 		}
+		if (window.process_page_hook)
+			window.process_page_hook(page, page_element, page_content, title);
 	}
 
 	// load a specific page number using ajax
@@ -750,7 +811,9 @@ require_once "config.php";
 		// load only search results
 		load_book(q);
 	}
+
 	</script>
+	<?=file_exists('custom/script.js') ? '<script src="custom/script.js"></script>':''?>
 	<?=$CONFIG["html_footer"]?>
 </body>
 </html>
