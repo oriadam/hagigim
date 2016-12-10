@@ -49,8 +49,25 @@
         "options": {
             "On": true,
             "Off": false
-        },
-        "size": 2
+        }
+    },
+    "browse_via_pages_depth": {
+        "name": "Browse book from pages depth",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "hr_to_read_more": {
+        "name": "Convert footnotes to `read more` link",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "text_hr_read_more": {
+        "name": "Clickable text for hidden footnotes",
+        "type": "text"
     },
     "pages_depth_paper_thickness": {
         "name": "Book pages depth: Paper thickness",

@@ -600,6 +600,30 @@ require_once "config.php";
 	}
 	$(window).resize(resize);
 
+	function process_page(page,page_element,page_content,title){
+		if (CONFIG["hr_to_read_more"]){
+			var hr = page_element.find("hr:first");
+			var hidden = hr.nextAll().addClass('hr_read_more_text').hide();
+			var clickable = $("<span class='hr_read_more_clickable'>").html(CONFIG["text_hr_read_more"]).click(function(){
+				clickable.remove();
+				hidden.slideDown();
+			});
+			hr.after(clickable);
+		}
+		if (CONFIG["remove_first_row_if_identical_to_page_title"] || CONFIG["bold_first_content_line"]){
+			var first_content_line = get_first_content_line(page_content[0]);
+			first_content_line.className+=' first_content_line';
+		}
+		if (CONFIG["remove_first_row_if_identical_to_page_title"]){
+			if ($.trim(first_content_line.textContent)==$.trim(title)){
+				first_content_line.style.display = 'none';
+			}
+		}
+		if (CONFIG["show_page_number"]){
+			page_element.find('.page_number').html(page - cover_pages_before);
+		}
+	}
+
 	// load a specific page number using ajax
 	function load_page(page) {
 		if (page<=cover_pages_before || page>pages - cover_pages_after || loaded_pages[page]){
@@ -629,18 +653,8 @@ require_once "config.php";
 				}
 				var page_content = element.find('.page_content');
 				page_content.html(data.content);
-				if (CONFIG["remove_first_row_if_identical_to_page_title"] || CONFIG["bold_first_content_line"]){
-					var first_content_line = get_first_content_line(page_content[0]);
-					first_content_line.className+=' first_content_line';
-				}
-				if (CONFIG["remove_first_row_if_identical_to_page_title"]){
-					if ($.trim(first_content_line.textContent)==title){
-						first_content_line.style.display = 'none';
-					}
-				}
-				if (CONFIG["show_page_number"]){
-					element.find('.page_number').html(page - cover_pages_before);
-				}
+
+				process_page(page,element,page_content,title);
 				
 				$('#flipbook .p'+page).empty().append(element);
 			});

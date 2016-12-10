@@ -72,12 +72,18 @@
     }
 }
 
-#flipbook .content-page.show_page_title0 .page-title {
+
+/* show_page_title */
+
+#flipbook .content_page.show_page_title0 .page-title {
     display: none;
 }
 
-#flipbook .content-page.show_page_title0 {
-    padding-top: 20px;
+
+/* hide footnotes etc */
+
+#flipbook .content_page a[href^="#"] {
+    display: none;
 }
 
 #flipbook .page-title {
@@ -96,8 +102,8 @@
 #flipbook .page_content p,
 #flipbook .page_content li {
     font-weight: normal;
-    font-size: 1.8vh;
-    line-height: 2.3vh;
+    font-size: 1.95vh;
+    line-height: 2.4vh;
     margin: 0;
 }
 
@@ -269,11 +275,11 @@ body {
     overflow: hidden;
 }
 
-.display-double #book_container {
+#book_container {
     white-space: nowrap;
 }
 
-.display-double #book_container>div {
+#book_container>div {
     display: inline-block;
 }
 
@@ -331,4 +337,9 @@ body {
 .rtl #id-form .top-form-element:not(:last-child) {
     margin-right: 0;
     margin-left: 2.5%;
+}
+
+.hr_read_more_clickable {
+    cursor: pointer;
+    text-decoration: underline;
 }

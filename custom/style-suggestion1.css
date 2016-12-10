@@ -6,6 +6,7 @@ html * {
 #flipbook #cover_back.hard {
     background: #1e1b16;
     color: #fff;
+    background-image: url("img/cover-black.jpg");
     background-repeat: no-repeat;
     background-position: bottom;
 }
@@ -18,31 +19,32 @@ html * {
     background-position: bottom;
 }
 
-#flipbook .page {
-    background-color: #fffffa;
-}
-
 #flipbook .hard {
-    background: #568;
+    background: #46a;
 }
 
 .display-double #flipbook.middle_gradient .odd.hard {
-    background-image: linear-gradient(to right, #7a8cb0 0%, #7a8cb0 66%, #124 100%);
+    background-image: linear-gradient(to right, #46a 0%, #46a 98%, #237 100%);
 }
 
 .display-double #flipbook.middle_gradient .even.hard {
-    background-image: linear-gradient(to left, #7a8cb0 0%, #7a8cb0 66%, #124 100%);
+    background-image: linear-gradient(to left, #46a 0%, #46a 98%, #237 100%);
+}
+
+.desktop #flipbook .page {
+    background-color: #fffff1;
+    background-image: url(img/page-bg.png);
 }
 
 
 /* For page patterns see https://www.transparenttextures.com and http://lea.verou.me/css3patterns */
 
 .display-double.desktop #flipbook.middle_gradient .page:not(.hard).odd {
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
+    background-image: url(img/page-bg.png), linear-gradient(to right, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
 }
 
 .display-double.desktop #flipbook.middle_gradient .page:not(.hard).even {
-    background-image: linear-gradient(to left, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
+    background-image: url(img/page-bg.png), linear-gradient(to left, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
 }
 
 
@@ -196,24 +198,4 @@ html * {
 .rtl.mobile.orientation-p #flipbook .content_page {
     margin-left: 0px;
     margin-right: 30px;
-}
-
-.hr_read_more_clickable {
-    color: #124;
-    text-decoration: none;
-    text-shadow: 0 0 1px 1px #333;
-    font-size: 1.7vh;
-    float: left;
-    margin-left: 20%;
-    clear: both;
-    font-style: italic;
-}
-
-.hr_read_more_text,
-.hr_read_more_text * {
-    font-size: 1.4vh;
-    font-style: italic;
-    float: left;
-    margin-left: 20%;
-    clear: both;
 }
