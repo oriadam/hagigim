@@ -1,43 +1,64 @@
 /* see http://codemug.com/html/custom-scrollbars-using-css */
 
-/*** WEBKIT START ***/
-::-webkit-scrollbar
-{width: 4px;background-color:transparent;border: none;}
 
+/*** WEBKIT START ***/
+
+::-webkit-scrollbar {
+    width: 4px;
+    background-color: transparent;
+    border: none;
+}
 
 ::-webkit-scrollbar-thumb,
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-track:active,
-::-webkit-scrollbar-track:hover
-{background-color: transparent; border: none;}
+::-webkit-scrollbar-track:hover {
+    background-color: rgba(180, 180, 180, 0.5);
+    border: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(170, 170, 140, 0.5);
+}
 
 ::-webkit-scrollbar-button,
 ::-webkit-scrollbar-corner,
-::-webkit-scrollbar-resizer
-{  background-color: transparent; display:none;}
+::-webkit-scrollbar-resizer {
+    background-color: transparent;
+    display: none;
+}
 
 .scrolled ::-webkit-scrollbar-thumb,
-.scrolled::-webkit-scrollbar-thumb,
-::-webkit-scrollbar:active ::-webkit-scrollbar-thumb,
-::-webkit-scrollbar:hover ::-webkit-scrollbar-thumb
-::-webkit-scrollbar:active::-webkit-scrollbar-thumb,
-::-webkit-scrollbar:hover::-webkit-scrollbar-thumb
-{background-color:#332; border: none;}
-
 ::-webkit-scrollbar-thumb:active,
-::-webkit-scrollbar-thumb:hover
-{background-color:#443;}
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(55, 55, 22, 1);
+    border: none;
+}
+
 
 /*** WEBKIT END ***/
-/*** EXPLORER START ***/
-*{
-  scrollbar-base-color: transparent;
-  scrollbar-darkshadow-color: transparent;
-  scrollbar-3dlight-color: transparent;
-  scrollbar-highlight-color: transparent;
-  scrollbar-shadow-color: transparent;
-  scrollbar-arrow-color: transparent;
-  scrollbar-track-color: transparent;
-  scrollbar-face-color: #332;
+
+
+/*** IE START ***/
+
+* {
+    scrollbar-base-color: transparent;
+    scrollbar-darkshadow-color: transparent;
+    scrollbar-3dlight-color: transparent;
+    scrollbar-highlight-color: transparent;
+    scrollbar-shadow-color: transparent;
+    scrollbar-arrow-color: transparent;
+    scrollbar-track-color: rgb(222, 222, 222);
+    scrollbar-face-color: rgb(99, 99, 77);
+    scrollbar-track-color: rgba(180, 180, 180, 0.5);
+    scrollbar-face-color: rgba(55, 55, 22, 1);
 }
-/*** EXPLORER END ***/
+
+
+/*** IE END ***/
+
+
+/*** EDGE START ***/
+
+
+/*** EDGE START ***/

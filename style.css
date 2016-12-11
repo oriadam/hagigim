@@ -93,9 +93,19 @@
 }
 
 #flipbook .page_content {
-    overflow: auto;
     height: calc( 100% - 56px);
     position: relative;
+}
+
+#flipbook .page_content,
+#flipbook .content_page,
+#flipbook .page_content_wrapper {
+    overflow: hidden;
+    height: 100%;
+}
+
+#flipbook .page_content.scrollable {
+    overflow-y: scroll;
 }
 
 #flipbook .page_content h1,

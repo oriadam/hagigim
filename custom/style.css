@@ -223,3 +223,14 @@ html * {
     margin-left: auto;
     margin-right: 50%;
 }
+
+
+/* location of scroller */
+
+#flipbook .odd .page_content_wrapper {
+    margin-right: 45px;
+}
+
+#flipbook .even .page_content_wrapper {
+    margin-left: 45px;
+}
