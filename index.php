@@ -43,7 +43,9 @@ require_once "config.php";
 				<h1 class="page_title"></h1>
 				<?php } ?>
 			</div>
-			<div class="page_content"></div>
+			<div class="page_content_wrapper">
+				<div class="page_content"></div>
+			</div>
 			<?php if ($CONFIG["show_page_number"]) { ?>
 			<div class="page_number_wrapper">
 				<div class="page_number"></div>
@@ -152,7 +154,7 @@ require_once "config.php";
 	});
 	$pages_depth_tooltip = $('<div id="pages_depth_tooltip">').hide().appendTo($body);
 	if (CONFIG["browse_via_pages_depth"]){
-		$('#pages_depth_l,#pages_depth_r').on('mousemove',function(){
+		$('#pages_depth_l,#pages_depth_r').on('mousemove',function(event){
 			var $elem = $(this);
 			var width = $elem.width();
 			var offset = $elem.offset();
@@ -196,7 +198,6 @@ require_once "config.php";
 		}).on('mouseleave',function(){
 			$pages_depth_tooltip.hide();
 		}).on('click',function(){
-			console.log(pages_depth_tooltip_page);
 			if (pages_depth_tooltip_page){
 				go_to_page(pages_depth_tooltip_page);
 			}
@@ -205,7 +206,7 @@ require_once "config.php";
 
 	// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 	function tmpl(name,id){
-		var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).children[0];
+		var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).querySelector('*');
 		if (id)
 			clone.id = id;
 		return $(clone);
@@ -246,7 +247,9 @@ require_once "config.php";
 			// bug: showing peel disables the scrolling
 			show_peel_corner();
 		}
+		
 		set_buttons_state();
+		
 	}
 
 	// hide page numbers when scrolling down a page content
@@ -714,10 +717,10 @@ require_once "config.php";
 				}
 				var page_content = element.find('.page_content');
 				page_content.html(data.content);
+				$('#flipbook .p'+page).empty().append(element);
 
 				process_page(page,element,page_content,title);
 				
-				$('#flipbook .p'+page).empty().append(element);
 			});
 		}
 	}
@@ -760,7 +763,7 @@ require_once "config.php";
 		var scrollable;
 		var page_content = document.querySelector('.p'+page+' .page_content');
 		if (page_content){
-			scrollable = page_content.scrollHeight > page_content.offsetHeight;
+			scrollable = page_content.scrollHeight > page_content.offsetHeight + 10;
 			if (scrollable){
 				var $page_content = $(page_content);
 				$page_content.addClass('scrollable');
@@ -795,7 +798,7 @@ require_once "config.php";
 					callback(data);
 				},
 				complete:function(){
-					console.log('ajax complete',url,arguments[0],arguments[1],arguments[2]);
+					//console.log('ajax complete',url,arguments[0],arguments[1],arguments[2]);
 				}
 			});
 		}
