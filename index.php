@@ -162,12 +162,13 @@ require_once "config.php";
 			var lr = this.id[this.id.length-1]; // 'l' or 'r'
 			var percent = 1 - ((width - pos) / width);
 			if (direction == "rtl") {
+				// swap the directions
 				lr = lr == 'l' ? 'r':'l';
 				percent = 1 - percent;
 			}
 			var relevant_pages,pages_offset;
 			if (lr=='l') {
-				// handle left side (right on rtl)
+				// handle left side (right side on rtl)
 				pages_offset = 1;
 				relevant_pages = current_page() - 1;
 				if (relevant_pages > pages_offset){
@@ -176,7 +177,7 @@ require_once "config.php";
 					pages_depth_tooltip_page = 0;
 				}
 			} else {
-				// handle right side (left on rtl)
+				// handle right side (left side on rtl)
 				pages_offset = current_page() + 1;
 				relevant_pages = pages - pages_offset - 1;
 				if (relevant_pages > 0) {

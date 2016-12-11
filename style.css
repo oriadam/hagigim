@@ -64,26 +64,6 @@
     margin: 0 auto;
 }
 
-@media only screen and (min-width: 900px) {
-    .book_container_width {
-        width: calc(100vw - 100px);
-    }
-}
-
-@media only screen and (max-width: 720px) {
-    .book_container_width {
-        width: calc(100vw - 10px);
-    }
-    .form-control,
-    .btn {
-        padding-left: 1px;
-        padding-right: 1px;
-        font-size: 11px;
-        line-height: 14px;
-        height: 28px;
-    }
-}
-
 
 /* show_page_title */
 
