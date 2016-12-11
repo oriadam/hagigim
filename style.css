@@ -21,14 +21,26 @@
 }
 
 #id-form .top-form-element {
-    float: left;
     white-space: nowrap;
     overflow: hidden;
 }
 
-#id-form .top-form-element:not(:last-child) {
+.ltr #id-form .top-form-element {
+    float: left;
+}
+
+.rtl #id-form .top-form-element {
+    float: right;
+}
+
+.ltr #id-form .top-form-element:not(:last-child) {
     /* 4 elements = 10% so far*/
     margin-right: 2.5%;
+}
+
+.rtl #id-form .top-form-element:not(:last-child) {
+    /* 4 elements = 10% so far*/
+    margin-left: 2.5%;
 }
 
 #id-q {
@@ -115,6 +127,7 @@
     font-size: 1.95vh;
     line-height: 2.4vh;
     margin: 0;
+    white-space: normal;
 }
 
 #flipbook .page_content img {
@@ -334,15 +347,6 @@ body {
 .display-double.mobile #flipbook.middle_gradient .even {
     background-image: linear-gradient(to left, #fff 90%, #f9f9f9 94%, #999 100%);
     box-shadow: none;
-}
-
-.rtl #id-form .top-form-element {
-    float: right;
-}
-
-.rtl #id-form .top-form-element:not(:last-child) {
-    margin-right: 0;
-    margin-left: 2.5%;
 }
 
 .hr_read_more_clickable {
