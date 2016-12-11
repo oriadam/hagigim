@@ -3,6 +3,14 @@ html * {
     font-family: 'Alef', sans-serif;
 }
 
+.ltr {
+    direction: ltr;
+}
+
+.rtl {
+    direction: rtl;
+}
+
 #flipbook #cover_back.hard {
     background: #1e1b16;
     color: #fff;
@@ -18,30 +26,38 @@ html * {
     background-position: bottom;
 }
 
+body {
+    background-color: #f5f5f5;
+}
+
 #flipbook .page {
-    background-color: #fffffa;
+    background-color: #ffffff;
 }
 
 #flipbook .hard {
     background: #568;
 }
 
-.display-double #flipbook.middle_gradient .odd.hard {
+.ltr.display-double #flipbook.middle_gradient .even.hard,
+.rtl.display-double #flipbook.middle_gradient .odd.hard {
     background-image: linear-gradient(to right, #7a8cb0 0%, #7a8cb0 66%, #124 100%);
 }
 
-.display-double #flipbook.middle_gradient .even.hard {
+.ltr.display-double #flipbook.middle_gradient .odd.hard,
+.rtl.display-double #flipbook.middle_gradient .even.hard {
     background-image: linear-gradient(to left, #7a8cb0 0%, #7a8cb0 66%, #124 100%);
 }
 
 
-/* For page patterns see https://www.transparenttextures.com and http://lea.verou.me/css3patterns */
+/* For page background patterns see https://www.transparenttextures.com and http://lea.verou.me/css3patterns */
 
-.display-double.desktop #flipbook.middle_gradient .page:not(.hard).odd {
+.ltr.display-double.desktop #flipbook.middle_gradient .page:not(.hard).even,
+.rtl.display-double.desktop #flipbook.middle_gradient .page:not(.hard).odd {
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
 }
 
-.display-double.desktop #flipbook.middle_gradient .page:not(.hard).even {
+.ltr.display-double.desktop #flipbook.middle_gradient .page:not(.hard).odd,
+.rtl.display-double.desktop #flipbook.middle_gradient .page:not(.hard).even {
     background-image: linear-gradient(to left, rgba(255, 255, 255, 0) 90%, rgba(250, 250, 250, 0.5) 94%, #999 100%);
 }
 
@@ -90,13 +106,17 @@ html * {
 /* Page numbers on corners */
 
 .display-single #flipbook .page_number_wrapper,
-#flipbook .even .page_number_wrapper,
-.display-double #flipbook .even .page_top_content {
+.ltr #flipbook .odd .page_number_wrapper,
+.rtl #flipbook .even .page_number_wrapper,
+.ltr.display-double #flipbook .odd .page_top_content,
+.rtl.display-double #flipbook .even .page_top_content {
     text-align: right;
 }
 
-.display-double #flipbook .odd .page_number_wrapper,
-.display-double #flipbook .odd .page_top_content {
+.ltr.display-double #flipbook .even .page_number_wrapper,
+.rtl.display-double #flipbook .odd .page_number_wrapper,
+.ltr.display-double #flipbook .even .page_top_content,
+.rtl.display-double #flipbook .odd .page_top_content {
     text-align: left;
 }
 
@@ -116,12 +136,14 @@ html * {
 }
 
 .display-single #flipbook .page_number,
-#flipbook .even .page_number {
+.ltr #flipbook .odd .page_number,
+.rtl #flipbook .even .page_number {
     text-align: left;
     border-radius: 10px 0 0 10px;
 }
 
-.display-double #flipbook .odd .page_number {
+.ltr.display-double #flipbook .even .page_number,
+.rtl.display-double #flipbook .odd .page_number {
     text-align: right;
     border-radius: 0 10px 10px 0;
 }
@@ -201,13 +223,16 @@ html * {
     padding: 0 8px;
 }
 
+
+/* add distance between text and borders, so that peels are not opened when trying to scroll * /
+ ^^^ no need since we already have auto centerilization
 .ltr.mobile.orientation-p #flipbook .content_page {
     margin-left: 30px;
 }
-
 .rtl.mobile.orientation-p #flipbook .content_page {
     margin-right: 30px;
 }
+*/
 
 .hr_read_more_clickable {
     color: #124;
@@ -234,14 +259,13 @@ html * {
 
 #flipbook .page_content>div {
     display: inline-block;
+}
+
+#flipbook .page_content>div {
     transform: translate(50%, 0);
 }
 
-.ltr #flipbook .page_content>div {
-    margin-left: 50%;
-}
-
-.rtl #flipbook .page_content>div {
+#flipbook .page_content>div {
     margin-right: 50%;
 }
 

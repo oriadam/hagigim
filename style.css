@@ -287,8 +287,8 @@ body {
     background-size: 100%, 2px;
     -box-shadow: 4px 0 10px 0px #fff inset;
     margin-right: -5px;
-    -webkit-clip-path: polygon(0 1%, 100% 0, 100% 100%, 0 99%);
-    clip-path: polygon(0 1%, 100% 0, 100% 100%, 0 99%);
+    -webkit-clip-path: polygon(0% 1%, 100% 0%, 100% 100%, 0% 99%);
+    clip-path: polygon(0% 1%, 100% 0%, 100% 100%, 0% 99%);
 }
 
 #pages_depth_r {
@@ -296,8 +296,8 @@ body {
     background-size: 100%, 2px;
     -box-shadow: -4px 0 10px 0px #fff inset;
     margin-left: -5px;
-    -webkit-clip-path: polygon(0 0, 100% 1%, 100% 99%, 0% 100%);
-    clip-path: polygon(0 0, 100% 1%, 100% 99%, 0% 100%);
+    -webkit-clip-path: polygon(0% 0%, 100% 1%, 100% 99%, 0% 100%);
+    clip-path: polygon(0% 0%, 100% 1%, 100% 99%, 0% 100%);
 }
 
 

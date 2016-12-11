@@ -130,6 +130,13 @@
             "Off": false
         }
     },
+    "prevent_corner_peels_on_mobile_to_allow_scrolling": {
+        "name": "Mobile turning pages",
+        "options": {
+            "On": false,
+            "Off on corners that may interfere with scroll": true
+        }
+    },
 
     "text_window_title": {
         "name": "Text: Window title",

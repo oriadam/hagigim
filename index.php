@@ -6,21 +6,21 @@ require_once "config.php";
 ?>
 <html>
 <head>
-<title><?=$CONFIG["text_window_title"]?></title>
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<link
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-	rel="stylesheet">
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="http://www.turnjs.com/lib/turn.min.js"></script>
-<link href="style.css" rel="stylesheet">
-<?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
-<?=file_exists('custom/style.css.php') ? '<link href="custom/style.css.php" rel="stylesheet">':''?>
-<?=$CONFIG["html_head"]?>
+	<title><?=$CONFIG["text_window_title"]?></title>
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<link
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		rel="stylesheet">
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
+	<link href="style.css" rel="stylesheet">
+	<?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
+	<?=file_exists('custom/style.css.php') ? '<link href="custom/style.css.php" rel="stylesheet">':''?>
+	<?=$CONFIG["html_head"]?>
 </head>
 <body class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?>">
 	<?=$CONFIG["html_body"]?>
@@ -89,6 +89,29 @@ require_once "config.php";
 		</div>
 		<div id="pages_depth_r" class="pages_depth_element"></div>
 	</div>
+	<!-- START workaround for clip-path on firefox -->
+	<!-- the svg must be loaded before style.css -->
+	<!-- the style must be here and not inside style.css -->
+	<svg width="0" height="0">
+		<defs>
+			<clipPath id="pages_depth_clip_l" clipPathUnits="objectBoundingBox">
+				<polygon points="0 0.01, 1 0, 1 1, 0 0.99" />
+			</clipPath>
+			<clipPath id="pages_depth_clip_r" clipPathUnits="objectBoundingBox">
+				<polygon points="0 0, 1 0.01, 1 0.99, 0 1" />
+			</clipPath>
+		</defs>
+	</svg>
+	<style>
+		#pages_depth_l {
+			clip-path: url("#pages_depth_clip_l");
+		}
+		#pages_depth_r {
+	    	clip-path: url("#pages_depth_clip_r");
+		}
+	</style>
+
+	<!-- END workaround for clip-path on firefox -->
 
 	<script>
 	// for a full list of options see http://www.turnjs.com/#api
@@ -169,8 +192,8 @@ require_once "config.php";
 			var relevant_pages,pages_offset;
 			if (lr=='l') {
 				// handle left side (right side on rtl)
-				pages_offset = 1;
-				relevant_pages = current_page() - 1;
+				pages_offset = cover_pages_before;
+				relevant_pages = current_page() - cover_pages_before;
 				if (relevant_pages > pages_offset){
 					pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
 				} else {
@@ -178,8 +201,8 @@ require_once "config.php";
 				}
 			} else {
 				// handle right side (left side on rtl)
-				pages_offset = current_page() + 1;
-				relevant_pages = pages - pages_offset - 1;
+				pages_offset = current_page() + cover_pages_before;
+				relevant_pages = pages - pages_offset;
 				if (relevant_pages > 0) {
 					pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
 				} else {
@@ -200,7 +223,7 @@ require_once "config.php";
 			$pages_depth_tooltip.hide();
 		}).on('click',function(){
 			if (pages_depth_tooltip_page){
-				go_to_page(pages_depth_tooltip_page);
+				go_to_page(pages_depth_tooltip_page + cover_pages_before); // i don't understant why the +1 is necessary, but it is :-/
 			}
 		})
 	}
@@ -213,7 +236,7 @@ require_once "config.php";
 		return $(clone);
 	}
 
-	// attached to the "turning" event
+	// turnjs turning event - when starting to animate turning to a specific page
 	function turning(event, page, view) {
 		clearTimeout(show_peel_corner_TO);
 		if (pause_turn_events){
@@ -233,7 +256,7 @@ require_once "config.php";
 		}
 	}
 
-	// attached to the "turned" event
+	// turnjs turned event - when a page has finished animation and is displayed
 	function turned(event, page, view) {
 		if (pause_turn_events){
 			return;
@@ -645,14 +668,15 @@ require_once "config.php";
 
 	}//set_mobile_mode
 
+	// turnjs animation start event 
 	function start_event(event, pageObject, corner) {
-		if (mobile_mode && mobile_orientation == 'p' && corner && corner[1]==direction[0]) {
+		if (CONFIG["prevent_corner_peels_on_mobile_to_allow_scrolling"] && mobile_mode && mobile_orientation == 'p' && corner && corner[1]==direction[0]) {
 			event.preventDefault();
 			return false;
 		}
 	};
 
-	// resize event - redetect mobile state, and reset the book size
+	// turnjs resize event - redetect mobile state, and reset the book size
 	function resize(){
 		set_mobile_mode();
 		handle_pages_depth();
