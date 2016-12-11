@@ -280,24 +280,39 @@ body {
 
 #book_container>div {
     display: inline-block;
+    float: left;
 }
 
 #pages_depth_l {
     background-image: linear-gradient(to left, rgba(99, 99, 77, 0) 0%, rgba(144, 144, 133, 0.8) 100%), linear-gradient(to left, #eee 50%, #ccc 50%);
     background-size: 100%, 2px;
     -box-shadow: 4px 0 10px 0px #fff inset;
-    margin-right: -5px;
     -webkit-clip-path: polygon(0% 1%, 100% 0%, 100% 100%, 0% 99%);
     clip-path: polygon(0% 1%, 100% 0%, 100% 100%, 0% 99%);
+}
+
+.ltr #pages_depth_l {
+    margin-right: -5px;
+}
+
+.rtl #pages_depth_l {
+    margin-left: -5px;
 }
 
 #pages_depth_r {
     background-image: linear-gradient(to right, rgba(99, 99, 77, 0) 0%, rgba(144, 144, 133, 0.8) 100%), linear-gradient(to left, #eee 50%, #ccc 50%);
     background-size: 100%, 2px;
     -box-shadow: -4px 0 10px 0px #fff inset;
-    margin-left: -5px;
     -webkit-clip-path: polygon(0% 0%, 100% 1%, 100% 99%, 0% 100%);
     clip-path: polygon(0% 0%, 100% 1%, 100% 99%, 0% 100%);
+}
+
+.ltr #pages_depth_r {
+    margin-left: -5px;
+}
+
+.rtl #pages_depth_r {
+    margin-right: -5px;
 }
 
 

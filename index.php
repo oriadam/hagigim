@@ -202,7 +202,7 @@ require_once "config.php";
 			} else {
 				// handle right side (left side on rtl)
 				pages_offset = current_page() + cover_pages_before;
-				relevant_pages = pages - pages_offset;
+				relevant_pages = pages - pages_offset - cover_pages_after - 1;
 				if (relevant_pages > 0) {
 					pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
 				} else {
@@ -223,7 +223,7 @@ require_once "config.php";
 			$pages_depth_tooltip.hide();
 		}).on('click',function(){
 			if (pages_depth_tooltip_page){
-				go_to_page(pages_depth_tooltip_page + cover_pages_before); // i don't understant why the +1 is necessary, but it is :-/
+				go_to_page(Math.min(pages - cover_pages_after,pages_depth_tooltip_page + cover_pages_before)); // i don't understant why the +1 is necessary, but it is :-/
 			}
 		})
 	}
