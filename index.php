@@ -717,7 +717,7 @@ require_once "config.php";
 	function page_turned(page,page_element){
 		if (CONFIG["allow_zoomin"]) {
 			var page_content = page_element.find('.page_content');
-			page_content.off('dblclick touchstart').on('dblclick touchstart',function(){
+			page_content.off('dblclick touchstart').on('dblclick touchstart',function(event){
 				var elem = this;
 				var delay = event.name == 'dblclick' ? 350 : 1000;
 				if (!elem.data_zoom_delay) {
