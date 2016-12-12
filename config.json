@@ -6,7 +6,7 @@
     "list_cache_expires": 86400,
     "start_with_closed_book": false,
     "hard_cover": true,
-    "mobile_width": 720,
+    "mobile_width": 950,
     "single_page_mode": "mobile",
     "show_peel_corner": false,
     "middle_gradient": true,

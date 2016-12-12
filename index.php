@@ -279,7 +279,7 @@ require_once "config.php";
 			} else {
 				// do search
 				var url='ajax.php?f=list&q='+encodeURI(q||'');
-				ajax(url,function(data){
+				var ajax_object = ajax(url,function(data){
 					if (data.error){
 						$('#id-found').text(data.error);
 						return;
@@ -803,9 +803,16 @@ require_once "config.php";
 
 		function consolelog(){
 			if (CONFIG["console_debug"]){
-				console.log.apply(window,arguments);
-			}
-		}	
+				try{
+					console.log.apply(window,arguments);
+				}catch(e){
+					try{
+						console.log(arguments);
+					}catch(e){
+					}
+				}
+			}	
+		}
 
 		// bug on chrome-for-android: page is blank until orientation change.
 		// workaround: use either setTimeout(..,0) or onLoad to run the main script
