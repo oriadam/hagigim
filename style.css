@@ -361,3 +361,37 @@ body {
     cursor: col-resize;
     cursor: crosshair;
 }
+
+#flipbook .page_content.zoomin {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #fff;
+    z-index: 11111111;
+    margin: 0;
+    padding: 10px 25px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+#flipbook .page_content.zoomin>div {
+    transform: none;
+    margin: 0;
+}
+
+#flipbook .zoomin .first_content_line,
+#flipbook .zoomin .first_content_line *,
+#flipbook .zoomin h1,
+#flipbook .zoomin h2,
+#flipbook .zoomin h3,
+#flipbook .zoomin h4,
+#flipbook .zoomin h5,
+#flipbook .zoomin h6,
+#flipbook .zoomin p,
+#flipbook .zoomin li {
+    font-size: 2.6vh;
+    line-height: 2.8vh;
+    margin: 0;
+    white-space: normal;
+}

@@ -7,15 +7,11 @@ require_once "config.php";
 <html>
 <head>
 	<title><?=$CONFIG["text_window_title"]?></title>
-	<meta name="viewport"
-		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-	<link
-		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-		rel="stylesheet">
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> 
+	<!-- Always use jquery 2 because turnjs does not work with jquery 3 -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
 	<?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
@@ -542,7 +538,7 @@ require_once "config.php";
 		}
 		$book.bind('turning', turning);
 		$book.bind('turned', turned);
-		$book.bind('start', start_event);
+		$book.bind('start', animation_start);
 		loaded_pages = [];
 
 		// append pages to book and remember which pages are already loaded
@@ -668,8 +664,9 @@ require_once "config.php";
 
 	}//set_mobile_mode
 
-	// turnjs animation start event 
-	function start_event(event, pageObject, corner) {
+	// turnjs start event 
+	function animation_start(event, pageObject, corner) {
+		$('#flipbook .zoomin').removeClass('zoomin');
 		if (CONFIG["prevent_corner_peels_on_mobile_to_allow_scrolling"] && mobile_mode && mobile_orientation == 'p' && corner && corner[1]==direction[0]) {
 			event.preventDefault();
 			return false;
@@ -708,6 +705,18 @@ require_once "config.php";
 		}
 		if (CONFIG["show_page_number"]){
 			page_element.find('.page_number').html(page - cover_pages_before);
+		}
+		if (CONFIG["allow_zoomin"]) {
+			var TO;
+			page_content.on('dblclick touchstart',function(){
+				var delay = event.name == 'dblclick' ? 350 : 1000;
+				if (!TO) {
+					page_content.toggleClass('zoomin');
+					TO = setTimeout(function(){
+						TO = 0;
+					},delay);
+				}
+			});
 		}
 		if (window.process_page_hook)
 			window.process_page_hook(page, page_element, page_content, title);
