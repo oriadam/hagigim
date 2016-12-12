@@ -232,46 +232,6 @@ require_once "config.php";
 		return $(clone);
 	}
 
-	// turnjs turning event - when starting to animate turning to a specific page
-	function turning(event, page, view) {
-		clearTimeout(show_peel_corner_TO);
-		if (pause_turn_events){
-			return;
-		}
-		if (is_page_skip_me(page)){
-    		event.preventDefault();
-			go_to_page(page);
-		} else {
-			if (page > pages - cover_pages_after)
-				return; // page out of range, a cover page, or is already loaded
-			var range = $book.turn('range', page);
-			for (var i = range[0]; i<=range[1]; i++){
-				load_page(i);
-			}
-			pages_depth_turning();
-		}
-	}
-
-	// turnjs turned event - when a page has finished animation and is displayed
-	function turned(event, page, view) {
-		if (pause_turn_events){
-			return;
-		}
-		var visible_scrollable;
-		for (var i = 0; i<=view.length; i++){
-			if (handle_scrollable_pages(view[i])){
-				visible_scrollable=1;
-			}
-		}
-		if (CONFIG["show_peel_corner"] && !visible_scrollable){
-			// bug: showing peel disables the scrolling
-			show_peel_corner();
-		}
-		
-		set_buttons_state();
-		
-	}
-
 	// hide page numbers when scrolling down a page content
 	if (CONFIG["show_page_number"]){
 		page_content_scroll_hide_page_number = function(ev){
@@ -666,12 +626,55 @@ require_once "config.php";
 
 	// turnjs start event 
 	function animation_start(event, pageObject, corner) {
-		$('#flipbook .zoomin').removeClass('zoomin');
 		if (CONFIG["prevent_corner_peels_on_mobile_to_allow_scrolling"] && mobile_mode && mobile_orientation == 'p' && corner && corner[1]==direction[0]) {
 			event.preventDefault();
 			return false;
 		}
-	};
+	}
+
+	// turnjs turning event - when starting to animate turning to a specific page
+	function turning(event, page, view) {
+		$('#flipbook .zoomin').removeClass('zoomin');
+		clearTimeout(show_peel_corner_TO);
+		if (pause_turn_events){
+			return;
+		}
+		if (is_page_skip_me(page)){
+    		event.preventDefault();
+			go_to_page(page);
+		} else {
+			if (page > pages - cover_pages_after)
+				return; // page out of range, a cover page, or is already loaded
+			var range = $book.turn('range', page);
+			for (var i = range[0]; i<=range[1]; i++){
+				load_page(i);
+			}
+			pages_depth_turning();
+		}
+	}//turning
+
+	// turnjs turned event - when a page has finished animation and is displayed
+	function turned(event, page, view) {
+		if (pause_turn_events){
+			return;
+		}
+		var visible_scrollable;
+		for (var i = 0; i<=view.length; i++){
+			if (handle_scrollable_pages(view[i])){
+				visible_scrollable=1;
+			}
+			var page_element=$('.p'+view[i]);
+			if (page_element[0]){
+				page_turned(page,page_element);
+			}
+		}
+		if (CONFIG["show_peel_corner"] && !visible_scrollable){
+			// bug: showing peel disables the scrolling
+			show_peel_corner();
+		}
+		
+		set_buttons_state();	
+	}//turned
 
 	// turnjs resize event - redetect mobile state, and reset the book size
 	function resize(){
@@ -706,20 +709,29 @@ require_once "config.php";
 		if (CONFIG["show_page_number"]){
 			page_element.find('.page_number').html(page - cover_pages_before);
 		}
+		if (window.process_page_hook)
+			window.process_page_hook(page, page_element, page_content, title);
+	}
+
+	// bind events to a page after it has turned
+	function page_turned(page,page_element){
 		if (CONFIG["allow_zoomin"]) {
-			var TO;
-			page_content.on('dblclick touchstart',function(){
+			var page_content = page_element.find('.page_content');
+			page_content.off('dblclick touchstart').on('dblclick touchstart',function(){
+				var elem = this;
 				var delay = event.name == 'dblclick' ? 350 : 1000;
-				if (!TO) {
-					page_content.toggleClass('zoomin');
-					TO = setTimeout(function(){
-						TO = 0;
+				if (!elem.data_zoom_delay) {
+					elem.data_zoom_delay = 1;
+					page_element.toggleClass('zoomin');
+					setTimeout(function(){
+						elem.data_zoom_delay = 0;
 					},delay);
 				}
 			});
 		}
-		if (window.process_page_hook)
-			window.process_page_hook(page, page_element, page_content, title);
+
+		if (window.page_turned_hook)
+			window.page_turned_hook(page, page_element);
 	}
 
 	// load a specific page number using ajax

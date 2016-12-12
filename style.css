@@ -101,6 +101,11 @@
 }
 
 #flipbook .page_content h1,
+#flipbook .page_content h2,
+#flipbook .page_content h3,
+#flipbook .page_content h4,
+#flipbook .page_content h5,
+#flipbook .page_content h6,
 #flipbook .page_content p,
 #flipbook .page_content li {
     font-weight: normal;
@@ -108,6 +113,7 @@
     line-height: 2.4vh;
     margin: 0;
     white-space: normal;
+    transition: font-size 200ms;
 }
 
 #flipbook .page_content img {
@@ -362,7 +368,7 @@ body {
     cursor: crosshair;
 }
 
-#flipbook .page_content.zoomin {
+#flipbook .zoomin .page_content {
     position: absolute;
     left: 0;
     top: 0;
@@ -375,7 +381,7 @@ body {
     overflow: auto;
 }
 
-#flipbook .page_content.zoomin>div {
+#flipbook .zoomin .page_content>div {
     transform: none;
     margin: 0;
 }
@@ -390,6 +396,7 @@ body {
 #flipbook .zoomin h6,
 #flipbook .zoomin p,
 #flipbook .zoomin li {
+    transition: font-size 200ms;
     font-size: 2.6vh;
     line-height: 2.8vh;
     margin: 0;
