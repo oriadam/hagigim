@@ -733,26 +733,41 @@ require_once "config.php";
 		if (CONFIG["allow_zoomin"]) {
 			//var page_content = page_element.find('.page_content');
 			page_element.off('dblclick dbltap').on('dblclick dbltap',function(){
-				page_element.toggleClass('zoomin');
+				toggle_zoomin(page,page_element);
 			});
 			
 			// detect double tap
-			page_element.off('touchend').on('touchend',function(){
+			page_element.off('touchstart').on('touchstart',function(){
 				var elem = this;
-				if (elem.data_doubletap){
-					elem.data_doubletap=0;
-					$(elem).trigger('dbltap');
-				} else {
-					elem.data_doubletap=1;
-					setTimeout(function(){
-						elem.data_doubletap = 0;
-					},350);
+				elem.data_doubletap = 1 + (elem.data_doubletap || 0);
+				if (elem.data_doubletap==2){
+					// this is the second tap
+					if (elem.data_doubletap==2){
+						$(elem).trigger('dbltap');
+					}
 				}
+				// reset timer for next tap
+				clearTimeout(elem.data_doubletapTO);
+				elem.data_doubletapTO = setTimeout(function(){
+					elem.data_doubletap = 0;
+				},400);
 			});
 		}
 
 		if (window.page_turned_hook)
 			window.page_turned_hook(page, page_element);
+	}
+
+	// zoom-in toggle
+	function toggle_zoomin(page,page_element){
+		if (page_element[0].zoomin_delay_TO){
+			clearTimeout(page_element[0].zoomin_delay_TO); // reset timer
+		} else {
+			page_element.toggleClass('zoomin');
+		}
+		page_element[0].zoomin_delay_TO = setTimeout(function(){
+			page_element[0].zoomin_delay_TO=0;
+		},600);
 	}
 
 	// load a specific page number using ajax
