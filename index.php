@@ -327,7 +327,7 @@ require_once "config.php";
 			if (search_q !== q) {
 				search_q = q;
 				set_searching_state(true);
-				var callback = function () {
+				var set_searching_state_false = function () {
 					set_searching_state(false);
 				}
 				if (CONFIG["remember_last_search"]){
@@ -336,10 +336,10 @@ require_once "config.php";
 				}
 				if (CONFIG["search_or_filter"]=='search'){
 					// search mode
-					load_search(q,callback);
+					load_search(q,set_searching_state_false);
 				} else {
 					// filter mode
-					load_book(q,callback);
+					load_book(q,set_searching_state_false);
 				}
 				consolelog('handle_search(',q,')');
 			}
@@ -864,7 +864,7 @@ require_once "config.php";
 						try{
 							data = JSON.parse(msg);
 						}catch(e){
-							console.log("AJAX Error: ", msg, url);
+							console.log("AJAX Parse Error: ", msg, url);
 							return callback({error:msg});
 						}
 						if (data.error){
