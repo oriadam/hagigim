@@ -87,6 +87,12 @@
 #flipbook .page_content {
     height: calc( 100% - 56px);
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #flipbook .page_content,
@@ -209,47 +215,47 @@ body {
 .display-single #flipbook .page_number_wrapper,
 #flipbook .even .page_number_wrapper,
 #flipbook .even .page_top_content {
-    text-align: right;
+text-align: right;
 }
 
 .display-double #flipbook .odd .page_number_wrapper,
 .display-double #flipbook .odd .page_top_content {
-    text-align: left;
+text-align: left;
 }
 
 #flipbook .page_number_wrapper:hover {
-    opacity: 1;
+opacity: 1;
 }
 
 #flipbook .page_number {
-    display: inline-block;
-    width: 60px;
-    font-size: 12px;
-    height: 22px;
-    line-height: 22px;
-    padding: 0 10px;
-    background: #999;
-    color: #fff;
+display: inline-block;
+width: 60px;
+font-size: 12px;
+height: 22px;
+line-height: 22px;
+padding: 0 10px;
+background: #999;
+color: #fff;
 }
 
 .display-single #flipbook .page_number,
 #flipbook .even .page_number {
-    text-align: left;
-    border-radius: 10px 0 0 10px;
+text-align: left;
+border-radius: 10px 0 0 10px;
 }
 
 .display-double #flipbook .odd .page_number {
-    text-align: right;
-    border-radius: 0 10px 10px 0;
+text-align: right;
+border-radius: 0 10px 10px 0;
 }
 
 @media only screen and (max-width: 720px) {
-    #flipbook .page_number {
-        width:49px;
-        height:15px;
-        line-height:15px;
-        font-size:9px;
-    }
+#flipbook .page_number {
+    width:49px;
+    height:15px;
+    line-height:15px;
+    font-size:9px;
+}
 }
 */
 
