@@ -119,11 +119,6 @@ require_once "config.php";
 	?>
 
 	<script>
-	// bug on chrome-for-android: page is blank until orientation change.
-	// workaround: use either setTimeout(..,0) or onLoad to run the main script
-	$(function(){
-		// for a full list of options see http://www.turnjs.com/#api
-		// width, height, pages are added automatically on build_book()
 		var CONFIG = <?=json_encode(config_for_js())?>;
 
 		var $body = $('body');
@@ -137,7 +132,7 @@ require_once "config.php";
 		var search_results = []; // array of search results (relevant on "search" mode, irrelevant on "filter" mode)
 		var search_position = 0; // position in current search results (relevant on "search" mode, irrelevant on "filter" mode)
 		var cover_pages_before,cover_pages_after;
-		var page_content_scroll_hide_page_number = null;
+		var page_content_scroll_hide_page_number;
 		var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
 		var direction = CONFIG["rtl"] ? 'rtl' : 'ltr';
 		var search_q; // search query
@@ -150,7 +145,18 @@ require_once "config.php";
 		var show_peel_corner_TO;
 		var pause_turn_events;
 		var search_results_clicked;
-		var show_peel_corner = function(){
+
+		// create a new jQuery element out of a <template> element of id '#tmpl_'+name
+		function tmpl(name,id){
+			var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).querySelector('*');
+			if (id)
+				clone.id = id;
+			//consolelog('tmpl(',name,') = ',clone);
+			return $(clone);
+		}//tmpl
+
+		// show teaser for flipping pages
+		function show_peel_corner(){
 			consolelog('show_peel_corner');
 			clearTimeout(show_peel_corner_TO);
 			show_peel_corner_TO = setTimeout(function(){
@@ -161,92 +167,7 @@ require_once "config.php";
 				}
 				search_results_clicked = false;
 			},2000);
-		};
-		$('#id-q').prop('placeholder',CONFIG["text_search"]).val((CONFIG["remember_last_search"] && localStorage.getItem('turn_reader_q') ) || '' );
-		$('#id-q').keypress(function(e) {
-			if(e.which == 13) {
-				$('#id-go').click();
-			}
-		});
-		$('#id-go').click(handle_search);
-		$('#id-prev').html(CONFIG["text_prev"]).click(function(){
-			search_next_prev('previous');
-		});
-		$('#id-next').html(CONFIG["text_next"]).click(function(){
-			search_next_prev('next');
-		});
-		$pages_depth_tooltip = $('<div id="pages_depth_tooltip">').hide().appendTo($body);
-		if (CONFIG["browse_via_pages_depth"]){
-			$('#pages_depth_l,#pages_depth_r').on('mousemove',function(event){
-				var $elem = $(this);
-				var width = $elem.width();
-				var offset = $elem.offset();
-				var pos = event.pageX - offset.left;
-				var lr = this.id[this.id.length-1]; // 'l' or 'r'
-				var percent = 1 - ((width - pos) / width);
-				if (direction == "rtl") {
-					// swap the directions
-					lr = lr == 'l' ? 'r':'l';
-					percent = 1 - percent;
-				}
-				var relevant_pages,pages_offset;
-				if (lr=='l') {
-					// handle left side (right side on rtl)
-					pages_offset = cover_pages_before;
-					relevant_pages = current_page() - cover_pages_before;
-					if (relevant_pages > pages_offset){
-						pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
-					} else {
-						pages_depth_tooltip_page = 0;
-					}
-				} else {
-					// handle right side (left side on rtl)
-					pages_offset = current_page() + cover_pages_before;
-					relevant_pages = pages - pages_offset - cover_pages_after - 1;
-					if (relevant_pages > 0) {
-						pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
-					} else {
-						pages_depth_tooltip_page = 0;
-					}
-				}
-				if (pages_depth_tooltip_page){
-					$pages_depth_tooltip.html(pages_depth_tooltip_page).show().offset({
-						left : event.pageX - ($pages_depth_tooltip.width()),
-						top: event.pageY - $pages_depth_tooltip.height()*2,
-					})
-				} else {
-					$pages_depth_tooltip.hide();
-				}
-			}).on('mouseenter',function(){
-				$pages_depth_tooltip.show();
-			}).on('mouseleave',function(){
-				$pages_depth_tooltip.hide();
-			}).on('click',function(){
-				if (pages_depth_tooltip_page){
-					go_to_page(Math.min(pages - cover_pages_after,pages_depth_tooltip_page + cover_pages_before)); // i don't understant why the +1 is necessary, but it is :-/
-				}
-			})
-		}
-
-		// create a new jQuery element out of a <template> element of id '#tmpl_'+name
-		function tmpl(name,id){
-			var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).querySelector('*');
-			if (id)
-				clone.id = id;
-			//consolelog('tmpl(',name,') = ',clone);
-			return $(clone);
-		}
-
-		// hide page numbers when scrolling down a page content
-		if (CONFIG["show_page_number"]){
-			page_content_scroll_hide_page_number = function(ev){
-				var scrolled = !!ev.target.scrollTop;
-				if (ev.target['data-scrolled'] != scrolled){
-					ev.target['data-scrolled'] = scrolled;
-					$(ev.target.parentElement).toggleClass('scrolled',scrolled);
-				}
-			};
-		}
+		}//show_peel_corner
 
 		// disable/enable prev/next buttons
 		function set_buttons_state(){
@@ -257,7 +178,7 @@ require_once "config.php";
 				$('#id-next').toggleClass('disabled',current_page()>=pages);
 				$('#id-prev').toggleClass('disabled',current_page()<=1);
 			}
-		}
+		}//set_buttons_state
 
 		// check if page cannot be moved to
 		function is_page_skip_me(page){
@@ -294,7 +215,7 @@ require_once "config.php";
 			}
 			pages_depth_turning();
 			consolelog('go_to_page(',page,') to ',page);
-		}
+		}//go_to_page
 
 		// wrapper for $book.turn('page')
 		function current_page() {
@@ -314,7 +235,7 @@ require_once "config.php";
 			} else {
 				$('#id-found').html("");
 			}
-		}
+		}//set_found_text
 
 		// set status of currently searching
 		function set_searching_state(state){
@@ -343,7 +264,7 @@ require_once "config.php";
 				}
 				consolelog('handle_search(',q,')');
 			}
-		}
+		}//handle_search
 
 		// search mode
 		function load_search(q,callback){
@@ -369,7 +290,7 @@ require_once "config.php";
 					}
 				});
 			}
-		}
+		}//load_search
 
 		// populate search results
 		function populate_search_results(data){
@@ -401,7 +322,7 @@ require_once "config.php";
 				go_to_search_position();
 			}
 			set_buttons_state();
-		}
+		}//populate_search_results
 
 		function go_to_search_position(){
 			consolelog('go_to_search_position: search_results[',search_position,'] = ',search_results[search_position]);
@@ -564,11 +485,11 @@ require_once "config.php";
 			if (turn_display_mode!==mode) {
 				// single/double mode change + on init
 				turn_display_mode=mode;
+				$book.turn("display",turn_display_mode);
 				$body.toggleClass('display-single',turn_display_mode=='single').toggleClass('display-double',turn_display_mode=='double');
 				if (turn_display_mode=='single'){
 					go_to_page(current_page()); // make sure not to dispaly skip_me pages
 				}
-				$book.turn("display",turn_display_mode);
 			}
 		}//set_display_mode
 
@@ -693,7 +614,6 @@ require_once "config.php";
 			$book_parent.width(width);
 			$book.turn("size",width,$size_parent.height());
 		}
-		$(window).resize(resize);
 
 		// make changes to a page
 		function process_page(page,page_element,page_content,title){
@@ -720,7 +640,7 @@ require_once "config.php";
 			}
 			if (window.process_page_hook)
 				window.process_page_hook(page, page_element, page_content, title);
-		}
+		}// process_page
 
 		// bind events to a page after it has turned
 		function page_turned(page,page_element){
@@ -750,7 +670,7 @@ require_once "config.php";
 
 			if (window.page_turned_hook)
 				window.page_turned_hook(page, page_element);
-		}
+		}// page_turned
 
 		// zoom-in toggle
 		function toggle_zoomin(page,page_element){
@@ -762,7 +682,7 @@ require_once "config.php";
 			page_element[0].zoomin_delay_TO = setTimeout(function(){
 				page_element[0].zoomin_delay_TO=0;
 			},600);
-		}
+		}// toggle_zoomin
 
 		// load a specific page number using ajax
 		function load_page(page) {
@@ -799,7 +719,7 @@ require_once "config.php";
 					
 				});
 			}
-		}
+		}// load page
 
 		// helper for remove_first_row_if_identical_to_page_title and bold_first_content_line
 		function get_first_content_line(element){
@@ -887,15 +807,99 @@ require_once "config.php";
 			}
 		}	
 
-		// load initial book by the last or default query
-		if (CONFIG["search_or_filter"] == 'search'){
-			// load entire book, then handle search
-			load_book('',handle_search);
-		} else {
-			// load only search results
-			handle_search();
-		}
-	}); // onload main function
+		// bug on chrome-for-android: page is blank until orientation change.
+		// workaround: use either setTimeout(..,0) or onLoad to run the main script
+		$(function(){
+			// for a full list of options see http://www.turnjs.com/#api
+			// width, height, pages are added automatically on build_book()
+			
+			$('#id-q').prop('placeholder',CONFIG["text_search"]).val((CONFIG["remember_last_search"] && localStorage.getItem('turn_reader_q') ) || '' );
+			$('#id-q').keypress(function(e) {
+				if(e.which == 13) {
+					$('#id-go').click();
+				}
+			});
+			$('#id-go').click(handle_search);
+			$('#id-prev').html(CONFIG["text_prev"]).click(function(){
+				search_next_prev('previous');
+			});
+			$('#id-next').html(CONFIG["text_next"]).click(function(){
+				search_next_prev('next');
+			});
+			$pages_depth_tooltip = $('<div id="pages_depth_tooltip">').hide().appendTo($body);
+			if (CONFIG["browse_via_pages_depth"]){
+				$('#pages_depth_l,#pages_depth_r').on('mousemove',function(event){
+					var $elem = $(this);
+					var width = $elem.width();
+					var offset = $elem.offset();
+					var pos = event.pageX - offset.left;
+					var lr = this.id[this.id.length-1]; // 'l' or 'r'
+					var percent = 1 - ((width - pos) / width);
+					if (direction == "rtl") {
+						// swap the directions
+						lr = lr == 'l' ? 'r':'l';
+						percent = 1 - percent;
+					}
+					var relevant_pages,pages_offset;
+					if (lr=='l') {
+						// handle left side (right side on rtl)
+						pages_offset = cover_pages_before;
+						relevant_pages = current_page() - cover_pages_before;
+						if (relevant_pages > pages_offset){
+							pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
+						} else {
+							pages_depth_tooltip_page = 0;
+						}
+					} else {
+						// handle right side (left side on rtl)
+						pages_offset = current_page() + cover_pages_before;
+						relevant_pages = pages - pages_offset - cover_pages_after - 1;
+						if (relevant_pages > 0) {
+							pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
+						} else {
+							pages_depth_tooltip_page = 0;
+						}
+					}
+					if (pages_depth_tooltip_page){
+						$pages_depth_tooltip.html(pages_depth_tooltip_page).show().offset({
+							left : event.pageX - ($pages_depth_tooltip.width()),
+							top: event.pageY - $pages_depth_tooltip.height()*2,
+						})
+					} else {
+						$pages_depth_tooltip.hide();
+					}
+				}).on('mouseenter',function(){
+					$pages_depth_tooltip.show();
+				}).on('mouseleave',function(){
+					$pages_depth_tooltip.hide();
+				}).on('click',function(){
+					if (pages_depth_tooltip_page){
+						go_to_page(Math.min(pages - cover_pages_after,pages_depth_tooltip_page + cover_pages_before)); // i don't understant why the +1 is necessary, but it is :-/
+					}
+				})
+			}
+
+			// hide page numbers when scrolling down a page content
+			if (CONFIG["show_page_number"]){
+				page_content_scroll_hide_page_number = function(ev){
+					var scrolled = !!ev.target.scrollTop;
+					if (ev.target['data-scrolled'] != scrolled){
+						ev.target['data-scrolled'] = scrolled;
+						$(ev.target.parentElement).toggleClass('scrolled',scrolled);
+					}
+				};
+			}
+			$(window).resize(resize);
+
+			// load initial book by the last or default query
+			if (CONFIG["search_or_filter"] == 'search'){
+				// load entire book, then handle search
+				load_book('',handle_search);
+			} else {
+				// load only search results
+				handle_search();
+			}
+		}); // onload main function
 	</script>
 	<?=$CONFIG["html_footer"]?>
 </body>
