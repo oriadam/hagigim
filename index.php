@@ -122,8 +122,6 @@ require_once "config.php";
 	// width, height, pages are added automatically on build_book()
 	var CONFIG = <?=json_encode(config_for_js())?>;
 
-	var q = '';
-	var lastQ; // previous search query
 	var $body = $('body');
 	var $book = $('#flipbook'); // book jQuery element
 	var $book_parent = $('#flipbook_parent');
@@ -138,6 +136,7 @@ require_once "config.php";
 	var page_content_scroll_hide_page_number = null;
 	var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
 	var direction = CONFIG["rtl"] ? 'rtl' : 'ltr';
+	var search_q; // search query
 	var mobile_mode; // mobile device mode true/false. intentionally start as undefined
 	var mobile_orientation; // 'p' for portrait, 'l' for landscape. intentionally start as undefined
 	var pages_depth_width = CONFIG["pages_depth"] ? undefined : 0; // width of pages_depth elements together. 0 for off. intentionally start as undefined
@@ -159,21 +158,13 @@ require_once "config.php";
 			search_results_clicked = false;
 		},2000);
 	};
-	if (CONFIG["remember_last_search"]){
-		q = localStorage.getItem('turn_reader_q') || ''; // current search query
-	};
-	$('#id-q').prop('placeholder',CONFIG["text_search"]).val(q);
-	$('#id-go').click(function(){
-		q = $.trim($('#id-q').val());
-		if (q==lastQ)
-			return;
-		handle_search(q);
-	});
+	$('#id-q').prop('placeholder',CONFIG["text_search"]).val((CONFIG["remember_last_search"] && localStorage.getItem('turn_reader_q') ) || '' );
 	$('#id-q').keypress(function(e) {
 		if(e.which == 13) {
 			$('#id-go').click();
 		}
 	});
+	$('#id-go').click(handle_search);
 	$('#id-prev').html(CONFIG["text_prev"]).click(function(){
 		search_next_prev('previous');
 	});
@@ -327,19 +318,20 @@ require_once "config.php";
 	}
 
 	// handle search query
-	function handle_search(q){
-		if (lastQ != q) {
-			// remember last visit q
+	function handle_search(){
+		var q = $.trim($('#id-q').val());
+		if (search_q !== q) {
+			search_q = q;
 			set_searching_state(true);
 			var callback = function () {
 				set_searching_state(false);
 			}
-			q = q || '';
-			lastQ = q;
 			if (CONFIG["remember_last_search"]){
+				// remember last visit q
 				localStorage.setItem('turn_reader_q',q);
 			}
 			if (CONFIG["search_or_filter"]=='search'){
+				// search mode
 				load_search(q,callback);
 			} else {
 				// filter mode
@@ -446,7 +438,7 @@ require_once "config.php";
 			go_to_page(next_or_prev);
 		}
 		set_buttons_state();
-	}
+	}//search_next_prev
 
 	// load a book according to a search query using ajax
 	// used: filter mode + on first run
@@ -478,14 +470,12 @@ require_once "config.php";
 					go_to_page(3);
 				}
 			}
+			set_buttons_state();
 			if (callback){
 				callback();
 			}
-			set_buttons_state();
-			var args = arguments;
-			args.callee.name = 'load_book_ready';
 		});
-	}
+	}//load_book
 
 	// populate the book. based on book_list. removes previous content if any.
 	function build_book(){
@@ -895,13 +885,11 @@ require_once "config.php";
 
 	// load initial book by the last or default query
 	if (CONFIG["search_or_filter"] == 'search'){
-		// load entire book
-		load_book('',function(){
-			load_search(q);
-		});
+		// load entire book, then handle search
+		load_book('',handle_search);
 	} else {
 		// load only search results
-		load_book(q);
+		handle_search();
 	}
 
 	</script>
