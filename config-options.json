@@ -137,6 +137,13 @@
             "Off on corners that may interfere with scroll": true
         }
     },
+    "allow_zoomin": {
+        "name": "Zoom on tap/double click",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
 
     "text_window_title": {
         "name": "Text: Window title",
