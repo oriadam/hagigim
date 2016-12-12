@@ -85,6 +85,11 @@ require_once "config.php";
 		</div>
 		<div id="pages_depth_r" class="pages_depth_element"></div>
 	</div>
+	<?php
+		$browser = get_browser(null, true);
+		if ($browser['browser']=='Firefox'){
+	?>
+	
 	<!-- START workaround for clip-path on firefox -->
 	<!-- the svg must be loaded before style.css -->
 	<!-- the style must be here and not inside style.css -->
@@ -108,6 +113,9 @@ require_once "config.php";
 	</style>
 
 	<!-- END workaround for clip-path on firefox -->
+	<?php
+	}
+	?>
 
 	<script>
 	// for a full list of options see http://www.turnjs.com/#api
@@ -140,6 +148,7 @@ require_once "config.php";
 	var pause_turn_events;
 	var search_results_clicked;
 	var show_peel_corner = function(){
+		consolelog('show_peel_corner');
 		clearTimeout(show_peel_corner_TO);
 		show_peel_corner_TO = setTimeout(function(){
 			if (!$book.turn('animating')&&!search_results_clicked){
@@ -229,6 +238,7 @@ require_once "config.php";
 		var clone = document.importNode(document.querySelector('#tmpl_'+name).content, true).querySelector('*');
 		if (id)
 			clone.id = id;
+		//consolelog('tmpl(',name,') = ',clone);
 		return $(clone);
 	}
 
@@ -288,6 +298,7 @@ require_once "config.php";
 			$book.turn('page',page);
 		}
 		pages_depth_turning();
+		consolelog('go_to_page(',page,') to ',page);
 	}
 
 	// wrapper for $book.turn('page')
@@ -334,11 +345,13 @@ require_once "config.php";
 				// filter mode
 				load_book(q,callback);
 			}
+			consolelog('handle_search(',q,')');
 		}
 	}
 
 	// search mode
 	function load_search(q,callback){
+		consolelog('load_search(',q,')');
 		if (!q){
 			// clear search
 			set_found_text("");
@@ -364,6 +377,7 @@ require_once "config.php";
 
 	// populate search results
 	function populate_search_results(data){
+		consolelog('populate_search_results(',data,')');
 		// sort and populate results by page numbers
 		var pages = [];
 		var length;
@@ -394,6 +408,7 @@ require_once "config.php";
 	}
 
 	function go_to_search_position(){
+		consolelog('go_to_search_position: search_results[',search_position,'] = ',search_results[search_position]);
 		set_found_text(CONFIG["text_found_in"].replace('%s1',search_position+1).replace('%s2',search_results.length));
 		var page = search_results[search_position].page;
 		if (page){
@@ -716,16 +731,22 @@ require_once "config.php";
 	// bind events to a page after it has turned
 	function page_turned(page,page_element){
 		if (CONFIG["allow_zoomin"]) {
-			var page_content = page_element.find('.page_content');
-			page_content.off('dblclick touchstart').on('dblclick touchstart',function(event){
+			//var page_content = page_element.find('.page_content');
+			page_element.off('dblclick dbltap').on('dblclick dbltap',function(){
+				page_element.toggleClass('zoomin');
+			});
+			
+			// detect double tap
+			page_element.off('touchend').on('touchend',function(){
 				var elem = this;
-				var delay = event.name == 'dblclick' ? 350 : 1000;
-				if (!elem.data_zoom_delay) {
-					elem.data_zoom_delay = 1;
-					page_element.toggleClass('zoomin');
+				if (elem.data_doubletap){
+					elem.data_doubletap=0;
+					$(elem).trigger('dbltap');
+				} else {
+					elem.data_doubletap=1;
 					setTimeout(function(){
-						elem.data_zoom_delay = 0;
-					},delay);
+						elem.data_doubletap = 0;
+					},350);
 				}
 			});
 		}
@@ -824,6 +845,7 @@ require_once "config.php";
 	// handle ajax calls + local memory caching
 	function ajax(url,callback){
 		if (url in ajax_cache){
+			consolelog('ajax cached',url);
 			callback(ajax_cache[url]);
 		} else {
 			$.ajax({
@@ -844,11 +866,17 @@ require_once "config.php";
 					callback(data);
 				},
 				complete:function(){
-					//console.log('ajax complete',url,arguments[0],arguments[1],arguments[2]);
+					consolelog('ajax complete',url,arguments);
 				}
 			});
 		}
 	}
+
+	function consolelog(){
+		if (CONFIG["console_debug"]){
+			console.log.apply(window,arguments);
+		}
+	}	
 
 	// load initial book by the last or default query
 	if (CONFIG["search_or_filter"] == 'search'){

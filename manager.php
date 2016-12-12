@@ -134,7 +134,7 @@ if (!$MANAGER_MODE) {
 		echo "<pre id='out'>Action: $action_name\n";
 		if ($action == 'auth') {
 			require "reader.lib.php";
-			$list = get_files('Testing file list access');
+			$list = get_files("fullText contains 'Testing file list access'");
 			if ($list === null) {
 				echo "\nError";
 			} else {

@@ -98,6 +98,7 @@
 #flipbook .page_content,
 #flipbook .content_page,
 #flipbook .page_content_wrapper {
+    cursor: default;
     overflow: hidden;
     height: 100%;
 }
