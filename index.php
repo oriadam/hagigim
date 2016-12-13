@@ -816,7 +816,7 @@ require_once "config.php";
 
 		// bug on chrome-for-android: page is blank until orientation change.
 		// workaround: use either setTimeout(..,0) or onLoad to run the main script
-		$(function(){
+		setTimeout(function(){
 			// for a full list of options see http://www.turnjs.com/#api
 			// width, height, pages are added automatically on build_book()
 			
@@ -906,7 +906,7 @@ require_once "config.php";
 				// load only search results
 				handle_search();
 			}
-		}); // onload main function
+		},1); // setTimeout main function
 	</script>
 	<?=$CONFIG["html_footer"]?>
 </body>
