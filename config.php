@@ -1,6 +1,22 @@
 <?php
+/* You can set custom config files and access them via search query `cfg`
+For example, add a config json called 'custom/config-myCustomConfig.json' and set some different config options there.
+Them, access the same url but with query string of ?cfg=myCustomConfig
+*/
+
 global $CONFIG;
+// load defaults
 $CONFIG = json_decode(file_get_contents('config.json'), true);
+
+// load custom config, if any
+if (!empty($_GET['cfg'])) {
+	$custom_config_fn = "custom/config-$_GET[cfg].json";
+	if (strpos($_GET['cfg'],'/')===FALSE && file_exists($custom_config_fn)){
+		$new_config = json_decode(file_get_contents($custom_config_fn), true);
+		$CONFIG = array_merge($CONFIG,$new_config);
+	}
+}
+
 
 // constants:
 define('MANAGER_FLAG', 'manager_mode_activated');
