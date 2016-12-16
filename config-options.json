@@ -58,6 +58,11 @@
             "Off": false
         }
     },
+    "max_book_width": {
+        "name": "Book max width",
+        "type": "number",
+        "step": 1
+    },
     "hr_to_read_more": {
         "name": "Convert footnotes to `read more` link",
         "options": {

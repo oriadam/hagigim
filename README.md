@@ -7,9 +7,7 @@ Setup:
 <https://developers.google.com/drive/v3/web/quickstart/php><br>
 When done you will have the file `client_secret.json` and a folder `vendor` with all required libraries.
 
-1. Change your manager password in `config.json` at `manager_password_md5` (stored as MD5 hash).<br>
-Note that all JSON file must be strict - **no comments, no ending commas**.
-
+1. Change your manager password in `config.json` at `manager_password_md5` (stored as MD5 hash).
 1. Visit the `manager.php` page. Use the password from step 1.<br>
 Click Validate Google Auth. You will have to follow a link, approve API access, and enter the token back inside the box.<br>
 Click Validate Google Auth again, and make sure you get the OK.<br>
@@ -19,5 +17,7 @@ Click Edit Configuration.<br>
 
 Notes:
 * Requires PHP 5.5 or higher
-
-* Before first run please visit the `manager.php` page, validate Google API and reset all cache folders.
+* JSON files must be strict - meaning **no comments, no ending commas**.
+* Before first run please visit the `manager.php` page, validate Google API, test and reset cache folders.
+* You can add additional config files under custom folder, for example custom/config-xxx.json; and access custom configs via search query "?cfg=xxx".
+Try adding "?cfg=myCustomConfig" for example (see the window title changes).

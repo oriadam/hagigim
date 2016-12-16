@@ -14,6 +14,13 @@ require_once "config.php";
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
+	<?php if ($CONFIG["max_book_width"]) { ?>
+	<style>
+		.book_container_width {
+		    max-width: <?=$CONFIG["max_book_width"]?>px;
+		}
+	</style>
+	<?php } ?>
 	<?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
 	<?=file_exists('custom/style.css.php') ? '<link href="custom/style.css.php" rel="stylesheet">':''?>
 	<?=file_exists('custom/script.js') ? '<script src="custom/script.js"></script>':''?>
@@ -472,21 +479,26 @@ require_once "config.php";
 			turn_options.direction = direction;
 			$book.turn(turn_options);
 			resize();
+			$(window).off('resize',resize).resize(resize);
+			setTimeout(resize,100);
+			setTimeout(resize,1000);
+			setTimeout(resize,2000);
+
 			// fix page width via css
 			//$('#id-style-fix-pages').remove();
 			//$('head').append('<style id="id-style-fix-pages">#flipbook .page { width:' +(turn_options.width/2)+'px; height:' + turn_options.height + 'px;</style>');
-			handle_pages_depth();
 		}//build_book
 
 		// detect and handle single/double pages view mode. 
-		// called by set_mode_mode() when mobile mode has changed
+		// called by resize()
 		function set_display_mode() {
 			var mode = CONFIG["single_page_mode"]=="always" || (mobile_mode && CONFIG["single_page_mode"]=="mobile") ? 'single' : 'double';
 			if (turn_display_mode!==mode) {
 				// single/double mode change + on init
 				turn_display_mode=mode;
+				$body.removeClass('display-double display-single');
+				$body.addClass('display-'+turn_display_mode);
 				$book.turn("display",turn_display_mode);
-				$body.toggleClass('display-single',turn_display_mode=='single').toggleClass('display-double',turn_display_mode=='double');
 				if (turn_display_mode=='single'){
 					go_to_page(current_page()); // make sure not to dispaly skip_me pages
 				}
@@ -544,7 +556,6 @@ require_once "config.php";
 				// desktop/mobile mode change + on init
 				mobile_mode = mode;
 				$body.toggleClass('mobile',mobile_mode).toggleClass('desktop',!mobile_mode);
-				set_display_mode();
 			}
 			var orientation = mobile_mode ? (innerWidth>innerHeight ? 'p':'l') : undefined;
 			if (mobile_orientation !== orientation) {
@@ -609,10 +620,12 @@ require_once "config.php";
 		// turnjs resize event - redetect mobile state, and reset the book size
 		function resize(){
 			set_mobile_mode();
-			handle_pages_depth();
+			set_display_mode();
 			var width = $size_parent.width() - pages_depth_width;
+			var height = $size_parent.height();
 			$book_parent.width(width);
-			$book.turn("size",width,$size_parent.height());
+			handle_pages_depth();
+			$book.turn("size",width,height);
 		}
 
 		// make changes to a page
@@ -896,7 +909,6 @@ require_once "config.php";
 					}
 				};
 			}
-			$(window).resize(resize);
 
 			// load initial book by the last or default query
 			if (CONFIG["search_or_filter"] == 'search'){
@@ -906,6 +918,7 @@ require_once "config.php";
 				// load only search results
 				handle_search();
 			}
+
 		},1); // setTimeout main function
 	</script>
 	<?=$CONFIG["html_footer"]?>

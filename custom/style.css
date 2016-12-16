@@ -179,16 +179,6 @@ body {
     }
 }
 
-.book_container_width {
-    max-width: 1300px;
-}
-
-@media only screen and (min-width: 1400px) {
-    .book_container_width {
-        width: 1300px;
-    }
-}
-
 @media only screen and (max-width: 720px) {
     #flipbook .page_number {
         width: 49px;
