@@ -142,13 +142,6 @@
             "Off on corners that may interfere with scroll": true
         }
     },
-    "allow_zoomin": {
-        "name": "Zoom on tap/double click",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
     "console_debug": {
         "name": "Debug notes on console",
         "options": {
@@ -192,6 +185,19 @@
     "html_footer": {
         "name": "HTML: footer, last thing inside &lt;body>",
         "type": "html"
+    },
+
+    "text_top_single_pages": {
+        "name": "Text on top of page on single mode",
+        "type": "text"
+    },
+    "text_top_even_pages": {
+        "name": "Text on top of even pages",
+        "type": "text"
+    },
+    "text_top_odd_pages": {
+        "name": "Text on top of odd pages",
+        "type": "text"
     },
     "text_search": {
         "name": "Text: Search text...",

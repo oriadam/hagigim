@@ -34,18 +34,23 @@
 }
 
 .ltr #id-form .top-form-element:not(:last-child) {
-    /* 4 elements = 10% so far*/
-    margin-right: 2.5%;
+    /* 5 elements = 10% so far*/
+    margin-right: 2%;
 }
 
 .rtl #id-form .top-form-element:not(:last-child) {
-    /* 4 elements = 10% so far*/
-    margin-left: 2.5%;
+    /* 5 elements = 10% so far*/
+    margin-left: 2%;
+}
+
+#id-zoom {
+    /* 5% + 10% = 15% so far */
+    width: 5%;
 }
 
 #id-q {
-    /* 30% + 10% = 40% so far */
-    width: 30%;
+    /* 25% + 15% = 40% so far */
+    width: 25%;
 }
 
 #id-form .top-form-button {

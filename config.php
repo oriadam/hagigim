@@ -4,19 +4,19 @@ For example, add a config json called 'custom/config-myCustomConfig.json' and se
 Them, access the same url but with query string of ?cfg=myCustomConfig
 */
 
-global $CONFIG;
+global $CONFIG,$CUSTOM_CONFIG_FN;
 // load defaults
 $CONFIG = json_decode(file_get_contents('config.json'), true);
+$CUSTOM_CONFIG_FN = 'custom/config-default.json';
+
+// load custom default config, if any
+read_from_config_file($CUSTOM_CONFIG_FN);
 
 // load custom config, if any
-if (!empty($_GET['cfg'])) {
-	$custom_config_fn = "custom/config-$_GET[cfg].json";
-	if (strpos($_GET['cfg'],'/')===FALSE && file_exists($custom_config_fn)){
-		$new_config = json_decode(file_get_contents($custom_config_fn), true);
-		$CONFIG = array_merge($CONFIG,$new_config);
-	}
+if (!empty($_GET['cfg']) && strpos($_GET['cfg'],'/')===FALSE) {
+	$CUSTOM_CONFIG_FN = "custom/config-$_GET[cfg].json";
+	read_from_config_file($CUSTOM_CONFIG_FN);
 }
-
 
 // constants:
 define('MANAGER_FLAG', 'manager_mode_activated');
@@ -24,12 +24,21 @@ define('CACHE_PATH', __DIR__ . '/cache');
 define('MYLOG_PATH', __DIR__ . '/' . $CONFIG['log_filename']);
 define('CACHETYPE_LIST', 'list');
 define('CACHETYPE_FILE', 'googledoc_html');
+define('CONFIG_OPTIONS_FN','config-options.json');
 
 // google auth constants:
 define('APPLICATION_NAME', 'Drive API PHP Quickstart');
 define('CREDENTIALS_PATH', __DIR__ . '/google_credentials.json');
 define('REFRESH_TOKEN_PATH', __DIR__ . '/google_credentials_refresh.json');
 define('CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json');
+
+function read_from_config_file($fn){
+	global $CONFIG;
+	if (file_exists($fn)){
+		$new_config = json_decode(file_get_contents($fn), true);
+		$CONFIG = array_merge($CONFIG,$new_config);
+	}
+}
 
 // for the JS config object
 function config_for_js(){

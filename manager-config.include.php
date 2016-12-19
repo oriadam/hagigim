@@ -2,37 +2,34 @@
 // Configuration editor //
 // This file must be included inside manager.php
 
-global $CONFIG,$MANAGER_MODE;
-if (!isset($CONFIG) || empty($MANAGER_MODE)){
+global $CONFIG,$CUSTOM_CONFIG_FN,$MANAGER_MODE;
+
+// allowed only on manager mode
+if (!isset($CONFIG) || empty($CUSTOM_CONFIG_FN) || empty($MANAGER_MODE)){
     exit();
 }
-
-define('CONFIG_FN','config.json');
-define('CONFIG_BACKUP_FN','config-backup.json');
-define('CONFIG_OPTIONS_FN','config-options.json');
 
 $options = json_decode(file_get_contents(CONFIG_OPTIONS_FN),true);
 
 if (!empty($_POST['configjson'])){
     // write the new configuration to config.json
-    // make a copy of $CONFIG
-	$copy = json_decode(json_encode($CONFIG),true);
     // populate new values to $copy
+    $copy = json_decode(file_get_contents($CUSTOM_CONFIG_FN),true);
     $new = json_decode($_POST['configjson'],true);
     $changed = false;
 	foreach($new as $key=>$val){
-        if ($copy[$key]!==$val){
+        if ($CONFIG[$key]!==$val){
             //echo "changed: $key to $val <Br>\n";
             $changed = true;
-		    $copy[$key]=$val;
-		    $CONFIG[$key]=$val;
+	        $copy[$key]=$val;
+            $CONFIG[$key]=$val; // update current session $CONFIG as well
         }
 	}
     if ($changed){
         // create backup
-        copy(CONFIG_FN,CONFIG_BACKUP_FN);
+        //copy($CUSTOM_CONFIG_FN,"$CUSTOM_CONFIG_FN.backup.json");
         // write new configuration to config.json
-        file_put_contents(CONFIG_FN,json_encode($copy,JSON_PRETTY_PRINT));
+        file_put_contents($CUSTOM_CONFIG_FN,json_encode($copy,JSON_PRETTY_PRINT));
     }
 }
 
@@ -73,10 +70,19 @@ foreach($options as $k=>$v){
         matchTags: {bothTags: true},
         autoCloseTags: true,
         highlightSelectionMatches: true,
-        lint:true,
+        lint: true,
     }
 </script>
 
+<h3>Select Configuration File:</h3>
+<?php
+foreach (glob("custom/config-*.json") as $filename) {
+    $cfg = str_replace('custom/config-','',str_replace('.json','',$filename));
+    $active = $filename == $CUSTOM_CONFIG_FN ? 'active btn-primary':'';
+    echo "<a class='btn btn-default configFilename $active' href='?f=config&cfg=$cfg'>$cfg</a>";
+}
+
+?>
 <h3>Configuration:</h3>
 <form id='frm' method='POST'><input name='configjson' type='hidden'/></form>
 <div id="form_wrapper" class="configuration form-container form-inline">

@@ -8,8 +8,10 @@ require_once "config.php";
 <head>
 	<title><?=$CONFIG["text_window_title"]?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+	<!-- turnjs does not support jquery 3, so use 2 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> 
-	<!-- Always use jquery 2 because turnjs does not work with jquery 3 -->
+	<!-- turnjs does not support jquery 3, so use 2 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.panzoom/3.2.2/jquery.panzoom.min.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
@@ -18,6 +20,18 @@ require_once "config.php";
 	<style>
 		.book_container_width {
 		    max-width: <?=$CONFIG["max_book_width"]?>px;
+		}
+
+		.display-double #flipbook .even .page_top_content:after {
+			content: "<?=$CONFIG["text_top_even_pages"]?>";
+		}
+
+		.display-double #flipbook .odd .page_top_content:after {
+			content: "<?=$CONFIG["text_top_odd_pages"]?>";
+		}
+
+		.display-single #flipbook .page_top_content:after {
+			content: "<?=$CONFIG["text_top_single_pages"]?>";
 		}
 	</style>
 	<?php } ?>
@@ -80,50 +94,53 @@ require_once "config.php";
 	</template>
 
 	<div id="id-form" class="container book_container_width input-append form-inline form-group">
+		<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control top-form-element"><i class="glyphicon glyphicon-zoom-in"></i></span>
 		<input id="id-q" placeholder="" type="text" class="form-control search-query top-form-element" />
 		<span id="id-go" class="form-control btn btn-small btn-primary top-form-element top-form-button"></span>
 		<output id="id-found" class="form-control text top-form-element"></output>
 		<span id="id-prev" class="form-control btn btn-primary top-form-element top-form-button"></span>
 		<span id="id-next" class="form-control btn btn-primary top-form-element top-form-button"></span>
 	</div>
-	<div id="book_container" class="book_container_width">
-		<div id="pages_depth_l" class="pages_depth_element"></div>
-		<div id="flipbook_parent">
-			<div id="flipbook"></div>
+	<div id="zoom_container">
+		<div id="book_container" class="book_container_width">
+			<div id="pages_depth_l" class="pages_depth_element"></div>
+			<div id="flipbook_parent">
+				<div id="flipbook"></div>
+			</div>
+			<div id="pages_depth_r" class="pages_depth_element"></div>
 		</div>
-		<div id="pages_depth_r" class="pages_depth_element"></div>
-	</div>
-	<?php
-		$browser = get_browser(null, true);
-		if ($browser['browser']=='Firefox'){
-	?>
-	
-	<!-- START workaround for clip-path on firefox -->
-	<!-- the svg must be loaded before style.css -->
-	<!-- the style must be here and not inside style.css -->
-	<svg width="0" height="0">
-		<defs>
-			<clipPath id="pages_depth_clip_l" clipPathUnits="objectBoundingBox">
-				<polygon points="0 0.01, 1 0, 1 1, 0 0.99" />
-			</clipPath>
-			<clipPath id="pages_depth_clip_r" clipPathUnits="objectBoundingBox">
-				<polygon points="0 0, 1 0.01, 1 0.99, 0 1" />
-			</clipPath>
-		</defs>
-	</svg>
-	<style>
-		#pages_depth_l {
-			clip-path: url("#pages_depth_clip_l");
-		}
-		#pages_depth_r {
-	    	clip-path: url("#pages_depth_clip_r");
-		}
-	</style>
+		<?php
+			$browser = get_browser(null, true);
+			if ($browser['browser']=='Firefox'){
+		?>
+		
+		<!-- START workaround for clip-path on firefox -->
+		<!-- the svg must be loaded before style.css -->
+		<!-- the style must be here and not inside style.css -->
+		<svg width="0" height="0">
+			<defs>
+				<clipPath id="pages_depth_clip_l" clipPathUnits="objectBoundingBox">
+					<polygon points="0 0.01, 1 0, 1 1, 0 0.99" />
+				</clipPath>
+				<clipPath id="pages_depth_clip_r" clipPathUnits="objectBoundingBox">
+					<polygon points="0 0, 1 0.01, 1 0.99, 0 1" />
+				</clipPath>
+			</defs>
+		</svg>
+		<style>
+			#pages_depth_l {
+				clip-path: url("#pages_depth_clip_l");
+			}
+			#pages_depth_r {
+				clip-path: url("#pages_depth_clip_r");
+			}
+		</style>
 
-	<!-- END workaround for clip-path on firefox -->
-	<?php
-	}
-	?>
+		<!-- END workaround for clip-path on firefox -->
+		<?php
+		}
+		?>
+	</div>
 
 	<script>
 		var CONFIG = <?=json_encode(config_for_js())?>;
@@ -132,6 +149,7 @@ require_once "config.php";
 		var $book = $('#flipbook'); // book jQuery element
 		var $book_parent = $('#flipbook_parent');
 		var $size_parent = $('#book_container');
+		var $zoom_elem = $('#zoom_container');
 		var pages; // number of pages (including 4 cover pages)
 		var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
 		var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
@@ -152,6 +170,34 @@ require_once "config.php";
 		var show_peel_corner_TO;
 		var pause_turn_events;
 		var search_results_clicked;
+		var zoom_active;
+
+		function zoom_toggle(){
+			if (zoom_active){
+				$zoom_elem.panzoom("reset").panzoom("destroy");
+				zoom_active=0;
+			} else {
+				$zoom_elem.panzoom({
+					minScale: 0.5,
+					maxScale: 5.0,
+					increment: 0.1,
+					// onZoom: function(){
+					// 	handle_scrollable_pages(page);
+					// }
+				}).panzoom('zoom', true);
+				$body.on('mousewheel.focal', function(ev) {
+					ev.preventDefault();
+					var delta = ev.delta || ev.originalEvent.wheelDelta;
+					var zoomOut = delta ? delta < 0 : ev.originalEvent.deltaY > 0;
+					$zoom_elem.panzoom('zoom', zoomOut, {
+						increment: 0.1,
+						animate: false,
+						focal: ev
+					});
+				});
+				zoom_active = 1;
+			}
+		}//zoom_toggle
 
 		// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 		function tmpl(name,id){
@@ -477,7 +523,7 @@ require_once "config.php";
 			turn_options.height = $size_parent.height();
 			turn_options.pages = pages;
 			turn_options.direction = direction;
-			$book.turn(turn_options);
+			$book.turn(turn_options);			
 			resize();
 			$(window).off('resize',resize).resize(resize);
 			setTimeout(resize,100);
@@ -575,7 +621,6 @@ require_once "config.php";
 
 		// turnjs turning event - when starting to animate turning to a specific page
 		function turning(event, page, view) {
-			$('#flipbook .zoomin').removeClass('zoomin');
 			clearTimeout(show_peel_corner_TO);
 			if (pause_turn_events){
 				return;
@@ -626,10 +671,14 @@ require_once "config.php";
 			$book_parent.width(width);
 			handle_pages_depth();
 			$book.turn("size",width,height);
+			handle_scrollable_pages();
 		}
 
 		// make changes to a page
 		function process_page(page,page_element,page_content,title){
+			if (!page_element.runonce){
+				page_element.runonce = 1;
+			}//runonce
 			if (CONFIG["hr_to_read_more"]){
 				var hr = page_element.find("hr:first");
 				var hidden = hr.nextAll().addClass('hr_read_more_text').hide();
@@ -657,45 +706,9 @@ require_once "config.php";
 
 		// bind events to a page after it has turned
 		function page_turned(page,page_element){
-			if (CONFIG["allow_zoomin"]) {
-				//var page_content = page_element.find('.page_content');
-				page_element.off('dblclick dbltap').on('dblclick dbltap',function(){
-					toggle_zoomin(page,page_element);
-				});
-				
-				// detect double tap
-				page_element.off('touchstart').on('touchstart',function(){
-					var elem = this;
-					elem.data_doubletap = 1 + (elem.data_doubletap || 0);
-					if (elem.data_doubletap==2){
-						// this is the second tap
-						if (elem.data_doubletap==2){
-							$(elem).trigger('dbltap');
-						}
-					}
-					// reset timer for next tap
-					clearTimeout(elem.data_doubletapTO);
-					elem.data_doubletapTO = setTimeout(function(){
-						elem.data_doubletap = 0;
-					},400);
-				});
-			}
-
 			if (window.page_turned_hook)
 				window.page_turned_hook(page, page_element);
 		}// page_turned
-
-		// zoom-in toggle
-		function toggle_zoomin(page,page_element){
-			if (page_element[0].zoomin_delay_TO){
-				clearTimeout(page_element[0].zoomin_delay_TO); // reset timer
-			} else {
-				page_element.toggleClass('zoomin');
-			}
-			page_element[0].zoomin_delay_TO = setTimeout(function(){
-				page_element[0].zoomin_delay_TO=0;
-			},600);
-		}// toggle_zoomin
 
 		// load a specific page number using ajax
 		function load_page(page) {
@@ -769,6 +782,7 @@ require_once "config.php";
 
 		// handle scrollable pages
 		function handle_scrollable_pages(page){
+			page = page || current_page();
 			var scrollable;
 			var page_content = document.querySelector('.p'+page+' .page_content');
 			if (page_content){
@@ -839,6 +853,7 @@ require_once "config.php";
 					$('#id-go').click();
 				}
 			});
+			$('#id-zoom').click(zoom_toggle);
 			$('#id-go').click(handle_search);
 			$('#id-prev').html(CONFIG["text_prev"]).click(function(){
 				search_next_prev('previous');
@@ -918,6 +933,7 @@ require_once "config.php";
 				// load only search results
 				handle_search();
 			}
+			init();
 
 		},1); // setTimeout main function
 	</script>
