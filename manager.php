@@ -65,8 +65,7 @@ if (!$MANAGER_MODE) {
 	$param = @$action[1];
 	$action = $action[0];
 	$actions = array(
-			'config' => 'Edit Configuration',
-			'edit;custom/style.css' => 'Edit style.css',
+			'config' => 'Books Configuration',
 			'auth' => 'Validate Google Auth',
 			'clearauth' => 'Revoke Google Credentials',
 			'testcache;list' => 'Test List Cache',
@@ -79,16 +78,16 @@ if (!$MANAGER_MODE) {
 			'clearlog;phplog' => 'Clear PHP Log',
 			'logout' => 'Log out',
 	);
+
+	if ($getaction == 'edit') {
+		include("manager-edit.include.php");
+		exit();
+	}
+
 	if (array_key_exists($getaction,$actions)) {
 		$action_name = $actions[$getaction];
 		if ($action == 'config') {
 			include("manager-config.include.php");
-			exit();
-		}
-		if ($action == 'edit') {
-			global $FILENAME;
-			$FILENAME = $param;
-			include("manager-edit.include.php");
 			exit();
 		}
 

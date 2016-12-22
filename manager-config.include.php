@@ -2,7 +2,7 @@
 // Configuration editor //
 // This file must be included inside manager.php
 
-global $CONFIG,$CUSTOM_CONFIG_FN,$MANAGER_MODE;
+global $CONFIG,$CUSTOM_CONFIG_FN,$CUSTOM_CONFIG_NAME,$MANAGER_MODE;
 
 // allowed only on manager mode
 if (!isset($CONFIG) || empty($CUSTOM_CONFIG_FN) || empty($MANAGER_MODE)){
@@ -74,15 +74,27 @@ foreach($options as $k=>$v){
     }
 </script>
 
-<h3>Select Configuration File:</h3>
+<h3>Select Book:</h3>
 <?php
 foreach (glob("custom/config-*.json") as $filename) {
     $cfg = str_replace('custom/config-','',str_replace('.json','',$filename));
-    $active = $filename == $CUSTOM_CONFIG_FN ? 'active btn-primary':'';
+    $active = $cfg == $CUSTOM_CONFIG_NAME ? 'active btn-primary':'';
     echo "<a class='btn btn-default configFilename $active' href='?f=config&cfg=$cfg'>$cfg</a>";
 }
-
 ?>
+<span id='cfg_add' class='btn btn-default configFilename' href='#'>+ Add</span>
+<div id="cfg_add_dialog" style="display:none" title="Select a name for new book config">
+    <div id="cfg_add_name_container">
+        <input id="cfg_add_name" type="text" class="form-control">
+    </div>
+</div>
+<div id="cfg_selected">
+    <?=$CUSTOM_CONFIG_NAME?> <?=$CUSTOM_CONFIG_FN?> <a target="_blank" href="/?cfg=<?=$CUSTOM_CONFIG_NAME?>">Go to that book</a>
+</div>
+
+<h3><a href="?f=edit&fn=style-<?=$CUSTOM_CONFIG_NAME?>.css">Edit Custom style.css</a></h3>
+<h3><a href="?f=edit&fn=script-<?=$CUSTOM_CONFIG_NAME?>.js">Edit Custom script.js</a></h3>
+
 <h3>Configuration:</h3>
 <form id='frm' method='POST'><input name='configjson' type='hidden'/></form>
 <div id="form_wrapper" class="configuration form-container form-inline">
@@ -94,6 +106,28 @@ foreach (glob("custom/config-*.json") as $filename) {
     </div>
 </div>
 <script>
+    $('#cfg_add').click(function(ev){
+        var bad = /[^a-z0-9_\-]/g;
+        ev.preventDefault();
+        ev.stopPropagation();
+        var name = prompt('Name for the new book config');
+        while (name && bad.test(name)){
+            name = prompt('Use only English letters or numbers, no signs.\nName for the new book config');
+        }
+        if (name){
+            location.href = '?f=config&addcfg=1&cfg='+name;
+        }
+    });
+    // not in use yet:
+    $('#cfg_add_name').on('keyup change click',function(ev){
+        var val = this.value;
+        var bad = /[^a-z0-9_\-]/g;
+        if (bad.test(val)){
+            val = val.replace(bad,'');
+            this.value = val;
+        }
+    });
+
     var $configjson = $('input[name="configjson"]');
     var $inputs = $('#inputs');
     var options = <?=json_encode($options)?>;

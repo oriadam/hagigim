@@ -12,6 +12,7 @@ switch ($func) {
 		}
 		
 		$id = $_GET['id'];
+		$cache_id = $id;
 		$modifiedTime = 1 * @$_GET['modifiedTime'];
 		
 		// ///////////////
@@ -20,7 +21,7 @@ switch ($func) {
 		if (empty($_GET['id'])) {
 			ajax_fatal('Missing required parameter: id');
 		}
-		$cached = cache_read($id, CACHETYPE_FILE, $modifiedTime);
+		$cached = cache_read($cache_id, CACHETYPE_FILE, $modifiedTime);
 		if ($cached) {
 			echo $cached;
 			exit();
@@ -44,7 +45,7 @@ switch ($func) {
 				'content' => content($content)
 		);
 		$cached = json_encode($return);
-		cache_write($id, CACHETYPE_FILE, $cached);
+		cache_write($cache_id, CACHETYPE_FILE, $cached);
 		echo $cached;
 		exit();
 		break;
@@ -53,11 +54,12 @@ switch ($func) {
 		// ////////////////
 		// SEARCH PAGES //
 		// ////////////////
-		$q = isset($_GET["q"]) ? $_GET["q"] : '';
+		$cfg = @$_GET["cfg"] ?: '';
+		$q = @$_GET["q"] ?: '';
 		$q = preg_replace('@[\"\']@', '', $q);
-		$id = urlencode($q) ?: '_empty_';
+		$cache_id = $cfg . '__' . urlencode($q) ?: '_empty_';
 		$modifiedTime = time() - $CONFIG["list_cache_expires"];
-		$cached = cache_read($id, CACHETYPE_LIST, $modifiedTime);
+		$cached = cache_read($cache_id, CACHETYPE_LIST, $modifiedTime);
 		if ($cached) {
 			echo $cached;
 			exit();
@@ -103,7 +105,7 @@ switch ($func) {
 			$return[] = $row;
 		}
 		$cached = json_encode($return);
-		cache_write($id, CACHETYPE_LIST, $cached);
+		cache_write($cache_id, CACHETYPE_LIST, $cached);
 		echo $cached;
 		exit();
 		break;

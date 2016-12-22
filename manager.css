@@ -72,3 +72,16 @@ html .configuration .CodeMirror {
 }
 
 .configFilename.active {}
+
+#cfg_selected {
+    font-size: 88%;
+    margin: 10px 10px;
+}
+
+#cfg_selected:before {
+    content: " Current: ";
+}
+
+#cfg_selected a {
+    display: block;
+}

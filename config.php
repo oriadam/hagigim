@@ -4,18 +4,31 @@ For example, add a config json called 'custom/config-myCustomConfig.json' and se
 Them, access the same url but with query string of ?cfg=myCustomConfig
 */
 
-global $CONFIG,$CUSTOM_CONFIG_FN;
+global $CONFIG,$CUSTOM_CONFIG_FN,$CUSTOM_CONFIG_NAME,$CUSTOM_PATH;
+$CUSTOM_PATH = "custom";
 // load defaults
 $CONFIG = json_decode(file_get_contents('config.json'), true);
-$CUSTOM_CONFIG_FN = 'custom/config-default.json';
+$CUSTOM_CONFIG_NAME = 'default';
+$CUSTOM_CONFIG_FN = "$CUSTOM_PATH/config-$CUSTOM_CONFIG_NAME.json";
 
-// load custom default config, if any
+// load custom default config,"if a"y
 read_from_config_file($CUSTOM_CONFIG_FN);
 
 // load custom config, if any
 if (!empty($_GET['cfg']) && strpos($_GET['cfg'],'/')===FALSE) {
-	$CUSTOM_CONFIG_FN = "custom/config-$_GET[cfg].json";
-	read_from_config_file($CUSTOM_CONFIG_FN);
+	$name = $_GET['cfg'];
+	$fn = "$CUSTOM_PATH/config-$name.json";
+	if (file_exists($fn)){
+		$CUSTOM_CONFIG_FN = $fn;
+		$CUSTOM_CONFIG_NAME = $name;
+		read_from_config_file($CUSTOM_CONFIG_FN);
+	}  else if (!empty($_REQUEST['addcfg'])){
+		$CUSTOM_CONFIG_FN = $fn;
+		$CUSTOM_CONFIG_NAME = $name;
+		file_put_contents($CUSTOM_CONFIG_FN,'{}');
+		file_put_contents("$CUSTOM_PATH/style-$CUSTOM_CONFIG_NAME.css","@import url('style-default.css');\n");
+		file_put_contents("$CUSTOM_PATH/script-$CUSTOM_CONFIG_NAME.js","//function process_page_hook(page, page_element, page_content, title){}");
+	}
 }
 
 // constants:
@@ -107,4 +120,8 @@ function cache_write($id, $cachetype, $content) {
 	} catch (Excpetion $e) {
 		mylog('cache_write cant write to "' . $path . '" Exception: ' . $e);
 	}
+}
+
+function is_firefox(){
+	return preg_match('/Firefox/i',$_SERVER['HTTP_USER_AGENT']);
 }

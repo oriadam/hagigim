@@ -30,6 +30,12 @@
             "Always Single": "always"
         }
     },
+    "toolbar_position": {
+        "options": {
+            "Top": "top",
+            "Bottom": "bottom"
+        }
+    },
     "show_peel_corner": {
         "name": "Fold a corner after 2 seconds",
         "options": {
@@ -72,6 +78,10 @@
     },
     "text_hr_read_more": {
         "name": "Clickable text for hidden footnotes",
+        "type": "text"
+    },
+    "text_page_number": {
+        "name": "Text for 'page:' in toolbar",
         "type": "text"
     },
     "pages_depth_paper_thickness": {
@@ -230,5 +240,8 @@
     "text_prev": {
         "name": "Text: Previous",
         "type": "text"
+    },
+    "custom_css": {
+        "type": "text/css"
     }
 }

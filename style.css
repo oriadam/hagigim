@@ -1,72 +1,22 @@
 @import url('scrollbars.css');
 @import url('loading.css');
+@import url('toolbar.css');
 .form-group {
     direction: rtl;
 }
 
-#id-form {
-    height: 40px;
-    margin-bottom: 5px;
-    white-space: nowrap;
+#body_wrapper {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
     padding: 0;
-}
-
-.mobile #id-form {
-    margin-top: 5px;
-    margin-bottom: 0;
-}
-
-#id-found {
-    display: inline-block;
-}
-
-#id-form .top-form-element {
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.ltr #id-form .top-form-element {
-    float: left;
-}
-
-.rtl #id-form .top-form-element {
-    float: right;
-}
-
-.ltr #id-form .top-form-element:not(:last-child) {
-    /* 5 elements = 10% so far*/
-    margin-right: 2%;
-}
-
-.rtl #id-form .top-form-element:not(:last-child) {
-    /* 5 elements = 10% so far*/
-    margin-left: 2%;
-}
-
-#id-zoom {
-    /* 5% + 10% = 15% so far */
-    width: 5%;
-}
-
-#id-q {
-    /* 25% + 15% = 40% so far */
-    width: 25%;
-}
-
-#id-form .top-form-button {
-    /* 3 buttons = 30% + 40% = 70% so far */
-    width: 10%;
-}
-
-#id-found {
-    /* 30% + 70% = 100% so far */
-    width: 30%;
+    overflow: visible;
 }
 
 .book_container_width {
     width: calc(100vw - 20px);
-    height: calc(100vh - 70px);
     margin: 0 auto;
+    white-space: nowrap;
 }
 
 
@@ -216,55 +166,6 @@ body {
     font-size: 1.1em;
 }
 
-
-/* For page numbers on corner of pages uncomment this block:
-.display-single #flipbook .page_number_wrapper,
-#flipbook .even .page_number_wrapper,
-#flipbook .even .page_top_content {
-text-align: right;
-}
-
-.display-double #flipbook .odd .page_number_wrapper,
-.display-double #flipbook .odd .page_top_content {
-text-align: left;
-}
-
-#flipbook .page_number_wrapper:hover {
-opacity: 1;
-}
-
-#flipbook .page_number {
-display: inline-block;
-width: 60px;
-font-size: 12px;
-height: 22px;
-line-height: 22px;
-padding: 0 10px;
-background: #999;
-color: #fff;
-}
-
-.display-single #flipbook .page_number,
-#flipbook .even .page_number {
-text-align: left;
-border-radius: 10px 0 0 10px;
-}
-
-.display-double #flipbook .odd .page_number {
-text-align: right;
-border-radius: 0 10px 10px 0;
-}
-
-@media only screen and (max-width: 720px) {
-#flipbook .page_number {
-    width:49px;
-    height:15px;
-    line-height:15px;
-    font-size:9px;
-}
-}
-*/
-
 #flipbook .first_content_line,
 #flipbook .first_content_line * {
     font-weight: bold;
@@ -293,7 +194,7 @@ border-radius: 0 10px 10px 0;
 }
 
 #book_container {
-    white-space: nowrap;
+    height: calc(100vh - 50px);
 }
 
 #book_container>div {
@@ -338,15 +239,6 @@ border-radius: 0 10px 10px 0;
 
 .mobile .book_container_width {
     width: calc(100vw - 10px);
-}
-
-.mobile .form-control,
-.mobile .btn {
-    padding-left: 1px;
-    padding-right: 1px;
-    font-size: 11px;
-    line-height: 14px;
-    height: 28px;
 }
 
 
@@ -413,4 +305,13 @@ border-radius: 0 10px 10px 0;
     line-height: 2.8vh;
     margin: 0;
     white-space: normal;
+}
+
+.animation-spin {
+    animation: spin 2s infinite linear;
+}
+
+.glyphicon,
+.fa {
+    font-weight: normal;
 }

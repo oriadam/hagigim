@@ -1,0 +1,158 @@
+#toolbar {
+    z-index: 1000;
+    white-space: nowrap;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    width: 100%;
+    max-width: none;
+    height: 36px;
+}
+
+#zoom_container {
+    z-index: 100;
+}
+
+.toolbar-top #toolbar {
+    top: 0;
+}
+
+.toolbar-top #zoom_container {
+    margin-top: 40px;
+}
+
+.mobile.toolbar-top #toolbar {
+    top: 5px;
+}
+
+.toolbar-bottom #toolbar {
+    bottom: 5px;
+}
+
+#id-found {
+    display: inline-block;
+}
+
+#toolbar .toolbar-item {
+    height: 36px;
+    width: auto;
+    min-width: 36px;
+    font-size: 16px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0px 5px;
+    line-height: 36px;
+}
+
+#toolbar .toolbar-item.btn {
+    padding: 10px 5px;
+    line-height: normal;
+}
+
+#id-buttons-container {
+    float: left;
+    width: auto;
+}
+
+#id-search-container {
+    float: right;
+    width: auto;
+}
+
+.ltr #toolbar li {
+    float: left;
+}
+
+.rtl #toolbar li {
+    float: right;
+}
+
+.ltr #toolbar li:not(:last-child) {
+    margin-right: 3px;
+}
+
+.rtl #toolbar li:not(:last-child) {
+    margin-left: 3px;
+}
+
+#id-found,
+#id-q {
+    min-width: 50px;
+    max-width: 300px;
+    width: 10vw;
+}
+
+
+/* collapse menu, from: https://css-tricks.com/responsive-menu-concepts/ */
+
+#toolbar_burger_button {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+nav[role="custom-dropdown"] ul {
+    padding: 0;
+    margin: 0 auto;
+    width: 100%;
+    list-style: none;
+}
+
+nav[role="custom-dropdown"] ul>li {
+    float: left;
+    text-align: center;
+    cursor: pointer;
+}
+
+#toolbar_burger_button,
+[for="toolbar_burger_button"] {
+    display: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+@media only screen and (max-width: 720px) {
+    #id-buttons-container,
+    #id-search-container {
+        float: none;
+    }
+    #toolbar .toolbar-item {
+        display: block;
+    }
+    nav[role="custom-dropdown"] ul {
+        display: none;
+        height: 100%;
+    }
+    nav[role="custom-dropdown"] label {
+        position: relative;
+        display: block;
+        margin: 0;
+        color: rgba(0, 0, 0, 0);
+    }
+    nav[role="custom-dropdown"] label:after {
+        color: #000;
+        position: absolute;
+        right: .25em;
+        top: 0;
+        content: "\2261";
+        font-size: 1.8em;
+    }
+    nav[role="custom-dropdown"] input[type=checkbox]:checked~label:after {
+        color: #222;
+    }
+    nav[role="custom-dropdown"] input[type=checkbox]:checked~ul {
+        display: block;
+    }
+    nav[role="custom-dropdown"] input[type=checkbox]:checked~ul>li {
+        width: 100%;
+        opacity: .8;
+        text-align: left;
+    }
+    nav[role="custom-dropdown"] input[type=checkbox]:checked~ul>li:after {
+        position: absolute;
+        right: .25em;
+        content: "\203A";
+        font: bold 1.4em sans-serif;
+    }
+}

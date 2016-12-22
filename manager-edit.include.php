@@ -2,14 +2,21 @@
 // File editor //
 // This file must be included inside manager.php
 
-global $CONFIG,$MANAGER_MODE,$FILENAME;
+global $CONFIG,$MANAGER_MODE,$CUSTOM_PATH;
 if (!isset($CONFIG) || empty($MANAGER_MODE)){
     exit();
 }
 
-$backup_fn = "$FILENAME.backup";
-$content = file_get_contents($FILENAME);
-$ext = explode('.',$FILENAME);
+$fn = @$_GET['fn'];
+$filename = "$CUSTOM_PATH/$fn";
+if (empty($fn)||strpos($fn,'..')!==FALSE||strpos($fn,'/')!==FALSE||strpos($fn,'\\')!==FALSE||!file_exists($filename)){
+    echo "Unknown exception";
+    exit();
+}
+
+$backup_fn = "$CUSTOM_PATH/$filename.backup";
+$content = file_get_contents($filename);
+$ext = explode('.',$filename);
 $ext = $ext[count($ext)-1];
 
 if (!empty($_POST['filecontent'])){
@@ -18,9 +25,9 @@ if (!empty($_POST['filecontent'])){
     if ($content != $updated){
         $content = $updated;
         // backup when necessary
-        copy($FILENAME,$backup_fn);
+        copy($filename,$backup_fn);
         // write new content to file
-        file_put_contents($FILENAME,$updated);
+        file_put_contents($filename,$updated);
     }
 }
 ?>
@@ -71,7 +78,7 @@ if (!empty($_POST['filecontent'])){
     }
 </script>
 
-<h3>Edit <?=$FILENAME?>:</h3>
+<h3>Edit <?=$fn?>:</h3>
 <form id='frm' method='POST'>
 <div id="form_wrapper" class="editfile form-container form-inline">
     <div id="inputs">

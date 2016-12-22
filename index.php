@@ -14,6 +14,7 @@ require_once "config.php";
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.panzoom/3.2.2/jquery.panzoom.min.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
 	<?php if ($CONFIG["max_book_width"]) { ?>
@@ -35,72 +36,13 @@ require_once "config.php";
 		}
 	</style>
 	<?php } ?>
-	<?=file_exists('custom/style.css') ? '<link href="custom/style.css" rel="stylesheet">':''?>
-	<?=file_exists('custom/style.css.php') ? '<link href="custom/style.css.php" rel="stylesheet">':''?>
-	<?=file_exists('custom/script.js') ? '<script src="custom/script.js"></script>':''?>
+	<link href="custom/style-<?=$CUSTOM_CONFIG_NAME?>.css" rel="stylesheet">
+	<script src="custom/script-<?=$CUSTOM_CONFIG_NAME?>.js"></script>
 	<?=$CONFIG["html_head"]?>
 </head>
-<body class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?>">
+<body class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?> toolbar-<?=$CONFIG["toolbar_position"]?>">
 	<?=$CONFIG["html_body"]?>
-	<template id="tmpl_empty_page">
-	<div class="page_outer_wrap">
-		<div class="empty_page">
-			<div class="empty_page_content"></div>
-		</div>
-	</div>
-	</template>
-	<template id="tmpl_extra_page">
-	<div class="skip_me page_wrap"></div>
-	</template>
-	<template id="tmpl_page">
-	<div class="page_wrap">
-		<div class="content_page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
-			<div class="page_top">
-				<div class='page_top_content'><?=$CONFIG["html_page_top"]?></div>
-				<?php if ($CONFIG["show_page_title"]) { ?>
-				<h1 class="page_title"></h1>
-				<?php } ?>
-			</div>
-			<div class="page_content_wrapper">
-				<div class="page_content"></div>
-			</div>
-			<?php if ($CONFIG["show_page_number"]) { ?>
-			<div class="page_number_wrapper">
-				<div class="page_number"></div>
-			</div>
-			<?php } ?>
-		</div>
-	</div>	
-	</template>
-	<template id="tmpl_cover_front">
-	<div class="hard page_wrap cover_front">
-		<?=$CONFIG["html_cover_front"]?>
-	</div>
-	</template>
-	<template id="tmpl_inside_front">
-	<div class="hard skip_me page_wrap inside_front">
-		<?=$CONFIG["html_inside_front"]?>
-	</div>
-	</template>
-	<template id="tmpl_inside_back">
-	<div class="hard skip_me page_wrap inside_back">
-		<?=$CONFIG["html_inside_back"]?>
-	</div>
-	</template>
-	<template id="tmpl_cover_back">
-	<div class="hard page_wrap cover_back">
-		<?=$CONFIG["html_cover_back"]?>
-	</div>
-	</template>
 
-	<div id="id-form" class="container book_container_width input-append form-inline form-group">
-		<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control top-form-element"><i class="glyphicon glyphicon-zoom-in"></i></span>
-		<input id="id-q" placeholder="" type="text" class="form-control search-query top-form-element" />
-		<span id="id-go" class="form-control btn btn-small btn-primary top-form-element top-form-button"></span>
-		<output id="id-found" class="form-control text top-form-element"></output>
-		<span id="id-prev" class="form-control btn btn-primary top-form-element top-form-button"></span>
-		<span id="id-next" class="form-control btn btn-primary top-form-element top-form-button"></span>
-	</div>
 	<div id="zoom_container">
 		<div id="book_container" class="book_container_width">
 			<div id="pages_depth_l" class="pages_depth_element"></div>
@@ -110,8 +52,7 @@ require_once "config.php";
 			<div id="pages_depth_r" class="pages_depth_element"></div>
 		</div>
 		<?php
-			$browser = get_browser(null, true);
-			if ($browser['browser']=='Firefox'){
+			if (is_firefox()){
 		?>
 		
 		<!-- START workaround for clip-path on firefox -->
@@ -142,6 +83,40 @@ require_once "config.php";
 		?>
 	</div>
 
+	<nav role="custom-dropdown" id="toolbar" class="container book_container_width input-append form-inline form-group">
+		<input type="checkbox" id="toolbar_burger_button" class="toolbar-item form-control">
+		<label for="toolbar_burger_button" onclick></label>
+    		
+		<ul id="id-buttons-container" class="container input-append form-inline form-group">
+			<li id="id-zoom-li">
+				<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control toolbar-item"><i class="glyphicon glyphicon-zoom-in"></i></span>
+			</li>
+		</ul>
+		<ul id="id-search-container" class="container input-append form-inline form-group">
+			<li id="id-q-li">
+				<input id="id-q" placeholder="" type="text" class="form-control search-query toolbar-item" />
+			</li>
+			<li id="id-go-li">
+				<span id="id-go" class="form-control btn btn-primary toolbar-item top-form-button"><?=$CONFIG["text_go"]?></span>
+			</li>			
+			<li id="id-found-li">
+				<output id="id-found" class="form-control text toolbar-item"></output>
+			</li>
+			<li id="id-prev-li">
+				<span id="id-prev" class="form-control btn btn-primary toolbar-item top-form-button"></span>
+			</li>
+			<li id="id-next-li">
+				<span id="id-next" class="form-control btn btn-primary toolbar-item top-form-button"></span>
+			</li>
+			<li id="id-page-number-li">
+				<label for="id-page-number" class="toolbar-item">
+					<?=$CONFIG["text_page_number"]?>
+				</label>
+				<input id="id-page-number" class="form-control toolbar-item" />
+			</li>
+		</ul>
+	</nav>
+
 	<script>
 		var CONFIG = <?=json_encode(config_for_js())?>;
 
@@ -150,7 +125,7 @@ require_once "config.php";
 		var $book_parent = $('#flipbook_parent');
 		var $size_parent = $('#book_container');
 		var $zoom_elem = $('#zoom_container');
-		var pages; // number of pages (including 4 cover pages)
+		var numpages; // number of pages (including 4 cover pages)
 		var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
 		var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
 		var loaded_pages = []; // remember which pages were already loaded (or currently loading)
@@ -171,6 +146,7 @@ require_once "config.php";
 		var pause_turn_events;
 		var search_results_clicked;
 		var zoom_active;
+		var CUSTOM_CONFIG_NAME = "<?=$CUSTOM_CONFIG_NAME?>";
 
 		function zoom_toggle(){
 			if (zoom_active){
@@ -197,6 +173,7 @@ require_once "config.php";
 				});
 				zoom_active = 1;
 			}
+			$('#id-zoom').toggleClass('active',zoom_active);
 		}//zoom_toggle
 
 		// create a new jQuery element out of a <template> element of id '#tmpl_'+name
@@ -228,7 +205,7 @@ require_once "config.php";
 				$('#id-next').toggleClass('disabled',search_position>=search_results.length-1);
 				$('#id-prev').toggleClass('disabled',search_position<=0);
 			} else {
-				$('#id-next').toggleClass('disabled',current_page()>=pages);
+				$('#id-next').toggleClass('disabled',current_page()>=numpages);
 				$('#id-prev').toggleClass('disabled',current_page()<=1);
 			}
 		}//set_buttons_state
@@ -264,7 +241,11 @@ require_once "config.php";
 			if (page == 'next' || page == 'previous') {
 				$book.turn(page);
 			} else {
-				$book.turn('page',page);
+				if (page>0 && page<numpages){
+					$book.turn('page',page);
+				} else {
+					console.log('Error go_to_page(',page,') - page not in range of book');
+				}
 			}
 			pages_depth_turning();
 			consolelog('go_to_page(',page,') to ',page);
@@ -331,7 +312,7 @@ require_once "config.php";
 				}
 			} else {
 				// do search
-				var url='ajax.php?f=list&q='+encodeURI(q||'');
+				var url='ajax.php?f=list&cfg='+CUSTOM_CONFIG_NAME+'&q='+encodeURI(q||'');
 				var ajax_object = ajax(url,function(data){
 					if (data.error){
 						$('#id-found').text(data.error);
@@ -423,7 +404,7 @@ require_once "config.php";
 		function load_book(q,callback) {
 			set_found_text("");
 			set_searching_state(true);
-			var url = 'ajax.php?f=list&q='+encodeURI(q||'');
+			var url = 'ajax.php?f=list&cfg='+CUSTOM_CONFIG_NAME+'&q='+encodeURI(q||'');
 			var ajax_object = ajax(url,function(data){
 				set_searching_state(false);
 				search_results = [];
@@ -458,8 +439,8 @@ require_once "config.php";
 		// populate the book. based on book_list. removes previous content if any.
 		function build_book(){
 			// reset
-			pages = book_list.length;
-			var extra_blank_page = !!(pages % 2); // for odd number of pages, add a blank page at the end
+			numpages = book_list.length;
+			var extra_blank_page = !!(numpages % 2); // for odd number of pages, add a blank page at the end
 			if (CONFIG["hard_cover"]) {
 				cover_pages_before = cover_pages_after = 2;
 			} else {
@@ -468,7 +449,7 @@ require_once "config.php";
 			if(extra_blank_page){
 				cover_pages_after++;
 			}
-			pages += cover_pages_before + cover_pages_after;
+			numpages += cover_pages_before + cover_pages_after;
 
 			var id = $book[0].id;
 			try{
@@ -508,20 +489,20 @@ require_once "config.php";
 
 			// when number of pages is odd, add another blank page to allow folding of the last page
 			if (extra_blank_page) {
-				append('extra_page',pages - 2);
+				append('extra_page',numpages - 2);
 			}
 
 			// add back cover
 			if (CONFIG["hard_cover"]){
-				append('inside_back',pages-1,'inside_back');
-				append('cover_back',pages,'cover_back');
+				append('inside_back',numpages-1,'inside_back');
+				append('cover_back',numpages,'cover_back');
 			}
 
 			// the turnjs magic!
 			var turn_options = CONFIG["turn_options"];
 			turn_options.width = $size_parent.width() - pages_depth_width;
 			turn_options.height = $size_parent.height();
-			turn_options.pages = pages;
+			turn_options.pages = numpages;
 			turn_options.direction = direction;
 			$book.turn(turn_options);			
 			resize();
@@ -559,7 +540,7 @@ require_once "config.php";
 			}
 			var width = 0;
 			if (turn_display_mode=='double') {
-				width = Math.min(CONFIG["pages_depth_max_width"],Math.floor(pages*CONFIG["pages_depth_paper_thickness"]));
+				width = Math.min(CONFIG["pages_depth_max_width"],Math.floor(numpages*CONFIG["pages_depth_paper_thickness"]));
 			}
 			var height = $size_parent.height();
 			if (pages_depth_width !== width || pages_depth_height !== height){
@@ -578,7 +559,7 @@ require_once "config.php";
 		// called by turned()
 		function pages_depth_turning() {
 			if (pages_depth_width){
-				var percent_of_book = current_page()/pages; 
+				var percent_of_book = current_page()/numpages; 
 				if (direction == "rtl"){
 					percent_of_book = 1-percent_of_book;
 				}
@@ -629,7 +610,7 @@ require_once "config.php";
 				event.preventDefault();
 				go_to_page(page);
 			} else {
-				if (page > pages - cover_pages_after)
+				if (page > numpages - cover_pages_after)
 					return; // page out of range, a cover page, or is already loaded
 				var range = $book.turn('range', page);
 				for (var i = range[0]; i<=range[1]; i++){
@@ -658,6 +639,7 @@ require_once "config.php";
 				// bug: showing peel disables the scrolling
 				show_peel_corner();
 			}
+			$('#id-page-number').val(page);
 			
 			set_buttons_state();	
 		}//turned
@@ -712,7 +694,7 @@ require_once "config.php";
 
 		// load a specific page number using ajax
 		function load_page(page) {
-			if (page<=cover_pages_before || page>pages - cover_pages_after || loaded_pages[page]){
+			if (page<=cover_pages_before || page>numpages - cover_pages_after || loaded_pages[page]){
 				return; // page out of range, a cover page, or is already loaded
 			}
 
@@ -725,7 +707,9 @@ require_once "config.php";
 				loaded_pages[page]=1; // do not load same page twice
 
 				// Get the data for that page
-				ajax( 'ajax.php?f=content&id=' + book_list[index].id + '&modifiedTime=' + book_list[index].modifiedTime,function(data) {
+				var url = 'ajax.php?f=content&id=' + book_list[index].id + '&modifiedTime=' + book_list[index].modifiedTime;
+				// p.s: no need for cfg parameter here
+				ajax(url,function(data) {
 					if (data.error){
 						data.content = 'Error: ' + data.error;
 						loaded_pages[page]=0; // allow retry loading by turning pages
@@ -861,6 +845,14 @@ require_once "config.php";
 			$('#id-next').html(CONFIG["text_next"]).click(function(){
 				search_next_prev('next');
 			});
+			$('#id-page-number').change(function(){
+				var n = 1*this.value;
+				if (n>0 && n<numpages){
+					go_to_page(n);
+				} else {
+					this.value='?';
+				}
+			});
 			$pages_depth_tooltip = $('<div id="pages_depth_tooltip">').hide().appendTo($body);
 			if (CONFIG["browse_via_pages_depth"]){
 				$('#pages_depth_l,#pages_depth_r').on('mousemove',function(event){
@@ -888,7 +880,7 @@ require_once "config.php";
 					} else {
 						// handle right side (left side on rtl)
 						pages_offset = current_page() + cover_pages_before;
-						relevant_pages = pages - pages_offset - cover_pages_after - 1;
+						relevant_pages = numpages - pages_offset - cover_pages_after - 1;
 						if (relevant_pages > 0) {
 							pages_depth_tooltip_page = pages_offset + Math.round(percent * relevant_pages);
 						} else {
@@ -909,7 +901,7 @@ require_once "config.php";
 					$pages_depth_tooltip.hide();
 				}).on('click',function(){
 					if (pages_depth_tooltip_page){
-						go_to_page(Math.min(pages - cover_pages_after,pages_depth_tooltip_page + cover_pages_before)); // i don't understant why the +1 is necessary, but it is :-/
+						go_to_page(Math.min(numpages - cover_pages_after,pages_depth_tooltip_page + cover_pages_before)); // i don't understant why the +1 is necessary, but it is :-/
 					}
 				})
 			}
@@ -933,10 +925,61 @@ require_once "config.php";
 				// load only search results
 				handle_search();
 			}
-			init();
-
 		},1); // setTimeout main function
 	</script>
+
+	<template id="tmpl_empty_page">
+	<div class="page_outer_wrap">
+		<div class="empty_page">
+			<div class="empty_page_content"></div>
+		</div>
+	</div>
+	</template>
+	<template id="tmpl_extra_page">
+	<div class="skip_me page_wrap"></div>
+	</template>
+	<template id="tmpl_page">
+	<div class="page_wrap">
+		<div class="content_page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
+			<div class="page_top">
+				<div class='page_top_content'><?=$CONFIG["html_page_top"]?></div>
+				<?php if ($CONFIG["show_page_title"]) { ?>
+				<h1 class="page_title"></h1>
+				<?php } ?>
+			</div>
+			<div class="page_content_wrapper">
+				<div class="page_content"></div>
+			</div>
+			<?php if ($CONFIG["show_page_number"]) { ?>
+			<div class="page_number_wrapper">
+				<div class="page_number"></div>
+			</div>
+			<?php } ?>
+		</div>
+	</div>	
+	</template>
+	<template id="tmpl_cover_front">
+	<div class="hard page_wrap cover_front">
+		<?=$CONFIG["html_cover_front"]?>
+	</div>
+	</template>
+	<template id="tmpl_inside_front">
+	<div class="hard skip_me page_wrap inside_front">
+		<?=$CONFIG["html_inside_front"]?>
+	</div>
+	</template>
+	<template id="tmpl_inside_back">
+	<div class="hard skip_me page_wrap inside_back">
+		<?=$CONFIG["html_inside_back"]?>
+	</div>
+	</template>
+	<template id="tmpl_cover_back">
+	<div class="hard page_wrap cover_back">
+		<?=$CONFIG["html_cover_back"]?>
+	</div>
+	</template>
+	
 	<?=$CONFIG["html_footer"]?>
+
 </body>
 </html>
