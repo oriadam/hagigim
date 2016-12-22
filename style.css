@@ -193,10 +193,6 @@ body {
     overflow: hidden;
 }
 
-#book_container {
-    height: calc(100vh - 50px);
-}
-
 #book_container>div {
     display: inline-block;
     float: left;

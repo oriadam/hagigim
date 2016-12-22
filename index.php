@@ -89,7 +89,7 @@ require_once "config.php";
     		
 		<ul id="id-buttons-container" class="container input-append form-inline form-group">
 			<li id="id-zoom-li">
-				<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control toolbar-item"><i class="glyphicon glyphicon-zoom-in"></i></span>
+				<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control toolbar-item"><i class="fa fa-search-plus"></i></span>
 			</li>
 		</ul>
 		<ul id="id-search-container" class="container input-append form-inline form-group">

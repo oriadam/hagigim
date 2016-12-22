@@ -6,7 +6,17 @@
     position: fixed;
     width: 100%;
     max-width: none;
-    height: 36px;
+    height: 25px;
+}
+
+#book_container {
+    height: calc(100vh - 30px);
+}
+
+#toolbar .toolbar-item {
+    height: 25px;
+    min-width: 25px;
+    line-height: 25px;
 }
 
 #zoom_container {
@@ -18,7 +28,7 @@
 }
 
 .toolbar-top #zoom_container {
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 .mobile.toolbar-top #toolbar {
@@ -26,7 +36,7 @@
 }
 
 .toolbar-bottom #toolbar {
-    bottom: 5px;
+    bottom: 2px;
 }
 
 #id-found {
@@ -34,19 +44,16 @@
 }
 
 #toolbar .toolbar-item {
-    height: 36px;
     width: auto;
-    min-width: 36px;
-    font-size: 16px;
+    font-size: 13px;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     padding: 0px 5px;
-    line-height: 36px;
 }
 
 #toolbar .toolbar-item.btn {
-    padding: 10px 5px;
+    padding: 5px 5px;
     line-height: normal;
 }
 
@@ -113,6 +120,13 @@ nav[role="custom-dropdown"] ul>li {
 }
 
 @media only screen and (max-width: 720px) {
+    #toolbar #id-q,
+    #toolbar #id-found {
+        width: 50px;
+    }
+}
+
+@media only screen and false and (max-width: 720px) {
     #id-buttons-container,
     #id-search-container {
         float: none;
