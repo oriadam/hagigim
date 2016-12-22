@@ -67,20 +67,21 @@
     width: auto;
 }
 
-.ltr #toolbar li {
+#toolbar li {
     float: left;
 }
 
-.rtl #toolbar li {
+.rtl #id-search-container li {
     float: right;
 }
 
-.ltr #toolbar li:not(:last-child) {
-    margin-right: 3px;
+#toolbar li:not(:last-child) {
+    margin-right: 2px;
 }
 
-.rtl #toolbar li:not(:last-child) {
-    margin-left: 3px;
+.rtl #id-search-container li:not(:last-child) {
+    margin-right: 0;
+    margin-left: 2px;
 }
 
 #id-found,

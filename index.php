@@ -88,6 +88,11 @@ require_once "config.php";
 		<label for="toolbar_burger_button" onclick></label>
     		
 		<ul id="id-buttons-container" class="container input-append form-inline form-group">
+			<?php if (!empty($CONFIG["url_homepage"])){?>
+			<li id="id-homepage-li">
+				<a id="id-homepage" href="<?=$CONFIG["url_homepage"]?>" class="btn btn-primary form-control toolbar-item"><i class="fa fa-home"></i></a>
+			</li>
+			<?php } ?>
 			<li id="id-zoom-li">
 				<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control toolbar-item"><i class="fa fa-search-plus"></i></span>
 			</li>

@@ -1,5 +1,10 @@
 {
     "google_drive_query": {},
+    "url_homepage": {
+        "name": "Toolbar homepage URL",
+        "type": "text"
+    },
+
     "list_cache_expires": {
         "name": "Cache search results for",
         "desc": "Time to keep search results in cache",
