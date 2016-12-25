@@ -4,6 +4,8 @@
     "google_drive_query": "'0B7cabAnVcz8xTHNUd1JieUFjQm8' in parents and trashed = false",
     "url_homepage": "",
     "list_cache_expires": 86400,
+    "generate_index": "start",
+    "index_lines_per_page": 50,
     "start_with_closed_book": false,
     "hard_cover": true,
     "mobile_width": 950,

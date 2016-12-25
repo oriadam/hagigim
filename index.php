@@ -11,6 +11,7 @@ require_once "config.php";
 	<!-- turnjs does not support jquery 3, so use 2 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> 
 	<!-- turnjs does not support jquery 3, so use 2 -->
+	<script src="polyfill.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.panzoom/3.2.2/jquery.panzoom.min.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -132,6 +133,8 @@ require_once "config.php";
 		var $zoom_elem = $('#zoom_container');
 		var numpages; // number of pages (including 4 cover pages)
 		var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
+		var index_pages; // array of index pages (if index was generated)
+		var index_numpages;		
 		var ajax_cache = {}; // local cache of ajax requests - used by ajax() function
 		var loaded_pages = []; // remember which pages were already loaded (or currently loading)
 		var search_results = []; // array of search results (relevant on "search" mode, irrelevant on "filter" mode)
@@ -441,20 +444,67 @@ require_once "config.php";
 			});
 		}//load_book
 
+		// generate the index pages and add them to correct place
+		function generate_index(){
+			if (!CONFIG["generate_index"])
+				return;
+			var tmpl_row = '<li class="idx_row" pi="__PAGE__"><span class="idx_name">__NAME__</span><span class="idx_number">__NUMBER__</span></a></li>';
+			var current_page,i;
+			var rows = [];
+			var pages_html = [];
+			index_pages=[];
+			index_numpages = Math.ceil(book_list.length/CONFIG["index_lines_per_page"]);
+
+			if (CONFIG["generate_index"]=="start"){
+				cover_pages_before += index_numpages;
+			} else {
+				cover_pages_after += index_numpages;
+			}
+			
+			// generate the rows
+			for (i=0;i<book_list.length;i++){
+				current_page = Math.floor(i/CONFIG["index_lines_per_page"]);
+				pages_html[current_page] = pages_html[current_page] || '';
+				pages_html[current_page] += tmpl_row.replace('__NAME__',book_list[i].name).replace('__PAGE__',i).replace('__NUMBER__',page_index_to_display_number(i));
+			}
+			for (current_page=0;current_page<pages_html.length;current_page++){
+				index_pages[current_page] = tmpl('index_page');
+				index_pages[current_page].find('.idx_list').append(pages_html[current_page]);
+			}
+		}
+
+		function index_row_click(){
+			var p = page_index_to_page_number(1*jQuery(this).attr('pi'));
+			go_to_page(p);
+		}
+
+		// return page number for displaying page number
+		function page_index_to_display_number(i){
+			return 1 + i;
+		}
+		// return page number for a page element index
+		function page_index_to_page_number(i){
+			return 1 + i + cover_pages_before;
+		}
+
 		// populate the book. based on book_list. removes previous content if any.
 		function build_book(){
 			// reset
-			numpages = book_list.length;
-			var extra_blank_page = !!(numpages % 2); // for odd number of pages, add a blank page at the end
+			cover_pages_before = 0;
+			cover_pages_after = 0;
+			generate_index();
+			
+			numpages = book_list.length + cover_pages_before + cover_pages_after;
+			var extra_blank_page = (numpages % 2)>0; // for odd number of pages, add a blank page at the end
 			if (CONFIG["hard_cover"]) {
-				cover_pages_before = cover_pages_after = 2;
-			} else {
-				cover_pages_before = cover_pages_after = 0;
+				cover_pages_before += 2;
+				cover_pages_after += 2;
 			}
 			if(extra_blank_page){
 				cover_pages_after++;
 			}
-			numpages += cover_pages_before + cover_pages_after;
+
+			numpages = book_list.length + cover_pages_before + cover_pages_after;
 
 			var id = $book[0].id;
 			try{
@@ -484,11 +534,18 @@ require_once "config.php";
 				append('inside_front',2,'inside_front');
 			}
 
+			// add index if at beginning
+			if (CONFIG["generate_index"]=="start"){
+				for (i=0;i<index_pages.length;i++){
+					$book.append(index_pages[i]);
+				}
+			}
+
 			// add book content placeholders
 			// book actual content will is loaded via ajax on turning event. see function turning()
 			var i;
 			for (i=0;i<book_list.length;i++){
-				var page = i + 3;
+				var page = page_index_to_page_number(i);
 				append('empty_page',page);
 			}
 
@@ -501,6 +558,13 @@ require_once "config.php";
 			if (CONFIG["hard_cover"]){
 				append('inside_back',numpages-1,'inside_back');
 				append('cover_back',numpages,'cover_back');
+			}
+
+			// add index if at end
+			if (CONFIG["generate_index"]=="end"){
+				for (i=0;i<index_pages.length;i++){
+					$book.append(index_pages[i]);
+				}
 			}
 
 			// the turnjs magic!
@@ -661,11 +725,12 @@ require_once "config.php";
 			handle_scrollable_pages();
 		}
 
-		// make changes to a page
+		// make changes to a content page
 		function process_page(page,page_element,page_content,title){
 			if (!page_element.runonce){
 				page_element.runonce = 1;
 			}//runonce
+			
 			if (CONFIG["hr_to_read_more"]){
 				var hr = page_element.find("hr:first");
 				var hidden = hr.nextAll().addClass('hr_read_more_text').hide();
@@ -693,6 +758,10 @@ require_once "config.php";
 
 		// bind events to a page after it has turned
 		function page_turned(page,page_element){
+			if (page_element[0].className.indexOf('index_page')>=0){
+				page_element.find('.idx_row').off().click(index_row_click);
+			}
+			
 			if (window.page_turned_hook)
 				window.page_turned_hook(page, page_element);
 		}// page_turned
@@ -937,6 +1006,13 @@ require_once "config.php";
 	<div class="page_outer_wrap">
 		<div class="empty_page">
 			<div class="empty_page_content"></div>
+		</div>
+	</div>
+	</template>
+	<template id="tmpl_index_page">
+	<div class="index_page_outer_wrap">
+		<div class="index_page">
+			<ul class="idx_list"></ul>
 		</div>
 	</div>
 	</template>

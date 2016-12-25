@@ -1,0 +1,63 @@
+/* taken from: https://www.w3.org/Style/Examples/007/leaders.en.html */
+
+.idx_list {
+    max-width: clac( 100% - 30px);
+    list-style: none;
+    overflow: hidden;
+    padding: 0;
+    margin: 50px 50px 0 50px;
+}
+
+.idx_row {
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+.ltr .idx_row {
+    text-align: left;
+}
+
+.rtl .idx_row {
+    text-align: right;
+}
+
+.idx_row:before {
+    width: 0;
+    white-space: nowrap;
+    overflow: visible;
+    content: ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
+}
+
+.ltr .idx_list li:before {
+    float: left;
+}
+
+.rtl .idx_list li:before {
+    float: right;
+}
+
+.idx_name,
+.idx_number {
+    background: #fff;
+}
+
+.ltr .idx_name {
+    padding-right: 5px;
+}
+
+.rtl .idx_name {
+    padding-left: 5px;
+}
+
+.ltr .idx_number {
+    text-align: right;
+    float: right;
+    padding-left: 5px;
+}
+
+.rtl .idx_number {
+    text-align: left;
+    float: left;
+    padding-right: 5px;
+}

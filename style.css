@@ -1,6 +1,7 @@
 @import url('scrollbars.css');
 @import url('loading.css');
 @import url('toolbar.css');
+@import url('index.css');
 .form-group {
     direction: rtl;
 }

@@ -5,6 +5,8 @@
     "google_drive_query": "'XXXXXXXXXXXX' in parents and trashed = false",
     "url_homepage": "",
     "list_cache_expires": 86400,
+    "generate_index": false,
+    "index_lines_per_page": 20,
     "start_with_closed_book": false,
     "hard_cover": true,
     "mobile_width": 750,
@@ -64,6 +66,8 @@
     "options_for_js": [
         "url_homepage",
         "console_debug",
+        "generate_index",
+        "index_lines_per_page",
         "start_with_closed_book",
         "hard_cover",
         "mobile_width",
