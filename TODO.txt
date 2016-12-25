@@ -1,3 +1,3 @@
 - OOP rather than global vars
 - Mobile support for toolbar, with the burger icon
-- Generate index
+- Test generated index on end of book
