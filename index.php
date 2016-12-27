@@ -573,12 +573,13 @@ require_once "config.php";
 			turn_options.height = $size_parent.height();
 			turn_options.pages = numpages;
 			turn_options.direction = direction;
-			$book.turn(turn_options);			
+			$book.turn(turn_options);
 			resize();
 			$(window).off('resize',resize).resize(resize);
 			setTimeout(resize,100);
 			setTimeout(resize,1000);
 			setTimeout(resize,2000);
+			init($book);
 
 			// fix page width via css
 			//$('#id-style-fix-pages').remove();
@@ -713,6 +714,14 @@ require_once "config.php";
 			set_buttons_state();	
 		}//turned
 
+		// event to run when book is ready (called by build_book)
+		function init($book){
+			page_turned(0,$('.p0'));
+			page_turned(0,$('.p1'));
+			page_turned(0,$('.p2'));
+			page_turned(0,$('.p3'));
+		}
+
 		// turnjs resize event - redetect mobile state, and reset the book size
 		function resize(){
 			set_mobile_mode();
@@ -758,6 +767,8 @@ require_once "config.php";
 
 		// bind events to a page after it has turned
 		function page_turned(page,page_element){
+			if (!page_element[0])
+				return;
 			if (page_element[0].className.indexOf('index_page')>=0){
 				page_element.find('.idx_row').off().click(index_row_click);
 			}
