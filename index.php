@@ -205,6 +205,18 @@ require_once "config.php";
 		}
 		
 		function launch_print() {
+			$('#print_container').remove();
+			var $print_container = $('<div id="print_container">').appendTo('body');
+			var views = $book.turn('view');
+			for(var i=0;i<views.length;i++){
+				var $page = $('.p'+views[i]);
+				if ($page.length){
+					var $page_content = $page.find('.page_content');
+					if ($page_content.length){
+						$page_content.clone().appendTo($print_container).prop('style','');
+					}
+				}
+			}
 			window.print();
 		}
 

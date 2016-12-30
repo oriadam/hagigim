@@ -323,3 +323,28 @@ body {
     color: #f33;
     margin-top: -6px;
 }
+
+@media screen {
+    #print_container {
+        display: none;
+    }
+}
+
+@media print {
+    .first_content_line {
+        font-size: 130%;
+        font-weight: bold;
+    }
+    .page_top,
+    body>*:not(#print_container) {
+        display: none;
+    }
+    #print_container {
+        -webkit-print-color-adjust: exact;
+    }
+    #print_container>* {
+        margin: 0;
+        display: block;
+        padding: 0;
+    }
+}
