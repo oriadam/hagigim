@@ -52,6 +52,12 @@
             "Bottom": "bottom"
         }
     },
+    "page_sound": {
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
     "show_peel_corner": {
         "name": "Fold a corner after 2 seconds",
         "options": {

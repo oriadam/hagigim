@@ -84,6 +84,10 @@ require_once "config.php";
 		?>
 	</div>
 
+<?php if ($CONFIG["page_sound"]){?>
+<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
+<?php } ?>
+
 	<nav role="custom-dropdown" id="toolbar" class="container book_container_width input-append form-inline form-group">
 		<input type="checkbox" id="toolbar_burger_button" class="toolbar-item form-control">
 		<label for="toolbar_burger_button" onclick></label>
@@ -95,8 +99,16 @@ require_once "config.php";
 			</li>
 			<?php } ?>
 			<li id="id-zoom-li">
-				<span id="id-zoom" placeholder="" type="button" class="btn btn-primary form-control toolbar-item"><i class="fa fa-search-plus"></i></span>
+				<span id="id-zoom" class="btn btn-primary form-control toolbar-item"><i class="fa fa-search-plus"></i></span>
 			</li>
+			<?php if ($CONFIG["page_sound"]){?>
+			<li id="id-sound-li">
+				<span id="id-sound" class="btn btn-primary form-control toolbar-item fa-stack">
+					<i class="fa fa-volume-up fa-stack-1x"></i>
+					<i id="id-sound-ban" class="fa fa-ban fa-stack-2x" style="font-weight:normal;display:none"></i>
+				</span>
+			</li>
+			<?php } ?>
 		</ul>
 		<ul id="id-search-container" class="container input-append form-inline form-group">
 			<li id="id-q-li">
@@ -131,6 +143,8 @@ require_once "config.php";
 		var $book_parent = $('#flipbook_parent');
 		var $size_parent = $('#book_container');
 		var $zoom_elem = $('#zoom_container');
+		var build_book_time = Date.now(); // remember when book was created, for reasons
+		var turn_count = 0;
 		var numpages; // number of pages (including 4 cover pages)
 		var book_list; // array of pages as json object of id,content,name,filename. note that array index = page - 3 (because it starts with 0 and does not include the cover pages)
 		var index_pages; // array of index pages (if index was generated)
@@ -154,7 +168,14 @@ require_once "config.php";
 		var pause_turn_events;
 		var search_results_clicked;
 		var zoom_active;
+		var sound_active = true;
 		var CUSTOM_CONFIG_NAME = "<?=$CUSTOM_CONFIG_NAME?>";
+
+		function sound_toggle(){
+			sound_active = !sound_active;
+			$('#id-sound').toggleClass('active',sound_active);
+			$('#id-sound-ban').toggle(!sound_active);
+		}
 
 		function zoom_toggle(){
 			if (zoom_active){
@@ -573,7 +594,9 @@ require_once "config.php";
 			turn_options.height = $size_parent.height();
 			turn_options.pages = numpages;
 			turn_options.direction = direction;
+			turn_count = 0;
 			$book.turn(turn_options);
+			build_book_time = Date.now();
 			resize();
 			$(window).off('resize',resize).resize(resize);
 			setTimeout(resize,100);
@@ -672,6 +695,7 @@ require_once "config.php";
 
 		// turnjs turning event - when starting to animate turning to a specific page
 		function turning(event, page, view) {
+			turn_count ++;
 			clearTimeout(show_peel_corner_TO);
 			if (pause_turn_events){
 				return;
@@ -688,6 +712,15 @@ require_once "config.php";
 				}
 				pages_depth_turning();
 			}
+
+			if (CONFIG["page_sound"] && sound_active && turn_count > 1){ // dont play sound on first 'turning' event
+				try{
+					document.querySelector("#page_sound").play();
+				}catch(e){
+					console.error(e);
+				}
+			}
+
 		}//turning
 
 		// turnjs turned event - when a page has finished animation and is displayed
@@ -705,6 +738,7 @@ require_once "config.php";
 					page_turned(page,page_element);
 				}
 			}
+			
 			if (CONFIG["show_peel_corner"] && !visible_scrollable){
 				// bug: showing peel disables the scrolling
 				show_peel_corner();
@@ -922,6 +956,7 @@ require_once "config.php";
 					$('#id-go').click();
 				}
 			});
+			$('#id-sound').click(sound_toggle);
 			$('#id-zoom').click(zoom_toggle);
 			$('#id-go').click(handle_search);
 			$('#id-prev').html(CONFIG["text_prev"]).click(function(){

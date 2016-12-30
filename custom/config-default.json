@@ -11,6 +11,7 @@
     "mobile_width": 950,
     "single_page_mode": "mobile",
     "toolbar_position": "bottom",
+    "page_sound": true,
     "show_peel_corner": false,
     "middle_gradient": true,
     "pages_depth": true,

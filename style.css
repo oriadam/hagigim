@@ -312,3 +312,9 @@ body {
 .fa {
     font-weight: normal;
 }
+
+#id-sound-ban {
+    opacity: 0.5;
+    color: #f33;
+    margin-top: -6px;
+}
