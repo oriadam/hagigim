@@ -30,7 +30,7 @@
     "browse_via_pages_depth": true,
     "pages_depth_paper_thickness": 0.026,
     "pages_depth_max_width": 30,
-    "max_book_width": 800,
+    "max_book_width": 850,
     "rtl": true,
     "show_page_number": true,
     "show_page_title": false,
