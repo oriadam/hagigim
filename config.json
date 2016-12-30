@@ -61,6 +61,8 @@
     "text_top_even_pages": "Text on top of even pages",
     "text_top_odd_pages": "Text on top of odd pages",
     "text_page_number": "Page: ",
+    "text_hit_f11": "Hit F11 for full screen mode",
+    "text_nothing_to_print": "Nothing to print",
     "search_or_filter": "filter",
     "remember_last_search": true,
     "custom_css": "#example{width:auto}",
@@ -71,10 +73,22 @@
         "fields": "files(createdTime,id,modifiedTime,name,starred),kind,nextPageToken"
     },
     "max_results": 9999,
+
+    "see turnjs options here:": "http://www.turnjs.com/#api",
     "turn_options": {
         "autoCenter": false,
         "elevation": 0,
         "gradients": true
+    },
+
+    "see sweetalert options here:": "http://t4t5.github.io/sweetalert/",
+    "swal_options": {
+        "timer": 2000,
+        "showLoaderOnConfirm": true,
+        "showConfirmButton": false,
+        "allowEscapeKey": true,
+        "allowOutsideClick": true,
+        "animation": "slide-from-top"
     },
     "options_for_js": [
         "url_homepage",
@@ -114,8 +128,11 @@
         "text_found",
         "text_found_in",
         "text_not_found",
+        "text_hit_f11",
+        "text_nothing_to_print",
         "search_or_filter",
         "remember_last_search",
-        "turn_options"
+        "turn_options",
+        "swal_options"
     ]
 }

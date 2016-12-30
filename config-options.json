@@ -172,6 +172,14 @@
         "name": "Text for 'page:' in toolbar",
         "type": "text"
     },
+    "text_hit_f11": {
+        "name": "Text 'Hit F11 for fullscreen'",
+        "type": "text"
+    },
+    "text_nothing_to_print": {
+        "name": "Text 'Nothing to print'",
+        "type": "text"
+    },
     "pages_depth_paper_thickness": {
         "name": "Book pages depth: Paper thickness",
         "type": "number",

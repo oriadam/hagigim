@@ -16,6 +16,8 @@ require_once "config.php";
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
 	<?php if ($CONFIG["max_book_width"]) { ?>
@@ -40,6 +42,69 @@ require_once "config.php";
 	<link href="custom/style-<?=$CUSTOM_CONFIG_NAME?>.css" rel="stylesheet">
 	<script src="custom/script-<?=$CUSTOM_CONFIG_NAME?>.js"></script>
 	<?=$CONFIG["html_head"]?>
+
+
+	<template id="tmpl_empty_page">
+	<div class="page_outer_wrap">
+		<div class="empty_page">
+			<div class="empty_page_content"></div>
+		</div>
+	</div>
+	</template>
+	<template id="tmpl_index_page">
+	<div class="index_page_outer_wrap">
+		<div class="index_page">
+			<ul class="idx_list"></ul>
+		</div>
+	</div>
+	</template>
+	<template id="tmpl_extra_page">
+		<div class="skip_me page_wrap"></div>
+	</template>
+	<template id="tmpl_page">
+		<div class="page_wrap">
+			<div class="content_page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
+				<div class="page_top">
+					<div class='page_top_content'><?=$CONFIG["html_page_top"]?></div>
+					<?php if ($CONFIG["show_page_title"]) { ?>
+					<h1 class="page_title"></h1>
+					<?php } ?>
+				</div>
+				<div class="page_content_wrapper">
+					<div class="page_content"></div>
+				</div>
+				<?php if ($CONFIG["show_page_number"]) { ?>
+				<div class="page_number_wrapper">
+					<div class="page_number"></div>
+				</div>
+				<?php } ?>
+			</div>
+		</div>	
+	</template>
+	<template id="tmpl_cover_front">
+	<div class="hard page_wrap cover_front">
+		<?=$CONFIG["html_cover_front"]?>
+	</div>
+	</template>
+	<template id="tmpl_inside_front">
+	<div class="hard skip_me page_wrap inside_front">
+		<?=$CONFIG["html_inside_front"]?>
+	</div>
+	</template>
+	<template id="tmpl_inside_back">
+	<div class="hard skip_me page_wrap inside_back">
+		<?=$CONFIG["html_inside_back"]?>
+	</div>
+	</template>
+	<template id="tmpl_cover_back">
+	<div class="hard page_wrap cover_back">
+		<?=$CONFIG["html_cover_back"]?>
+	</div>
+	</template>
+
+
+
+
 </head>
 <body class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?> toolbar-<?=$CONFIG["toolbar_position"]?>">
 	<?=$CONFIG["html_body"]?>
@@ -195,29 +260,38 @@ require_once "config.php";
 			CONFIG["toolbar_item_homepage"] = false;
 		}
 
+		swal.setDefaults(CONFIG["swal_options"]);
+
 		// taken from: http://stackoverflow.com/a/7525760/3356679
 		function launch_fullscreen() {
 			try{
 				//requestFullScreenMethod.call(document.querySelector('#zoom_container'));
 				requestFullScreenMethod.call(document.body);
 			}catch(e){
+				swal({
+					title: CONFIG["text_hit_f11"],
+				});
 			}
 		}
 		
 		function launch_print() {
-			$('#print_container').remove();
-			var $print_container = $('<div id="print_container">').appendTo('body');
+			var $print_container = $('#print_container').empty();
 			var views = $book.turn('view');
+			var added;
 			for(var i=0;i<views.length;i++){
-				var $page = $('.p'+views[i]);
-				if ($page.length){
-					var $page_content = $page.find('.page_content');
-					if ($page_content.length){
-						$page_content.clone().appendTo($print_container).prop('style','');
-					}
+				var $page_content = $('.p' + views[i] + ' .page_content');
+				if ($page_content.length){
+					$page_content.clone().appendTo($print_container).prop('style','');
+					added=1;
 				}
 			}
-			window.print();
+			if (added){
+				window.print();
+			} else {
+				swal({
+					title: CONFIG["text_nothing_to_print"],
+				});				
+			}
 		}
 
 		function textselect_toggle(){
@@ -504,10 +578,6 @@ require_once "config.php";
 					if (CONFIG["show_peel_corner"]) {
 						show_peel_corner();
 					}
-					// always load first pages
-					load_page(1+cover_pages_before);
-					load_page(2+cover_pages_before);
-					load_page(3+cover_pages_before);
 					if (!CONFIG["start_with_closed_book"]){
 						// start on first page
 						go_to_page(3);
@@ -1119,63 +1189,7 @@ require_once "config.php";
 		},1); // setTimeout main function
 	</script>
 
-	<template id="tmpl_empty_page">
-	<div class="page_outer_wrap">
-		<div class="empty_page">
-			<div class="empty_page_content"></div>
-		</div>
-	</div>
-	</template>
-	<template id="tmpl_index_page">
-	<div class="index_page_outer_wrap">
-		<div class="index_page">
-			<ul class="idx_list"></ul>
-		</div>
-	</div>
-	</template>
-	<template id="tmpl_extra_page">
-	<div class="skip_me page_wrap"></div>
-	</template>
-	<template id="tmpl_page">
-	<div class="page_wrap">
-		<div class="content_page show_page_title<?=$CONFIG["show_page_title"]?1:0?>">
-			<div class="page_top">
-				<div class='page_top_content'><?=$CONFIG["html_page_top"]?></div>
-				<?php if ($CONFIG["show_page_title"]) { ?>
-				<h1 class="page_title"></h1>
-				<?php } ?>
-			</div>
-			<div class="page_content_wrapper">
-				<div class="page_content"></div>
-			</div>
-			<?php if ($CONFIG["show_page_number"]) { ?>
-			<div class="page_number_wrapper">
-				<div class="page_number"></div>
-			</div>
-			<?php } ?>
-		</div>
-	</div>	
-	</template>
-	<template id="tmpl_cover_front">
-	<div class="hard page_wrap cover_front">
-		<?=$CONFIG["html_cover_front"]?>
-	</div>
-	</template>
-	<template id="tmpl_inside_front">
-	<div class="hard skip_me page_wrap inside_front">
-		<?=$CONFIG["html_inside_front"]?>
-	</div>
-	</template>
-	<template id="tmpl_inside_back">
-	<div class="hard skip_me page_wrap inside_back">
-		<?=$CONFIG["html_inside_back"]?>
-	</div>
-	</template>
-	<template id="tmpl_cover_back">
-	<div class="hard page_wrap cover_back">
-		<?=$CONFIG["html_cover_back"]?>
-	</div>
-	</template>
+	<div id="print_container">
 	
 	<?=$CONFIG["html_footer"]?>
 

@@ -5,7 +5,7 @@
     "url_homepage": "",
     "list_cache_expires": 86400,
     "generate_index": "start",
-    "index_lines_per_page": 50,
+    "index_lines_per_page": 45,
     "start_with_closed_book": false,
     "hard_cover": true,
     "mobile_width": 950,
@@ -62,6 +62,8 @@
     "text_top_even_pages": "\u05d4\u05d2\u05d9\u05d2\u05d9\u05dd",
     "text_top_odd_pages": "\u05e9\u05d9\u05de\u05d5\u05df1",
     "text_page_number": "\u05e2\u05de\u05d5\u05d3: ",
+    "text_hit_f11": "הקש F11 למסך מלא",
+    "text_nothing_to_print": "אין מה להדפיס",
     "search_or_filter": "search",
     "remember_last_search": true,
     "custom_css": ""
