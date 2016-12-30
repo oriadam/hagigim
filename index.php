@@ -84,10 +84,6 @@ require_once "config.php";
 		?>
 	</div>
 
-<?php if ($CONFIG["page_sound"]){?>
-<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
-<?php } ?>
-
 	<nav role="custom-dropdown" id="toolbar" class="container book_container_width input-append form-inline form-group">
 		<input type="checkbox" id="toolbar_burger_button" class="toolbar-item form-control">
 		<label for="toolbar_burger_button" onclick></label>
@@ -99,16 +95,22 @@ require_once "config.php";
 			</li>
 			<?php } ?>
 			<li id="id-zoom-li">
-				<span id="id-zoom" class="btn btn-primary form-control toolbar-item"><i class="fa fa-search-plus"></i></span>
+				<span id="id-zoom" class="btn btn-primary form-control toolbar-item">
+					<i class="fa fa-search-plus"></i>
+				</span>
 			</li>
-			<?php if ($CONFIG["page_sound"]){?>
 			<li id="id-sound-li">
+				<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
 				<span id="id-sound" class="btn btn-primary form-control toolbar-item fa-stack">
 					<i class="fa fa-volume-up fa-stack-1x"></i>
 					<i id="id-sound-ban" class="fa fa-ban fa-stack-2x" style="font-weight:normal;display:none"></i>
 				</span>
 			</li>
-			<?php } ?>
+			<li id="id-fullscreen-li">
+				<span id="id-fullscreen" class="btn btn-primary form-control toolbar-item">
+					<i class="fa fa-external-link-square"></i>
+				</span>
+			</li>
 		</ul>
 		<ul id="id-search-container" class="container input-append form-inline form-group">
 			<li id="id-q-li">
@@ -137,12 +139,14 @@ require_once "config.php";
 
 	<script>
 		var CONFIG = <?=json_encode(config_for_js())?>;
+		var CUSTOM_CONFIG_NAME = "<?=$CUSTOM_CONFIG_NAME?>";
 
 		var $body = $('body');
 		var $book = $('#flipbook'); // book jQuery element
 		var $book_parent = $('#flipbook_parent');
 		var $size_parent = $('#book_container');
 		var $zoom_elem = $('#zoom_container');
+		var zoom_elem = $zoom_elem[0];
 		var build_book_time = Date.now(); // remember when book was created, for reasons
 		var turn_count = 0;
 		var numpages; // number of pages (including 4 cover pages)
@@ -169,7 +173,12 @@ require_once "config.php";
 		var search_results_clicked;
 		var zoom_active;
 		var sound_active = true;
-		var CUSTOM_CONFIG_NAME = "<?=$CUSTOM_CONFIG_NAME?>";
+		var requestFullScreenMethod = CONFIG["fullscreen_button"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
+		if (CONFIG["fullscreen_button"] && !requestFullScreenMethod){
+			// when there is no fullscreen option, override settings
+			console.log("Full screen not available");
+			CONFIG["fullscreen_button"] = false;
+		}
 
 		function sound_toggle(){
 			sound_active = !sound_active;
@@ -768,6 +777,15 @@ require_once "config.php";
 			handle_scrollable_pages();
 		}
 
+		// taken from: http://stackoverflow.com/a/7525760/3356679
+		function requestFullScreen() {
+			try{
+				//requestFullScreenMethod.call(document.querySelector('#zoom_container'));
+				requestFullScreenMethod.call(document.body);
+			}catch(e){
+			}
+		}
+
 		// make changes to a content page
 		function process_page(page,page_element,page_content,title){
 			if (!page_element.runonce){
@@ -956,6 +974,13 @@ require_once "config.php";
 					$('#id-go').click();
 				}
 			});
+			
+			// toolbar toggles
+			$('#id-fullscreen-li').toggle(CONFIG["fullscreen_button"]);
+			$('#id-sound-li').toggle(CONFIG["page_sound"]);
+			
+			// toolbar actions
+			$('#id-fullscreen').click(requestFullScreen);
 			$('#id-sound').click(sound_toggle);
 			$('#id-zoom').click(zoom_toggle);
 			$('#id-go').click(handle_search);

@@ -58,6 +58,13 @@
             "Off": false
         }
     },
+    "fullscreen_button": {
+        "name": "Full-screen toolbar button",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
     "show_peel_corner": {
         "name": "Fold a corner after 2 seconds",
         "options": {
