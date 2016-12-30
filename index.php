@@ -89,26 +89,34 @@ require_once "config.php";
 		<label for="toolbar_burger_button" onclick></label>
     		
 		<ul id="id-buttons-container" class="container input-append form-inline form-group">
-			<?php if (!empty($CONFIG["url_homepage"])){?>
-			<li id="id-homepage-li">
+			<li id="toolbar_item_homepage" title="<?=@$CONFIG["text_toolbar_item_homepage"]?>">
 				<a id="id-homepage" href="<?=$CONFIG["url_homepage"]?>" class="btn btn-primary form-control toolbar-item"><i class="fa fa-home"></i></a>
 			</li>
-			<?php } ?>
-			<li id="id-zoom-li">
-				<span id="id-zoom" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-search-plus"></i>
+			<li id="toolbar_item_fullscreen" title="<?=@$CONFIG["text_toolbar_item_fullscreen"]?>">
+				<span id="id-fullscreen" class="btn btn-primary form-control toolbar-item">
+					<i class="fa fa-external-link-square"></i>
 				</span>
 			</li>
-			<li id="id-sound-li">
+			<li id="toolbar_item_print" title="<?=@$CONFIG["text_toolbar_item_print"]?>">
+				<span id="id-print" class="btn btn-primary form-control toolbar-item">
+					<i class="fa fa-print"></i>
+				</span>
+			</li>
+			<li id="toolbar_item_sound" title="<?=@$CONFIG["text_toolbar_item_sound"]?>">
 				<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
 				<span id="id-sound" class="btn btn-primary form-control toolbar-item fa-stack">
 					<i class="fa fa-volume-up fa-stack-1x"></i>
 					<i id="id-sound-ban" class="fa fa-ban fa-stack-2x" style="font-weight:normal;display:none"></i>
 				</span>
 			</li>
-			<li id="id-fullscreen-li">
-				<span id="id-fullscreen" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-external-link-square"></i>
+			<li id="toolbar_item_zoom" title="<?=@$CONFIG["text_toolbar_item_zoom"]?>">
+				<span id="id-zoom" class="btn btn-primary form-control toolbar-item">
+					<i class="fa fa-search-plus"></i>
+				</span>
+			</li>
+			<li id="toolbar_item_textselect" title="<?=@$CONFIG["text_toolbar_item_textselect"]?>">
+				<span id="id-textselect" class="btn btn-primary form-control toolbar-item">
+					<i class="fa fa-text-width"></i>
 				</span>
 			</li>
 		</ul>
@@ -171,13 +179,39 @@ require_once "config.php";
 		var show_peel_corner_TO;
 		var pause_turn_events;
 		var search_results_clicked;
-		var zoom_active;
+		var zoom_active = false;
 		var sound_active = true;
-		var requestFullScreenMethod = CONFIG["fullscreen_button"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
-		if (CONFIG["fullscreen_button"] && !requestFullScreenMethod){
+		var textselect_active = false;
+		var requestFullScreenMethod = CONFIG["toolbar_item_fullscreen"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
+		
+		if (CONFIG["toolbar_item_fullscreen"] && !requestFullScreenMethod){
 			// when there is no fullscreen option, override settings
 			console.log("Full screen not available");
-			CONFIG["fullscreen_button"] = false;
+			CONFIG["toolbar_item_fullscreen"] = false;
+		}
+
+		if (CONFIG["toolbar_item_homepage"] && !CONFIG["url_homepage"]){
+			// when there is no homepage url, override settings
+			CONFIG["toolbar_item_homepage"] = false;
+		}
+
+		// taken from: http://stackoverflow.com/a/7525760/3356679
+		function launch_fullscreen() {
+			try{
+				//requestFullScreenMethod.call(document.querySelector('#zoom_container'));
+				requestFullScreenMethod.call(document.body);
+			}catch(e){
+			}
+		}
+		
+		function launch_print() {
+			window.print();
+		}
+
+		function textselect_toggle(){
+			textselect_active = !textselect_active;
+			$('#id-textselect').toggleClass('active',textselect_active);
+			$body.toggleClass('textselect',textselect_active);
 		}
 
 		function sound_toggle(){
@@ -777,15 +811,6 @@ require_once "config.php";
 			handle_scrollable_pages();
 		}
 
-		// taken from: http://stackoverflow.com/a/7525760/3356679
-		function requestFullScreen() {
-			try{
-				//requestFullScreenMethod.call(document.querySelector('#zoom_container'));
-				requestFullScreenMethod.call(document.body);
-			}catch(e){
-			}
-		}
-
 		// make changes to a content page
 		function process_page(page,page_element,page_content,title){
 			if (!page_element.runonce){
@@ -976,13 +1001,22 @@ require_once "config.php";
 			});
 			
 			// toolbar toggles
-			$('#id-fullscreen-li').toggle(CONFIG["fullscreen_button"]);
-			$('#id-sound-li').toggle(CONFIG["page_sound"]);
-			
+			$('#toolbar li').each(function(){
+				var k = this.id;
+				if (CONFIG[k]===true){
+					$(this).show();
+				} else if (CONFIG[k]===false){
+					$(this).hide();
+				}
+			});
+
 			// toolbar actions
-			$('#id-fullscreen').click(requestFullScreen);
+			$('#id-fullscreen').click(launch_fullscreen);
+			$('#id-print').click(launch_print);
 			$('#id-sound').click(sound_toggle);
 			$('#id-zoom').click(zoom_toggle);
+			$('#id-textselect').click(textselect_toggle);
+
 			$('#id-go').click(handle_search);
 			$('#id-prev').html(CONFIG["text_prev"]).click(function(){
 				search_next_prev('previous');

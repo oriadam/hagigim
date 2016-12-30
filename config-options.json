@@ -46,24 +46,83 @@
             "Always Single": "always"
         }
     },
-    "toolbar_position": {
-        "options": {
-            "Top": "top",
-            "Bottom": "bottom"
-        }
-    },
     "page_sound": {
         "options": {
             "On": true,
             "Off": false
         }
     },
-    "fullscreen_button": {
-        "name": "Full-screen toolbar button",
+    "toolbar_position": {
+        "options": {
+            "Top": "top",
+            "Bottom": "bottom"
+        }
+    },
+    "toolbar_item_homepage": {
+        "name": "Toolbar button: Homepage",
         "options": {
             "On": true,
             "Off": false
         }
+    },
+    "text_toolbar_item_homepage": {
+        "name": "Button tooltip",
+        "type": "text"
+    },
+    "toolbar_item_fullscreen": {
+        "name": "Toolbar button: Full-screen",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "text_toolbar_item_fullscreen": {
+        "name": "Button tooltip",
+        "type": "text"
+    },
+    "toolbar_item_print": {
+        "name": "Toolbar button: Print",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "text_toolbar_item_print": {
+        "name": "Button tooltip",
+        "type": "text"
+    },
+    "toolbar_item_sound": {
+        "name": "Toolbar button: Sounds",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "text_toolbar_item_sound": {
+        "name": "Button tooltip",
+        "type": "text"
+    },
+    "toolbar_item_zoom": {
+        "name": "Toolbar button: Zoom",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "text_toolbar_item_zoom": {
+        "name": "Button tooltip",
+        "type": "text"
+    },
+    "toolbar_item_textselect": {
+        "name": "Toolbar button: Text-select",
+        "options": {
+            "On": true,
+            "Off": false
+        }
+    },
+    "text_toolbar_item_textselect": {
+        "name": "Button tooltip",
+        "type": "text"
     },
     "show_peel_corner": {
         "name": "Fold a corner after 2 seconds",
