@@ -66,16 +66,16 @@ if (!$MANAGER_MODE) {
 	$action = $action[0];
 	$actions = array(
 			'config' => 'Books Configuration',
-			'auth' => 'Validate Google Auth',
-			'clearauth' => 'Revoke Google Credentials',
+			'clearcache;list' => 'Refresh Google Drive Changes',
 			'testcache;list' => 'Test List Cache',
 			'testcache;file' => 'Test File Cache',
-			'clearcache;list' => 'Clear List Cache',
 			//'clearcache;file' => 'Clear File Cache',
 			'log;mylog' => 'Read Inner Log',
 			'log;phplog' => 'Read PHP Log',
 			'clearlog;mylog' => 'Clear Inner Log',
 			'clearlog;phplog' => 'Clear PHP Log',
+			'auth' => 'Validate Google Auth',
+			'clearauth' => 'Revoke Google Credentials',
 			'logout' => 'Log out',
 	);
 

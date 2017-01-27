@@ -29,6 +29,7 @@ html * {
 
 body {
     background-color: #f5f5f5;
+    color: #000;
 }
 
 #flipbook .page {
@@ -69,6 +70,7 @@ body {
 #flipbook .page_content {
     height: calc( 100% - 80px);
     text-align: right;
+    margin-top: 15px;
 }
 
 #flipbook .page_top {

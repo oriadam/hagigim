@@ -133,68 +133,70 @@ foreach (glob("custom/config-*.json") as $filename) {
     var options = <?=json_encode($options)?>;
     var updated = <?=json_encode($updated)?>;
     var counter = 0;
-    Object.keys(options).forEach(function(key){
-        counter++;
-        var id='id'+counter;
-        var option = options[key];
-        option.name = option.name || fcwords(key.replace(/_/g,' '));
-        var $label = $('<label class="form-label" for="'+id+'">').html(option.name);
-        var $group = $('<div class="form-group" data-key="'+key+'">');
-        $group.append($label);
-        var current_value = updated[key];
-        if (option.options){
-            // select box mode - options
-            var $sel = $('<select id="'+id+'" class="form-control" size="1"/>');
-            var value_exist = false;
-            Object.keys(option.options).forEach(function(value_name){
-                var value = option.options[value_name];
-                var $opt = $('<option>').html(value_name).val(JSON.stringify(value));
-                if (value == current_value){
-                    value_exist = true;
-                    $opt.prop('selected',true);
-                }
-                $sel.append($opt)
-            });
-            if (!value_exist){
-                // if current value is missing from list - add it to top
-                var $opt = $('<option selected>').html(current_value).val(JSON.stringify(current_value));
-                $sel.prepend($opt);
-            }
-            $sel.change(function(){
-                // update updated
-                update(key,JSON.parse($sel.val()));
-            });
-            $group.append($sel);
-        } else {
-            // open text mode - no options
-            option.type = option.type || 'text';
-            if (option.type == 'text' || option.type == 'number'){
-                var $input = $('<input id="'+id+'" class="form-control" type="'+option.type+'">').val(current_value).change(function(){
-                    if (option.type == 'number'){
-                        update(key,1*$input.val());
-                    } else {
-                        update(key,$input.val());
+    if (options) {
+        Object.keys(options).forEach(function(key){
+            counter++;
+            var id='id'+counter;
+            var option = options[key];
+            option.name = option.name || fcwords(key.replace(/_/g,' '));
+            var $label = $('<label class="form-label" for="'+id+'">').html(option.name);
+            var $group = $('<div class="form-group" data-key="'+key+'">');
+            $group.append($label);
+            var current_value = updated[key];
+            if (option.options){
+                // select box mode - options
+                var $sel = $('<select id="'+id+'" class="form-control" size="1"/>');
+                var value_exist = false;
+                Object.keys(option.options).forEach(function(value_name){
+                    var value = option.options[value_name];
+                    var $opt = $('<option>').html(value_name).val(JSON.stringify(value));
+                    if (value == current_value){
+                        value_exist = true;
+                        $opt.prop('selected',true);
                     }
+                    $sel.append($opt)
                 });
-                $group.append($input);
-            } else if (option.type == 'html' || option.type == 'textarea') {
-                var $input = $('<textarea id="'+id+'" class="form-control">').text(current_value).change(function(){
-                    update(key,$input.val());
+                if (!value_exist){
+                    // if current value is missing from list - add it to top
+                    var $opt = $('<option selected>').html(current_value).val(JSON.stringify(current_value));
+                    $sel.prepend($opt);
+                }
+                $sel.change(function(){
+                    // update updated
+                    update(key,JSON.parse($sel.val()));
                 });
-                $group.append($input);
+                $group.append($sel);
             } else {
-                console.log("ERROR: Unknown type at ",option);
+                // open text mode - no options
+                option.type = option.type || 'text';
+                if (option.type == 'text' || option.type == 'number'){
+                    var $input = $('<input id="'+id+'" class="form-control" type="'+option.type+'">').val(current_value).change(function(){
+                        if (option.type == 'number'){
+                            update(key,1*$input.val());
+                        } else {
+                            update(key,$input.val());
+                        }
+                    });
+                    $group.append($input);
+                } else if (option.type == 'html' || option.type == 'textarea') {
+                    var $input = $('<textarea id="'+id+'" class="form-control">').text(current_value).change(function(){
+                        update(key,$input.val());
+                    });
+                    $group.append($input);
+                } else {
+                    console.log("ERROR: Unknown type at ",option);
+                }
             }
-        }
 
-        ["autocomplete","height","width","list","min","max","multiple","pattern","placeholder","required","step",].forEach(function(k){
-            if (option[k]!==undefined){
-                $input.prop(k,option[k]);
-            }
-        })       
-        
-        $inputs.append($group);
-    });
+            ["autocomplete","height","width","list","min","max","multiple","pattern","placeholder","required","step",].forEach(function(k){
+                if (option[k]!==undefined){
+                    $input.prop(k,option[k]);
+                }
+            })       
+            
+            $inputs.append($group);
+        });
+    }
 
     // like PHP's ucwords
     function ucwords(str){
