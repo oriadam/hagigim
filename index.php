@@ -18,8 +18,12 @@ require_once "config.php";
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-	<script src="http://www.turnjs.com/lib/turn.min.js"></script>
+	<script src="turnjs/turn.min.js" hotlink_src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
+	<?php if ($CONFIG['bootswatch_css']) { ?>
+	<link href="https://bootswatch.com/<?=$CONFIG['bootswatch_css']?>/bootstrap.min.css" rel="stylesheet">
+	<?php } ?>
+	
 	<?php if ($CONFIG["max_book_width"]) { ?>
 	<style>
 		.book_container_width {
@@ -167,11 +171,18 @@ require_once "config.php";
 					<i class="fa fa-print"></i>
 				</span>
 			</li>
+			<?php if ($CONFIG['page_sound']){ ?>
 			<li id="toolbar_item_sound" title="<?=@$CONFIG["text_toolbar_item_sound"]?>">
 				<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
-				<span id="id-sound" class="btn btn-primary form-control toolbar-item fa-stack">
-					<i class="fa fa-volume-up fa-stack-1x"></i>
-					<i id="id-sound-ban" class="fa fa-ban fa-stack-2x" style="font-weight:normal;display:none"></i>
+				<span id="id-sound" class="btn btn-primary form-control toolbar-item active">
+					<i class="fa fa-volume-up"></i>
+				</span>
+			</li>
+			<?php } ?>
+			<li id="toolbar_item_music" title="<?=@$CONFIG["text_toolbar_item_music"]?>">
+				<audio id="music_tag"><source id="music_source" src=""></audio>
+				<span id="id-music" class="btn btn-primary form-control toolbar-item active">
+					<i class="fa fa-music"></i>
 				</span>
 			</li>
 			<li id="toolbar_item_zoom" title="<?=@$CONFIG["text_toolbar_item_zoom"]?>">
@@ -246,6 +257,8 @@ require_once "config.php";
 		var search_results_clicked;
 		var zoom_active = false;
 		var sound_active = true;
+		var music_active = true;
+		var current_music_url = 'http://docs.google.com/uc?export=download&id=0BykyFKEtY3aeZkxjcXJYTUpLNm8',last_music_url;
 		var textselect_active = false;
 		var requestFullScreenMethod = CONFIG["toolbar_item_fullscreen"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
 		
@@ -303,7 +316,26 @@ require_once "config.php";
 		function sound_toggle(){
 			sound_active = !sound_active;
 			$('#id-sound').toggleClass('active',sound_active);
-			$('#id-sound-ban').toggle(!sound_active);
+			$('#id-sound>i').toggleClass('fa-volume-up',sound_active).toggleClass('fa-volume-off',!sound_active);
+		}
+
+		function music_toggle(){
+			music_active = !music_active;
+			$('#id-music').toggleClass('active',music_active);
+			music_handler();
+		}
+
+		function music_handler(){
+			if (music_active){
+				if (last_music_url!=current_music_url){
+					last_music_url = current_music_url;
+					document.querySelector("#music_source").src=current_music_url;
+					document.querySelector("#music_tag").play();
+				}
+			} else if (last_music_url) {
+				last_music_url = null;
+				document.querySelector("#music_tag").stop();
+			}
 		}
 
 		function zoom_toggle(){
@@ -1096,6 +1128,7 @@ require_once "config.php";
 			$('#id-fullscreen').click(launch_fullscreen);
 			$('#id-print').click(launch_print);
 			$('#id-sound').click(sound_toggle);
+			$('#id-music').click(music_toggle);
 			$('#id-zoom').click(zoom_toggle);
 			$('#id-textselect').click(textselect_toggle);
 

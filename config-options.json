@@ -1,343 +1,382 @@
 {
-    "google_drive_query": {},
-    "url_homepage": {
-        "name": "Toolbar homepage URL",
-        "type": "text"
-    },
+	"google_drive_query": {},
+	"url_homepage": {
+		"name": "Toolbar homepage URL",
+		"type": "text"
+	},
 
-    "list_cache_expires": {
-        "name": "Cache search results for",
-        "desc": "Time to keep search results in cache",
-        "options": {
-            "1 hour": 3600,
-            "1 day": 86400,
-            "10 days": 864000
-        }
-    },
-    "generate_index": {
-        "name": "Index",
-        "options": {
-            "Off": false,
-            "Start of book": "start",
-            "End of book": "end"
-        }
-    },
-    "index_lines_per_page": {
-        "type": "number"
-    },
-    "start_with_closed_book": {
-        "name": "Start at",
-        "options": {
-            "Front cover": true,
-            "First page": false
-        }
-    },
-    "hard_cover": {
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "single_page_mode": {
-        "name": "Pages in view",
-        "options": {
-            "Double on Desktop, Single on Mobile": "mobile",
-            "Always Double": "never",
-            "Always Single": "always"
-        }
-    },
-    "page_sound": {
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "toolbar_position": {
-        "options": {
-            "Top": "top",
-            "Bottom": "bottom"
-        }
-    },
-    "toolbar_item_homepage": {
-        "name": "Toolbar button: Homepage",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_toolbar_item_homepage": {
-        "name": "Button tooltip",
-        "type": "text"
-    },
-    "toolbar_item_fullscreen": {
-        "name": "Toolbar button: Full-screen",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_toolbar_item_fullscreen": {
-        "name": "Button tooltip",
-        "type": "text"
-    },
-    "toolbar_item_print": {
-        "name": "Toolbar button: Print",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_toolbar_item_print": {
-        "name": "Button tooltip",
-        "type": "text"
-    },
-    "toolbar_item_sound": {
-        "name": "Toolbar button: Sounds",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_toolbar_item_sound": {
-        "name": "Button tooltip",
-        "type": "text"
-    },
-    "toolbar_item_zoom": {
-        "name": "Toolbar button: Zoom",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_toolbar_item_zoom": {
-        "name": "Button tooltip",
-        "type": "text"
-    },
-    "toolbar_item_textselect": {
-        "name": "Toolbar button: Text-select",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_toolbar_item_textselect": {
-        "name": "Button tooltip",
-        "type": "text"
-    },
-    "show_peel_corner": {
-        "name": "Fold a corner after 2 seconds",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "middle_gradient": {
-        "name": "Shadow in the middle of the book",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "pages_depth": {
-        "name": "Book pages depth effect",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "browse_via_pages_depth": {
-        "name": "Browse book from pages depth",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "max_book_width": {
-        "name": "Book max width",
-        "type": "number",
-        "step": 1
-    },
-    "hr_to_read_more": {
-        "name": "Convert footnotes to `read more` link",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "text_hr_read_more": {
-        "name": "Clickable text for hidden footnotes",
-        "type": "text"
-    },
-    "text_page_number": {
-        "name": "Text for 'page:' in toolbar",
-        "type": "text"
-    },
-    "text_hit_f11": {
-        "name": "Text 'Hit F11 for fullscreen'",
-        "type": "text"
-    },
-    "text_nothing_to_print": {
-        "name": "Text 'Nothing to print'",
-        "type": "text"
-    },
-    "pages_depth_paper_thickness": {
-        "name": "Book pages depth: Paper thickness",
-        "type": "number",
-        "min": 0,
-        "max": 10,
-        "step": 0.01
-    },
-    "pages_depth_max_width": {
-        "name": "Book pages depth: Max width",
-        "type": "number",
-        "min": 0,
-        "step": 5
-    },
-    "rtl": {
-        "name": "Language Direction",
-        "options": {
-            "Left-to-right": false,
-            "Right-to-left": true
-        }
-    },
-    "show_page_number": {
-        "name": "Page numbers",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "show_page_title": {
-        "name": "Page titles",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "remove_first_row_if_identical_to_page_title": {
-        "name": "Remove first line if same as title",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "bold_first_content_line": {
-        "name": "Bigger first line",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "search_or_filter": {
-        "name": "Search or filter?",
-        "options": {
-            "Load entire book, search results in book": "search",
-            "Load search results as book content": "filter"
-        }
-    },
-    "remember_last_search": {
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
-    "prevent_corner_peels_on_mobile_to_allow_scrolling": {
-        "name": "Mobile turning pages",
-        "options": {
-            "On": false,
-            "Off on corners that may interfere with scroll": true
-        }
-    },
-    "console_debug": {
-        "name": "Debug notes on console",
-        "options": {
-            "On": true,
-            "Off": false
-        }
-    },
+	"list_cache_expires": {
+		"name": "Cache search results for",
+		"desc": "Time to keep search results in cache",
+		"options": {
+			"1 hour": 3600,
+			"1 day": 86400,
+			"10 days": 864000
+		}
+	},
+	"generate_index": {
+		"name": "Index",
+		"options": {
+			"Off": false,
+			"Start of book": "start",
+			"End of book": "end"
+		}
+	},
+	"index_lines_per_page": {
+		"type": "number"
+	},
+	"start_with_closed_book": {
+		"name": "Start at",
+		"options": {
+			"Front cover": true,
+			"First page": false
+		}
+	},
+	"hard_cover": {
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"single_page_mode": {
+		"name": "Pages in view",
+		"options": {
+			"Double on Desktop, Single on Mobile": "mobile",
+			"Always Double": "never",
+			"Always Single": "always"
+		}
+	},
+	"auto_shrink_page_text": {
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"page_sound": {
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"bootswatch_css": {
+		"name": "Toolbar color set",
+		"options": {
+			"Default": "",
+			"Cerulean": "cerulean",
+			"Cosmo": "cosmo",
+			"Cyborg": "cyborg",
+			"Darkly": "darkly",
+			"Flatly": "flatly",
+			"Journal": "journal",
+			"Lumen": "lumen",
+			"Paper": "paper",
+			"Readable": "readable",
+			"Sandstone": "sandstone",
+			"Simplex": "simplex",
+			"Slate": "slate",
+			"Spacelab": "spacelab",
+			"Superhero": "superhero",
+			"United": "united",
+			"Yeti": "yeti"
+		}
+	},
+	"toolbar_position": {
+		"options": {
+			"Top": "top",
+			"Bottom": "bottom"
+		}
+	},
+	"toolbar_item_homepage": {
+		"name": "Toolbar button: Homepage",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_homepage": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"toolbar_item_fullscreen": {
+		"name": "Toolbar button: Full-screen",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_fullscreen": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"toolbar_item_print": {
+		"name": "Toolbar button: Print",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_print": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"toolbar_item_sound": {
+		"name": "Toolbar button: Sounds",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_sound": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"toolbar_item_music": {
+		"name": "Toolbar button: Background music",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_music": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"toolbar_item_zoom": {
+		"name": "Toolbar button: Zoom",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_zoom": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"toolbar_item_textselect": {
+		"name": "Toolbar button: Text-select",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_toolbar_item_textselect": {
+		"name": "Button tooltip",
+		"type": "text"
+	},
+	"show_peel_corner": {
+		"name": "Fold a corner after 2 seconds",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"middle_gradient": {
+		"name": "Shadow in the middle of the book",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"pages_depth": {
+		"name": "Book pages depth effect",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"browse_via_pages_depth": {
+		"name": "Browse book from pages depth",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"max_book_width": {
+		"name": "Book max width",
+		"type": "number",
+		"step": 1
+	},
+	"hr_to_read_more": {
+		"name": "Convert footnotes to `read more` link",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"text_hr_read_more": {
+		"name": "Clickable text for hidden footnotes",
+		"type": "text"
+	},
+	"text_page_number": {
+		"name": "Text for 'page:' in toolbar",
+		"type": "text"
+	},
+	"text_hit_f11": {
+		"name": "Text 'Hit F11 for fullscreen'",
+		"type": "text"
+	},
+	"text_nothing_to_print": {
+		"name": "Text 'Nothing to print'",
+		"type": "text"
+	},
+	"pages_depth_paper_thickness": {
+		"name": "Book pages depth: Paper thickness",
+		"type": "number",
+		"min": 0,
+		"max": 10,
+		"step": 0.01
+	},
+	"pages_depth_max_width": {
+		"name": "Book pages depth: Max width",
+		"type": "number",
+		"min": 0,
+		"step": 5
+	},
+	"rtl": {
+		"name": "Language Direction",
+		"options": {
+			"Left-to-right": false,
+			"Right-to-left": true
+		}
+	},
+	"show_page_number": {
+		"name": "Page numbers",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"show_page_title": {
+		"name": "Page titles",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"remove_first_row_if_identical_to_page_title": {
+		"name": "Remove first line if same as title",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"bold_first_content_line": {
+		"name": "Bigger first line",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"search_or_filter": {
+		"name": "Search or filter?",
+		"options": {
+			"Load entire book, search results in book": "search",
+			"Load search results as book content": "filter"
+		}
+	},
+	"remember_last_search": {
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
+	"prevent_corner_peels_on_mobile_to_allow_scrolling": {
+		"name": "Mobile turning pages",
+		"options": {
+			"On": false,
+			"Off on corners that may interfere with scroll": true
+		}
+	},
+	"console_debug": {
+		"name": "Debug notes on console",
+		"options": {
+			"On": true,
+			"Off": false
+		}
+	},
 
-    "text_window_title": {
-        "name": "Text: Window title",
-        "type": "text"
-    },
-    "html_cover_front": {
-        "name": "HTML: Front cover",
-        "type": "html"
-    },
-    "html_inside_front": {
-        "name": "HTML: Inside page front",
-        "type": "html"
-    },
-    "html_inside_back": {
-        "name": "HTML: Inside page back",
-        "type": "html"
-    },
-    "html_cover_back": {
-        "name": "HTML: Back cover",
-        "type": "html"
-    },
-    "html_page_top": {
-        "name": "HTML: Page top",
-        "type": "html"
-    },
-    "html_head": {
-        "name": "HTML: inside &lt;head> tag",
-        "type": "html"
-    },
-    "html_body": {
-        "name": "HTML: first thing inside &lt;body>",
-        "type": "html"
-    },
-    "html_footer": {
-        "name": "HTML: footer, last thing inside &lt;body>",
-        "type": "html"
-    },
+	"text_window_title": {
+		"name": "Text: Window title",
+		"type": "text"
+	},
+	"html_cover_front": {
+		"name": "HTML: Front cover",
+		"type": "html"
+	},
+	"html_inside_front": {
+		"name": "HTML: Inside page front",
+		"type": "html"
+	},
+	"html_inside_back": {
+		"name": "HTML: Inside page back",
+		"type": "html"
+	},
+	"html_cover_back": {
+		"name": "HTML: Back cover",
+		"type": "html"
+	},
+	"html_page_top": {
+		"name": "HTML: Page top",
+		"type": "html"
+	},
+	"html_head": {
+		"name": "HTML: inside &lt;head> tag",
+		"type": "html"
+	},
+	"html_body": {
+		"name": "HTML: first thing inside &lt;body>",
+		"type": "html"
+	},
+	"html_footer": {
+		"name": "HTML: footer, last thing inside &lt;body>",
+		"type": "html"
+	},
 
-    "text_top_single_pages": {
-        "name": "Text on top of page on single mode",
-        "type": "text"
-    },
-    "text_top_even_pages": {
-        "name": "Text on top of even pages",
-        "type": "text"
-    },
-    "text_top_odd_pages": {
-        "name": "Text on top of odd pages",
-        "type": "text"
-    },
-    "text_search": {
-        "name": "Text: Search text...",
-        "type": "text"
-    },
-    "text_go": {
-        "name": "Text: Start search",
-        "type": "text"
-    },
-    "text_searching": {
-        "name": "Text: Searching...",
-        "type": "text"
-    },
-    "text_found": {
-        "name": "Text: Found %s results",
-        "type": "text"
-    },
-    "text_found_in": {
-        "name": "Text: Reading %s1 of %s2 results",
-        "type": "text"
-    },
-    "text_not_found": {
-        "name": "Text: No results found",
-        "type": "text"
-    },
-    "text_next": {
-        "name": "Text: Next",
-        "type": "text"
-    },
-    "text_prev": {
-        "name": "Text: Previous",
-        "type": "text"
-    },
-    "custom_css": {
-        "type": "text/css"
-    }
+	"text_top_single_pages": {
+		"name": "Text on top of page on single mode",
+		"type": "text"
+	},
+	"text_top_even_pages": {
+		"name": "Text on top of even pages",
+		"type": "text"
+	},
+	"text_top_odd_pages": {
+		"name": "Text on top of odd pages",
+		"type": "text"
+	},
+	"text_search": {
+		"name": "Text: Search text...",
+		"type": "text"
+	},
+	"text_go": {
+		"name": "Text: Start search",
+		"type": "text"
+	},
+	"text_searching": {
+		"name": "Text: Searching...",
+		"type": "text"
+	},
+	"text_found": {
+		"name": "Text: Found %s results",
+		"type": "text"
+	},
+	"text_found_in": {
+		"name": "Text: Reading %s1 of %s2 results",
+		"type": "text"
+	},
+	"text_not_found": {
+		"name": "Text: No results found",
+		"type": "text"
+	},
+	"text_next": {
+		"name": "Text: Next",
+		"type": "text"
+	},
+	"text_prev": {
+		"name": "Text: Previous",
+		"type": "text"
+	},
+	"custom_css": {
+		"type": "text/css"
+	}
 }
