@@ -179,12 +179,14 @@ require_once "config.php";
 				</span>
 			</li>
 			<?php } ?>
+			<?php if ($CONFIG['toolbar_item_music']){ ?>
 			<li id="toolbar_item_music" title="<?=@$CONFIG["text_toolbar_item_music"]?>">
-				<audio id="music_tag"><source id="music_source" src=""></audio>
+				<audio id="music_tag"></audio>
 				<span id="id-music" class="btn btn-primary form-control toolbar-item active">
 					<i class="fa fa-music"></i>
 				</span>
 			</li>
+			<?php } ?>
 			<li id="toolbar_item_zoom" title="<?=@$CONFIG["text_toolbar_item_zoom"]?>">
 				<span id="id-zoom" class="btn btn-primary form-control toolbar-item">
 					<i class="fa fa-search-plus"></i>
@@ -231,6 +233,7 @@ require_once "config.php";
 		var $size_parent = $('#book_container');
 		var $zoom_elem = $('#zoom_container');
 		var zoom_elem = $zoom_elem[0];
+		var $music_tag = $("#music_tag");
 		var build_book_time = Date.now(); // remember when book was created, for reasons
 		var turn_count = 0;
 		var numpages; // number of pages (including 4 cover pages)
@@ -258,7 +261,7 @@ require_once "config.php";
 		var zoom_active = false;
 		var sound_active = true;
 		var music_active = true;
-		var current_music_url = 'http://docs.google.com/uc?export=download&id=0BykyFKEtY3aeZkxjcXJYTUpLNm8',last_music_url;
+		var current_music_url = CONFIG["music_url"],last_music_url;
 		var textselect_active = false;
 		var requestFullScreenMethod = CONFIG["toolbar_item_fullscreen"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
 		
@@ -326,16 +329,20 @@ require_once "config.php";
 		}
 
 		function music_handler(){
+			<?php if ($CONFIG['toolbar_item_music']){ ?>
 			if (music_active){
 				if (last_music_url!=current_music_url){
-					last_music_url = current_music_url;
-					document.querySelector("#music_source").src=current_music_url;
-					document.querySelector("#music_tag").play();
+					$music_tag[0].src = last_music_url = current_music_url;
+					$music_tag.stop()[0].volume = 1;
+					$music_tag[0].play();
 				}
 			} else if (last_music_url) {
 				last_music_url = null;
-				document.querySelector("#music_tag").stop();
+				$music_tag.animate({volume: 0, duration:200,complete:function(){
+					$music_tag[0].pause();
+				}});
 			}
+		<?php } ?>
 		}
 
 		function zoom_toggle(){
@@ -901,7 +908,7 @@ require_once "config.php";
 				show_peel_corner();
 			}
 			$('#id-page-number').val(page);
-			
+			music_handler();
 			set_buttons_state();	
 		}//turned
 

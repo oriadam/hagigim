@@ -58,6 +58,9 @@
 			"Off": false
 		}
 	},
+	"music_url": {
+		"name": "Background music URL (ogg/mp3)"
+	},
 	"bootswatch_css": {
 		"name": "Toolbar color set",
 		"options": {
