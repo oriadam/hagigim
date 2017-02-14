@@ -110,6 +110,61 @@ switch ($func) {
 		exit();
 		break;
 	
+	case 'music':
+		// /////////////////////
+		// SEARCH MUSIC FILES //
+		// /////////////////////
+		$cfg = @$_GET["cfg"] ?: '';
+		$cache_id = $cfg . '_musicfiles';
+		$modifiedTime = time() - $CONFIG["list_cache_expires"];
+		$cached = cache_read($cache_id, CACHETYPE_LIST, $modifiedTime);
+		if ($cached) {
+			echo $cached;
+			exit();
+		}
+		
+		$list_query = $CONFIG["google_drive_query"];
+		$list_query .= " AND ";
+		$list_query .= "mimeType contains \"audio\"";
+		//$list_query .= "name contains '.mp3' or name contains '.ogg'";
+		$list = get_files($list_query,$CONFIG['musiclist']);
+		if (!empty($list) && !empty($list->error)) {
+			ajax_fatal('Error with music list ' . ($list ? $list->error ?: '' : ''));
+			exit();
+		}
+		
+		$return = array();
+		foreach ( $list as $file ) {
+			// For Debug:
+			// $methods = get_class_methods($file);
+			// var_export($methods);
+			$row = array(
+					'name' => $file->getName(),
+					'id' => $file->getId(),
+					'modifiedTime' => strtotime($file->getModifiedTime())
+			);
+			if ($val=$file->getCreatedTime()){
+				$row['createdTime'] = strtotime($val);
+			}
+			get_if_not_null($row,$file,'getContentHints');
+			get_if_not_null($row,$file,'getDescription');
+			get_if_not_null($row,$file,'getParents');
+			get_if_not_null($row,$file,'getQuotaBytesUsed');
+			get_if_not_null($row,$file,'getSize');
+			get_if_not_null($row,$file,'getStarred');
+			get_if_not_null($row,$file,'getTrashed');
+			get_if_not_null($row,$file,'getVersion');
+			get_if_not_null($row,$file,'getWebContentLink');
+			get_if_not_null($row,$file,'getWebViewLink');
+			get_if_not_null($row,$file,'getThumbnail');
+			$return[] = $row;
+		}
+		$cached = json_encode($return);
+		cache_write($cache_id, CACHETYPE_LIST, $cached);
+		echo $cached;
+		exit();
+		break;
+	
 	default:
 		break;
 }

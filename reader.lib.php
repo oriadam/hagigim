@@ -148,12 +148,15 @@ if (empty($GOOGLE['client'])) {
 	exit();
 }
 $GOOGLE['service'] = new Google_Service_Drive($GOOGLE['client']);
-function get_files($q = '') {
+function get_files($q = '',$optParams = null) {
 	global $CONFIG, $GOOGLE;
 	// Get the names and IDs of all files
-	$optParams = $CONFIG["list"];
+	if ($optParams === null)
+		$optParams = $CONFIG["list"];
 	if (! empty($q)) {
-		$optParams['q'] .= " AND ($q)";
+		if ($optParams['q'])
+			$optParams['q'] .= " AND ";
+		$optParams['q'].="($q)";
 	}
 	return retrieveAllFiles($GOOGLE['service'],$optParams,$CONFIG["max_results"]);
 }

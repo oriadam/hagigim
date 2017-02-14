@@ -244,6 +244,7 @@ require_once "config.php";
 		var loaded_pages = []; // remember which pages were already loaded (or currently loading)
 		var search_results = []; // array of search results (relevant on "search" mode, irrelevant on "filter" mode)
 		var search_position = 0; // position in current search results (relevant on "search" mode, irrelevant on "filter" mode)
+		var music_list = []; // list of music files that may fit with the currently viewed music file
 		var cover_pages_before,cover_pages_after;
 		var page_content_scroll_hide_page_number;
 		var turn_display_mode; // 'single' or 'double' pages view. intentionally start as undefined
@@ -596,6 +597,15 @@ require_once "config.php";
 			set_buttons_state();
 		}//search_next_prev
 
+		function load_music_files(){
+			var url = 'ajax.php?f=music&cfg='+CUSTOM_CONFIG_NAME;
+			var ajax_object = ajax(url,function(data){
+				if (data.length){
+					music_list = data;
+				}
+			});
+		}
+
 		// load a book according to a search query using ajax
 		// used: filter mode + on first run
 		function load_book(q,callback) {
@@ -710,7 +720,7 @@ require_once "config.php";
 				if (page && !id)
 					id = 'page-'+page;
 				var $elem = tmpl(tmpl_name,id);
-				$book.append($elem);
+				return $elem.appendTo($book);
 			}
 
 			// add front cover
@@ -731,7 +741,7 @@ require_once "config.php";
 			var i;
 			for (i=0;i<book_list.length;i++){
 				var page = page_index_to_page_number(i);
-				append('empty_page',page);
+				append('empty_page',page).attr('i',i);
 			}
 
 			// when number of pages is odd, add another blank page to allow folding of the last page
@@ -961,7 +971,25 @@ require_once "config.php";
 			}
 			if (window.process_page_hook)
 				window.process_page_hook(page, page_element, page_content, title);
+			
+			var music = get_music_iframe(page,page_element,page_content,title);
+			if (music){
+				page_element.find('.page_content>div').append(music);
+			}
+
 		}// process_page
+
+		function get_music_iframe(page,page_element,page_content,title){
+			var trimrx = /\.[^\.]*$|_|-|%20| |\s+$|^\s+/g;
+			var book_entry = book_list[page_element.parent().attr('i')];
+			if (book_entry){
+				for (var i in music_list){
+					if (music_list[i].name && music_list[i].name.replace(trimrx,'')==book_entry.name.replace(trimrx,'')){
+						return $('<iframe class="music_pop" src="https://drive.google.com/file/d/'+music_list[i].id+'/preview" i="'+i+'"></iframe>');
+					}
+				}
+			}
+		}
 
 		// bind events to a page after it has turned
 		function page_turned(page,page_element){
@@ -1226,6 +1254,7 @@ require_once "config.php";
 				// load only search results
 				handle_search();
 			}
+			load_music_files();
 		},1); // setTimeout main function
 	</script>
 

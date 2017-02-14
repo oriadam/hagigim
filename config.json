@@ -75,6 +75,11 @@
 		"orderBy": "starred,recency",
 		"fields": "files(createdTime,id,modifiedTime,name,starred),kind,nextPageToken"
 	},
+	"musiclist": {
+		"q": "",
+		"pageSize": 1000,
+		"fields": "files(createdTime,id,modifiedTime,name,starred),kind,nextPageToken"
+	},
 	"max_results": 9999,
 
 	"see turnjs options here:": "http://www.turnjs.com/#api",
