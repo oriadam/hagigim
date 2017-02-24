@@ -12,8 +12,10 @@ html * {
 }
 
 #flipbook #cover_back.hard {
-	background: #1e1b16;
+	background: #1c223c;
 	color: #fff;
+	background-image: url("img/cover-mesh.jpg");
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: bottom;
 }
@@ -21,9 +23,17 @@ html * {
 #flipbook #cover_front.hard {
 	background: #fff;
 	color: #333;
-	background-image: url("img/cover-white.jpg");
+	/*background-image: url("img/cover-white.jpg");*/
+	/*background-size: contain;*/
+	background-image: url("img/cover-mesh.jpg");
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: bottom;
+}
+
+#flipbook #cover_front.hard h1 {
+	text-shadow: 0 0 2px rgba(0, 0, 0, .7);
+	color: rgba(0, 0, 0, 0.7);
 }
 
 body {
