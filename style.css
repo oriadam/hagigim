@@ -44,6 +44,7 @@
 	height: calc( 100% - 56px);
 	position: relative;
 	min-width: 200px;
+	padding: 0 30px 40px;
 }
 
 body:not(.textselect) #flipbook .page_content,
@@ -82,11 +83,11 @@ body.textselect #flipbook .page_content {
 #flipbook .page_content p,
 #flipbook .page_content li {
 	font-weight: normal;
-	font-size: 1.95vh;
-	line-height: 2.4vh;
-	margin: 0;
+	/*font-size: 1.87vh;
+	line-height: 2.4vh;*/
+	margin-top: 0;
+	margin-bottom: 0;
 	white-space: normal;
-	transition: font-size 200ms;
 }
 
 #flipbook .page_content img {
@@ -110,7 +111,7 @@ body {
 #flipbook .page {
 	vertical-align: middle;
 	background-color: white;
-	font-size: 1.2vh;
+	/*font-size: 1.2vh;*/
 	text-align: center;
 	-width: 50%;
 	-height: calc(100vh - 70px);
@@ -176,8 +177,12 @@ body {
 #flipbook .first_content_line,
 #flipbook .first_content_line * {
 	font-weight: bold;
-	font-size: 2.1vh;
-	line-height: 3vh;
+	font-size: 20px;
+	line-height: 22px;
+}
+
+#flipbook .first_content_line {
+	margin-bottom: 15px !important;
 }
 
 .pages_depth_element {
@@ -275,41 +280,6 @@ body {
 	cursor: crosshair;
 }
 
-#flipbook .zoomin .page_content {
-	position: absolute;
-	left: 0;
-	top: 0;
-	background: #fff;
-	z-index: 11111111;
-	margin: 0;
-	padding: 10px 25px;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-}
-
-#flipbook .zoomin .page_content>div {
-	transform: none;
-	margin: 0;
-}
-
-#flipbook .zoomin .first_content_line,
-#flipbook .zoomin .first_content_line *,
-#flipbook .zoomin h1,
-#flipbook .zoomin h2,
-#flipbook .zoomin h3,
-#flipbook .zoomin h4,
-#flipbook .zoomin h5,
-#flipbook .zoomin h6,
-#flipbook .zoomin p,
-#flipbook .zoomin li {
-	transition: font-size 200ms;
-	font-size: 2.6vh;
-	line-height: 2.8vh;
-	margin: 0;
-	white-space: normal;
-}
-
 .animation-spin {
 	animation: spin 2s infinite linear;
 }
@@ -357,4 +327,11 @@ iframe.music_pop {
 	border: none;
 	transform: scale(0.7);
 	display: inline-block;
+}
+
+
+/* trying to fix the bluring bug: */
+
+.page_outer_wrap {
+	/*transform: rotate(-0.01deg) translate3d(-1px, 1px, 990px);*/
 }

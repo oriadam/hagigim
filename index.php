@@ -20,8 +20,21 @@ require_once "config.php";
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 	<script src="turnjs/turn.min.js" hotlink_src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
-	<?php if ($CONFIG['bootswatch_css']) { ?>
-	<link href="https://bootswatch.com/<?=$CONFIG['bootswatch_css']?>/bootstrap.min.css" rel="stylesheet">
+	<?php if ($CONFIG["bootswatch_css"]) { ?>
+	<link href="https://bootswatch.com/<?=$CONFIG["bootswatch_css"]?>/bootstrap.min.css" rel="stylesheet">
+	<?php } ?>
+	<?php if ($CONFIG["autofit_text"]) { ?>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
+	<?php } elseif ($CONFIG["text_size"]) { ?>
+	<style>.page_content { font-size: <?=$CONFIG["text_size"]?>px;</style>
+	<?php } ?>
+
+	<?php if ($CONFIG["generate_index"]) { ?>
+	<style>
+		.idx_row {
+			font-size:<?=(1/$CONFIG["index_lines_per_page"])*60?>vh;
+		}
+	</style>
 	<?php } ?>
 	
 	<?php if ($CONFIG["max_book_width"]) { ?>
@@ -171,18 +184,18 @@ require_once "config.php";
 					<i class="fa fa-print"></i>
 				</span>
 			</li>
-			<?php if ($CONFIG['page_sound']){ ?>
+			<?php if ($CONFIG["page_sound"]){ ?>
 			<li id="toolbar_item_sound" title="<?=@$CONFIG["text_toolbar_item_sound"]?>">
 				<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
-				<span id="id-sound" class="btn btn-primary form-control toolbar-item active">
+				<span id="id-sound" class="btn btn-primary form-control toolbar-item">
 					<i class="fa fa-volume-up"></i>
 				</span>
 			</li>
 			<?php } ?>
-			<?php if ($CONFIG['toolbar_item_music']){ ?>
+			<?php if ($CONFIG["toolbar_item_music"]){ ?>
 			<li id="toolbar_item_music" title="<?=@$CONFIG["text_toolbar_item_music"]?>">
 				<audio id="music_tag"></audio>
-				<span id="id-music" class="btn btn-primary form-control toolbar-item active">
+				<span id="id-music" class="btn btn-primary form-control toolbar-item">
 					<i class="fa fa-music"></i>
 				</span>
 			</li>
@@ -226,6 +239,8 @@ require_once "config.php";
 	<script>
 		var CONFIG = <?=json_encode(config_for_js())?>;
 		var CUSTOM_CONFIG_NAME = "<?=$CUSTOM_CONFIG_NAME?>";
+		CONFIG["textfit_options"]["minFontSize"] = CONFIG["autofit_text_min"];
+		CONFIG["textfit_options"]["maxFontSize"] = CONFIG["autofit_text_max"];
 
 		var $body = $('body');
 		var $book = $('#flipbook'); // book jQuery element
@@ -260,11 +275,12 @@ require_once "config.php";
 		var pause_turn_events;
 		var search_results_clicked;
 		var zoom_active = false;
-		var sound_active = true;
-		var music_active = true;
+		var sound_active = localStorage.getItem("sound_active") === null ? true : localStorage.getItem("sound_active")=="1";
+		var music_active = localStorage.getItem("music_active") === null ? CONFIG["music_default"] : localStorage.getItem("music_active")=="1";
 		var current_music_url = CONFIG["music_url"],last_music_url;
 		var textselect_active = false;
 		var requestFullScreenMethod = CONFIG["toolbar_item_fullscreen"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
+		var autofit_text_running;
 		
 		if (CONFIG["toolbar_item_fullscreen"] && !requestFullScreenMethod){
 			// when there is no fullscreen option, override settings
@@ -319,18 +335,23 @@ require_once "config.php";
 
 		function sound_toggle(){
 			sound_active = !sound_active;
+			localStorage.setItem("sound_active",sound_active? 1:0)
+			sound_handler();
+		}
+		function sound_handler(){
 			$('#id-sound').toggleClass('active',sound_active);
 			$('#id-sound>i').toggleClass('fa-volume-up',sound_active).toggleClass('fa-volume-off',!sound_active);
 		}
 
 		function music_toggle(){
 			music_active = !music_active;
-			$('#id-music').toggleClass('active',music_active);
+			localStorage.setItem("music_active",music_active? 1:0)
 			music_handler();
 		}
 
 		function music_handler(){
-			<?php if ($CONFIG['toolbar_item_music']){ ?>
+			<?php if ($CONFIG["toolbar_item_music"]){ ?>
+			$('#id-music').toggleClass('active',music_active);
 			if (music_active){
 				if (last_music_url!=current_music_url){
 					$music_tag[0].src = last_music_url = current_music_url;
@@ -355,9 +376,6 @@ require_once "config.php";
 					minScale: 0.5,
 					maxScale: 5.0,
 					increment: 0.1,
-					// onZoom: function(){
-					// 	handle_scrollable_pages(page);
-					// }
 				}).panzoom('zoom', true);
 				$body.on('mousewheel.focal', function(ev) {
 					ev.preventDefault();
@@ -664,7 +682,7 @@ require_once "config.php";
 			}
 			for (current_page=0;current_page<pages_html.length;current_page++){
 				index_pages[current_page] = tmpl('index_page');
-				index_pages[current_page].find('.idx_list').append(pages_html[current_page]);
+				index_pages[current_page].find('.idx_list').append(pages_html[current_page]).find('.idx_row').click(index_row_click);
 			}
 		}
 
@@ -707,12 +725,13 @@ require_once "config.php";
 			}catch(e){}
 			$book.remove();
 			$book = $('<div id="'+id+'">').appendTo($book_parent);
+			$book.bind('turned', turned);
+			$book.bind('turning', turning);
+			$book.bind('start', animation_start);
+			$book.bind('end', animation_end);
 			if (CONFIG["middle_gradient"]){
 				$book.addClass('middle_gradient');
 			}
-			$book.bind('turning', turning);
-			$book.bind('turned', turned);
-			$book.bind('start', animation_start);
 			loaded_pages = [];
 
 			// append pages to book and remember which pages are already loaded
@@ -865,6 +884,11 @@ require_once "config.php";
 				event.preventDefault();
 				return false;
 			}
+			autofit_text();
+		}
+
+		// turnjs end event 
+		function animation_end(event, pageObject, corner) {
 		}
 
 		// turnjs turning event - when starting to animate turning to a specific page
@@ -900,8 +924,10 @@ require_once "config.php";
 		// turnjs turned event - when a page has finished animation and is displayed
 		function turned(event, page, view) {
 			if (pause_turn_events){
+				consolelog('pause_turn_events',page);
 				return;
 			}
+			consolelog('turned',page);
 			var visible_scrollable;
 			for (var i = 0; i<=view.length; i++){
 				if (handle_scrollable_pages(view[i])){
@@ -919,7 +945,10 @@ require_once "config.php";
 			}
 			$('#id-page-number').val(page);
 			music_handler();
+			sound_handler();
 			set_buttons_state();	
+			autofit_text();
+			handle_scrollable_pages();			
 		}//turned
 
 		// event to run when book is ready (called by build_book)
@@ -928,6 +957,35 @@ require_once "config.php";
 			page_turned(0,$('.p1'));
 			page_turned(0,$('.p2'));
 			page_turned(0,$('.p3'));
+		}
+
+		function autofit_text($elements){
+			if (CONFIG["autofit_text"]){
+				if (autofit_text_running)
+					return;
+				autofit_text_running=1;
+				var $visible = $(".page_content:visible");
+				$elements = $elements || $visible;
+				var w = $visible.width(),h=$visible.height();
+				if (w&&h){
+					$elements.each(function(){
+						var $container=$(this),
+							$content=$container.children(),
+							$imgs=$content.find('img');
+						$content.width(w).height(h);
+
+						try{
+							textFit($content.toArray(),CONFIG["textfit_options"]);
+							$imgs.load(function(){
+								textFit($content.toArray(),CONFIG["textfit_options"]);
+							});
+						}catch(e){
+							console.error(e);
+						}
+					});
+				}
+				autofit_text_running=0;
+			}
 		}
 
 		// turnjs resize event - redetect mobile state, and reset the book size
@@ -939,6 +997,7 @@ require_once "config.php";
 			$book_parent.width(width);
 			handle_pages_depth();
 			$book.turn("size",width,height);
+			autofit_text();
 			handle_scrollable_pages();
 		}
 
@@ -971,7 +1030,7 @@ require_once "config.php";
 			}
 			if (window.process_page_hook)
 				window.process_page_hook(page, page_element, page_content, title);
-			
+
 			var music = get_music_iframe(page,page_element,page_content,title);
 			if (music){
 				page_element.find('.page_content>div').append(music);
@@ -1037,6 +1096,8 @@ require_once "config.php";
 					$('#flipbook .p'+page).empty().append(element);
 
 					process_page(page,element,page_content,title);
+					autofit_text();
+					handle_scrollable_pages();
 					
 				});
 			}

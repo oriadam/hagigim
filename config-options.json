@@ -23,7 +23,10 @@
 		}
 	},
 	"index_lines_per_page": {
-		"type": "number"
+		"type": "number",
+		"min": 20,
+		"max": 50,
+		"step": 5
 	},
 	"start_with_closed_book": {
 		"name": "Start at",
@@ -46,11 +49,33 @@
 			"Always Single": "always"
 		}
 	},
-	"auto_shrink_page_text": {
+	"autofit_text": {
+		"name": "Autofit font size on page",
 		"options": {
 			"On": true,
 			"Off": false
 		}
+	},
+	"autofit_text_min": {
+		"name": "Autofit min font size",
+		"type": "number",
+		"min": 6,
+		"max": 20,
+		"step": 1
+	},
+	"autofit_text_max": {
+		"name": "Autofit max font size",
+		"type": "number",
+		"min": 20,
+		"max": 99,
+		"step": 1
+	},
+	"text_size": {
+		"name": "Font size (if autofit off)",
+		"type": "number",
+		"min": 6,
+		"max": 99,
+		"step": 1
 	},
 	"page_sound": {
 		"options": {
@@ -60,6 +85,13 @@
 	},
 	"music_url": {
 		"name": "Background music URL (ogg/mp3)"
+	},
+	"music_default": {
+		"name": "Background music default state",
+		"options": {
+			"On": true,
+			"Off": false
+		}
 	},
 	"bootswatch_css": {
 		"name": "Toolbar color set",

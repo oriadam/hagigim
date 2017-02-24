@@ -1,6 +1,6 @@
 {
 	"manager_password_md5": "0ff49c3123244ee5187f9130902857a0",
-	"console_debug": true,
+	"console_debug": false,
 	"log_filename": "err.log",
 	"google_drive_query": "'XXXXXXXXXXXX' in parents and trashed = false",
 	"url_homepage": "",
@@ -11,6 +11,10 @@
 	"hard_cover": true,
 	"mobile_width": 750,
 	"single_page_mode": "mobile",
+	"autofit_text": true,
+	"autofit_text_min": 15,
+	"autofit_text_max": 36,
+	"text_size": 20,
 	"toolbar_position": "top",
 	"toolbar_item_homepage": true,
 	"text_toolbar_item_homepage": "Home page",
@@ -28,6 +32,7 @@
 	"text_toolbar_item_textselect": "Select Text",
 	"page_sound": true,
 	"music_url": "",
+	"music_default": false,
 	"show_peel_corner": false,
 	"middle_gradient": true,
 	"pages_depth": true,
@@ -82,14 +87,14 @@
 	},
 	"max_results": 9999,
 
-	"see turnjs options here:": "http://www.turnjs.com/#api",
+	"See turnjs options here:": "http://www.turnjs.com/#api",
 	"turn_options": {
 		"autoCenter": false,
 		"elevation": 0,
 		"gradients": true
 	},
 
-	"see sweetalert options here:": "http://t4t5.github.io/sweetalert/",
+	"See sweetalert options here:": "http://t4t5.github.io/sweetalert/",
 	"swal_options": {
 		"timer": 2000,
 		"showLoaderOnConfirm": true,
@@ -97,6 +102,17 @@
 		"allowEscapeKey": true,
 		"allowOutsideClick": true,
 		"animation": "slide-from-top"
+	},
+	"See textfit options here:": "https://github.com/STRML/textFit#default-settings",
+	"textfit_options": {
+		"multiLine": true,
+		"detectMultiLine": false,
+		"minFontSize": 15,
+		"maxFontSize": 36,
+		"reProcess": true,
+		"widthOnly": false,
+		"alignHoriz": false,
+		"alignVert": false
 	},
 	"options_for_js": [
 		"url_homepage",
@@ -107,6 +123,9 @@
 		"hard_cover",
 		"mobile_width",
 		"single_page_mode",
+		"autofit_text",
+		"autofit_text_min",
+		"autofit_text_max",
 		"toolbar_position",
 		"toolbar_item_homepage",
 		"toolbar_item_fullscreen",
@@ -117,6 +136,7 @@
 		"toolbar_item_textselect",
 		"page_sound",
 		"music_url",
+		"music_default",
 		"show_peel_corner",
 		"middle_gradient",
 		"pages_depth",
@@ -145,6 +165,7 @@
 		"search_or_filter",
 		"remember_last_search",
 		"turn_options",
-		"swal_options"
+		"swal_options",
+		"textfit_options"
 	]
 }
