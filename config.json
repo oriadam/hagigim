@@ -33,6 +33,7 @@
 	"page_sound": true,
 	"music_url": "",
 	"music_default": false,
+	"bootswatch_css": "cosmo",
 	"show_peel_corner": false,
 	"middle_gradient": true,
 	"pages_depth": true,

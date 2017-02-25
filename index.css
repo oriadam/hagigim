@@ -6,7 +6,7 @@
 	overflow: hidden;
 	padding: 0;
 	margin: 75px 50px 0 50px;
-}
+} 
 
 .idx_row {
 	cursor: pointer;
@@ -32,6 +32,9 @@
 	white-space: nowrap;
 	overflow: visible;
 	content: ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
+}
+.idx_row:hover:before {
+	font-weight:bold;
 }
 
 .ltr .idx_list li:before {
