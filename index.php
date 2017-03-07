@@ -1044,7 +1044,7 @@ require_once "config.php";
 			if (book_entry){
 				for (var i in music_list){
 					if (music_list[i].name && music_list[i].name.replace(trimrx,'')==book_entry.name.replace(trimrx,'')){
-						return $('<iframe class="music_pop" src="https://drive.google.com/file/d/'+music_list[i].id+'/preview" i="'+i+'"></iframe>');
+						return $('<div class="music_pop"><iframe src="https://drive.google.com/file/d/'+music_list[i].id+'/preview" i="'+i+'"></iframe></div>');
 					}
 				}
 			}

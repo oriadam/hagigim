@@ -197,7 +197,7 @@ body {
 	z-index: 100;
 	background-color: fff;
 	background-size: 2px;
-} 
+}
 
 #flipbook_parent {
 	margin: 0;
@@ -320,13 +320,22 @@ body {
 	}
 }
 
-iframe.music_pop {
-	width: 100%;
-	height: 60px;
-	margin-top: 20px;
+.music_pop {
+	margin: 20px auto 0;
+	display: block;
+	overflow: hidden;
+	width: 182px;
+	height: 32px;
+	position: relative;
+}
+
+.music_pop iframe {
+	position: absolute;
+	left: -36px;
+	top: -12px;
+	width: 386px;
+	height: 56px;
 	border: none;
-	transform: scale(0.7);
-	display: inline-block;
 }
 
 
