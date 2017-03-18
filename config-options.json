@@ -1,4 +1,9 @@
 {
+	"title for behavior": {
+		"name": "Behavior",
+		"type": "configuration title"
+	},
+
 	"google_drive_query": {},
 	"url_homepage": {
 		"name": "Toolbar homepage URL",
@@ -22,12 +27,6 @@
 			"End of book": "end"
 		}
 	},
-	"index_lines_per_page": {
-		"type": "number",
-		"min": 20,
-		"max": 50,
-		"step": 5
-	},
 	"start_with_closed_book": {
 		"name": "Start at",
 		"options": {
@@ -35,11 +34,30 @@
 			"First page": false
 		}
 	},
+
+	"title for sound": {
+		"name": "Sound options",
+		"type": "configuration title"
+	},
+
+	"page_sound": {
+		"type": "boolean"
+	},
+	"music_url": {
+		"name": "Background music URL (ogg/mp3)"
+	},
+	"music_default": {
+		"name": "Background music default state",
+		"type": "boolean"
+	},
+
+	"title for graphics": {
+		"name": "Graphical options",
+		"type": "configuration title"
+	},
+
 	"hard_cover": {
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"single_page_mode": {
 		"name": "Pages in view",
@@ -51,10 +69,7 @@
 	},
 	"autofit_text": {
 		"name": "Autofit font size on page",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"autofit_text_min": {
 		"name": "Autofit min font size",
@@ -70,161 +85,41 @@
 		"max": 99,
 		"step": 1
 	},
-	"text_size": {
+	"font_size": {
 		"name": "Font size (if autofit off)",
 		"type": "number",
 		"min": 6,
 		"max": 99,
 		"step": 1
 	},
-	"page_sound": {
+	"index_lines_per_page": {
+		"type": "number",
+		"min": 20,
+		"max": 50,
+		"step": 5
+	},
+	"fullscreen_selector": {
+		"name": "Fullscreen mode",
 		"options": {
-			"On": true,
-			"Off": false
+			"Entire window": "body",
+			"Book only": "#zoom_container"
 		}
-	},
-	"music_url": {
-		"name": "Background music URL (ogg/mp3)"
-	},
-	"music_default": {
-		"name": "Background music default state",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"bootswatch_css": {
-		"name": "Toolbar color set",
-		"options": {
-			"Default": "",
-			"Cerulean": "cerulean",
-			"Cosmo": "cosmo",
-			"Cyborg": "cyborg",
-			"Darkly": "darkly",
-			"Flatly": "flatly",
-			"Journal": "journal",
-			"Lumen": "lumen",
-			"Paper": "paper",
-			"Readable": "readable",
-			"Sandstone": "sandstone",
-			"Simplex": "simplex",
-			"Slate": "slate",
-			"Spacelab": "spacelab",
-			"Superhero": "superhero",
-			"United": "united",
-			"Yeti": "yeti"
-		}
-	},
-	"toolbar_position": {
-		"options": {
-			"Top": "top",
-			"Bottom": "bottom"
-		}
-	},
-	"toolbar_item_homepage": {
-		"name": "Toolbar button: Homepage",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_homepage": {
-		"name": "Button tooltip",
-		"type": "text"
-	},
-	"toolbar_item_fullscreen": {
-		"name": "Toolbar button: Full-screen",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_fullscreen": {
-		"name": "Button tooltip",
-		"type": "text"
-	},
-	"toolbar_item_print": {
-		"name": "Toolbar button: Print",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_print": {
-		"name": "Button tooltip",
-		"type": "text"
-	},
-	"toolbar_item_sound": {
-		"name": "Toolbar button: Sounds",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_sound": {
-		"name": "Button tooltip",
-		"type": "text"
-	},
-	"toolbar_item_music": {
-		"name": "Toolbar button: Background music",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_music": {
-		"name": "Button tooltip",
-		"type": "text"
-	},
-	"toolbar_item_zoom": {
-		"name": "Toolbar button: Zoom",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_zoom": {
-		"name": "Button tooltip",
-		"type": "text"
-	},
-	"toolbar_item_textselect": {
-		"name": "Toolbar button: Text-select",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_toolbar_item_textselect": {
-		"name": "Button tooltip",
-		"type": "text"
 	},
 	"show_peel_corner": {
 		"name": "Fold a corner after 2 seconds",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"middle_gradient": {
 		"name": "Shadow in the middle of the book",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"pages_depth": {
 		"name": "Book pages depth effect",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"browse_via_pages_depth": {
 		"name": "Browse book from pages depth",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"max_book_width": {
 		"name": "Book max width",
@@ -233,26 +128,7 @@
 	},
 	"hr_to_read_more": {
 		"name": "Convert footnotes to `read more` link",
-		"options": {
-			"On": true,
-			"Off": false
-		}
-	},
-	"text_hr_read_more": {
-		"name": "Clickable text for hidden footnotes",
-		"type": "text"
-	},
-	"text_page_number": {
-		"name": "Text for 'page:' in toolbar",
-		"type": "text"
-	},
-	"text_hit_f11": {
-		"name": "Text 'Hit F11 for fullscreen'",
-		"type": "text"
-	},
-	"text_nothing_to_print": {
-		"name": "Text 'Nothing to print'",
-		"type": "text"
+		"type": "boolean"
 	},
 	"pages_depth_paper_thickness": {
 		"name": "Book pages depth: Paper thickness",
@@ -276,31 +152,19 @@
 	},
 	"show_page_number": {
 		"name": "Page numbers",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"show_page_title": {
 		"name": "Page titles",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"remove_first_row_if_identical_to_page_title": {
 		"name": "Remove first line if same as title",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"bold_first_content_line": {
 		"name": "Bigger first line",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"search_or_filter": {
 		"name": "Search or filter?",
@@ -310,10 +174,7 @@
 		}
 	},
 	"remember_last_search": {
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"type": "boolean"
 	},
 	"prevent_corner_peels_on_mobile_to_allow_scrolling": {
 		"name": "Mobile turning pages",
@@ -323,17 +184,105 @@
 		}
 	},
 	"console_debug": {
-		"name": "Debug notes on console",
-		"options": {
-			"On": true,
-			"Off": false
-		}
+		"name": "Log debug notes on console",
+		"type": "boolean"
+	},
+
+	"title for text": {
+		"name": "Translation and text",
+		"type": "configuration title"
 	},
 
 	"text_window_title": {
-		"name": "Text: Window title",
-		"type": "text"
+		"name": "Text: Window title"
 	},
+	"text_top_single_pages": {
+		"name": "Text on top of page on single mode"
+	},
+	"text_top_even_pages": {
+		"name": "Text on top of even pages"
+	},
+	"text_top_odd_pages": {
+		"name": "Text on top of odd pages"
+	},
+	"text_hr_read_more": {
+		"name": "Clickable text for hidden footnotes"
+	},
+	"text_hit_f11": {
+		"name": "Text 'Hit F11 for fullscreen'"
+	},
+	"text_nothing_to_print": {
+		"name": "Text 'Nothing to print'"
+	},
+	"text_tb_item_homepage": {
+		"name": "Button tooltip: homepage"
+	},
+	"text_tb_item_fullscreen": {
+		"name": "Button tooltip: fullscreen"
+	},
+	"text_tb_item_print": {
+		"name": "Button tooltip: print"
+	},
+	"text_tb_item_sound": {
+		"name": "Button tooltip: sound"
+	},
+	"text_tb_item_music": {
+		"name": "Button tooltip: music"
+	},
+	"text_tb_item_zoom": {
+		"name": "Button tooltip: zoom"
+	},
+	"text_tb_item_textselect": {
+		"name": "Button tooltip: textselect"
+	},
+	"text_search": {
+		"name": "Text: Search text..."
+	},
+	"text_found": {
+		"name": "Text: Found %s results"
+	},
+	"text_found_in": {
+		"name": "Text: Reading search result %s1 of %s2 results"
+	},
+	"text_pagenum_in": {
+		"name": "Text: Reading page %s1 of %s2 pages"
+	},
+	"text_pagenum_none": {
+		"name": "Text: Current page out of range (i.e. on cover)"
+	},
+	"text_not_found": {
+		"name": "Text: No results found"
+	},
+	"text_tb_item_nav-next": {
+		"name": "Button tooltip: Next page or search result"
+	},
+	"text_tb_item_nav-prev": {
+		"name": "Button tooltip: Previous page or search result"
+	},
+	"text_tb_item_nav-first": {
+		"name": "Button tooltip: First page or search result"
+	},
+	"text_tb_item_nav-last": {
+		"name": "Button tooltip: Last page or search result"
+	},
+	"text_tb_item_nav-pagenum": {
+		"name": "Button tooltip: Go to page"
+	},
+	"text_tb_item_nav-go": {
+		"name": "Button tooltip: Search button"
+	},
+	"text_tb_item_nav-clear": {
+		"name": "Button tooltip: Clear search"
+	},
+	"text_tb_item_nav-found": {
+		"name": "Button tooltip: Search results"
+	},
+
+	"title for html": {
+		"name": "HTML and CSS",
+		"type": "configuration title"
+	},
+
 	"html_cover_front": {
 		"name": "HTML: Front cover",
 		"type": "html"
@@ -366,52 +315,50 @@
 		"name": "HTML: footer, last thing inside &lt;body>",
 		"type": "html"
 	},
-
-	"text_top_single_pages": {
-		"name": "Text on top of page on single mode",
-		"type": "text"
-	},
-	"text_top_even_pages": {
-		"name": "Text on top of even pages",
-		"type": "text"
-	},
-	"text_top_odd_pages": {
-		"name": "Text on top of odd pages",
-		"type": "text"
-	},
-	"text_search": {
-		"name": "Text: Search text...",
-		"type": "text"
-	},
-	"text_go": {
-		"name": "Text: Start search",
-		"type": "text"
-	},
-	"text_searching": {
-		"name": "Text: Searching...",
-		"type": "text"
-	},
-	"text_found": {
-		"name": "Text: Found %s results",
-		"type": "text"
-	},
-	"text_found_in": {
-		"name": "Text: Reading %s1 of %s2 results",
-		"type": "text"
-	},
-	"text_not_found": {
-		"name": "Text: No results found",
-		"type": "text"
-	},
-	"text_next": {
-		"name": "Text: Next",
-		"type": "text"
-	},
-	"text_prev": {
-		"name": "Text: Previous",
-		"type": "text"
-	},
 	"custom_css": {
 		"type": "text/css"
+	},
+
+	"title for toolbars": {
+		"name": "Toolbars",
+		"output": "nav-q,nav-go,nav-clear,nav-found,nav-first,nav-prev,nav-next,nav-last <br> fullscreen,textselect,zoom,sound,music,homepage,print",
+		"type": "configuration title"
+	},
+
+	"bootswatch_css": {
+		"name": "Toolbar color set",
+		"options": {
+			"Default": "",
+			"Cerulean": "cerulean",
+			"Cosmo": "cosmo",
+			"Cyborg": "cyborg",
+			"Darkly": "darkly",
+			"Flatly": "flatly",
+			"Journal": "journal",
+			"Lumen": "lumen",
+			"Paper": "paper",
+			"Readable": "readable",
+			"Sandstone": "sandstone",
+			"Simplex": "simplex",
+			"Slate": "slate",
+			"Spacelab": "spacelab",
+			"Superhero": "superhero",
+			"United": "united",
+			"Yeti": "yeti"
+		}
+	},
+
+	"tb_list_top": {
+		"name": "Items in toolbar top"
+	},
+	"tb_list_bottom": {
+		"name": "Items in toolbar bottom"
+	},
+	"tb_list_left": {
+		"name": "Items in toolbar left"
+	},
+	"tb_list_right": {
+		"name": "Items in toolbar right"
 	}
+
 }

@@ -1,6 +1,7 @@
 // custom hook functions
 
 function process_page_hook(page, page_element, page_content, title) {
+	// allow changing the current visible page
 	if (page_content[0].innerHTML) {
 		page_content[0].innerHTML = page_content[0].innerHTML
 			.replace(/\bdir="rtl"/g, '')
@@ -18,4 +19,8 @@ function process_page_hook(page, page_element, page_content, title) {
 			.replace(/(<br>)+/g, '<br>')
 			.replace(/(<br>|<p><\/p>)+(.*first_content_line)/g, '$2')
 	}
+}
+
+function process_tb_hook() {
+	// allow changing the tb_items array
 }

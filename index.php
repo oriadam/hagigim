@@ -16,32 +16,30 @@ require_once "config.php";
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-	<script src="turnjs/turn.min.js" hotlink_src="http://www.turnjs.com/lib/turn.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+	<!-- bootbox dialogs: http://bootboxjs.com/examples.html -->
+	<script src="turnjs/turn.min.js" hotlink-src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<link href="style.css" rel="stylesheet">
 	<?php if ($CONFIG["bootswatch_css"]) { ?>
 	<link href="https://bootswatch.com/<?=$CONFIG["bootswatch_css"]?>/bootstrap.min.css" rel="stylesheet">
 	<?php } ?>
 	<?php if ($CONFIG["autofit_text"]) { ?>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
-	<?php } elseif ($CONFIG["text_size"]) { ?>
-	<style>.page_content { font-size: <?=$CONFIG["text_size"]?>px;</style>
+	<?php } elseif ($CONFIG["font_size"]) { ?>
+	<style>.page_content { font-size: <?=$CONFIG["font_size"]?>px;</style>
 	<?php } ?>
 
-	<?php if ($CONFIG["generate_index"]) { ?>
 	<style>
+		<?php if ($CONFIG["generate_index"]) { ?>
 		.idx_row {
 			font-size:<?=(1/$CONFIG["index_lines_per_page"])*60?>vh;
 		}
-	</style>
-	<?php } ?>
-	
-	<?php if ($CONFIG["max_book_width"]) { ?>
-	<style>
+		<?php } ?>
+		<?php if ($CONFIG["max_book_width"]) { ?>
 		.book_container_width {
 		    max-width: <?=$CONFIG["max_book_width"]?>px;
 		}
+		<?php } ?>
 
 		.display-double #flipbook .even .page_top_content:after {
 			content: "<?=$CONFIG["text_top_even_pages"]?>";
@@ -55,7 +53,6 @@ require_once "config.php";
 			content: "<?=$CONFIG["text_top_single_pages"]?>";
 		}
 	</style>
-	<?php } ?>
 	<link href="custom/style-<?=$CUSTOM_CONFIG_NAME?>.css" rel="stylesheet">
 	<script src="custom/script-<?=$CUSTOM_CONFIG_NAME?>.js"></script>
 	<?=$CONFIG["html_head"]?>
@@ -123,7 +120,7 @@ require_once "config.php";
 
 
 </head>
-<body class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?> toolbar-<?=$CONFIG["toolbar_position"]?>">
+<body id="body" class="<?=$CONFIG["rtl"]? 'rtl':'ltr'?>">
 	<?=$CONFIG["html_body"]?>
 
 	<div id="zoom_container">
@@ -166,75 +163,10 @@ require_once "config.php";
 		?>
 	</div>
 
-	<nav role="custom-dropdown" id="toolbar" class="container book_container_width input-append form-inline form-group">
-		<input type="checkbox" id="toolbar_burger_button" class="toolbar-item form-control">
-		<label for="toolbar_burger_button" onclick></label>
-    		
-		<ul id="id-buttons-container" class="container input-append form-inline form-group">
-			<li id="toolbar_item_homepage" title="<?=@$CONFIG["text_toolbar_item_homepage"]?>">
-				<a id="id-homepage" href="<?=$CONFIG["url_homepage"]?>" class="btn btn-primary form-control toolbar-item"><i class="fa fa-home"></i></a>
-			</li>
-			<li id="toolbar_item_fullscreen" title="<?=@$CONFIG["text_toolbar_item_fullscreen"]?>">
-				<span id="id-fullscreen" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-external-link-square"></i>
-				</span>
-			</li>
-			<li id="toolbar_item_print" title="<?=@$CONFIG["text_toolbar_item_print"]?>">
-				<span id="id-print" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-print"></i>
-				</span>
-			</li>
-			<?php if ($CONFIG["page_sound"]){ ?>
-			<li id="toolbar_item_sound" title="<?=@$CONFIG["text_toolbar_item_sound"]?>">
-				<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
-				<span id="id-sound" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-volume-up"></i>
-				</span>
-			</li>
-			<?php } ?>
-			<?php if ($CONFIG["toolbar_item_music"]){ ?>
-			<li id="toolbar_item_music" title="<?=@$CONFIG["text_toolbar_item_music"]?>">
-				<audio id="music_tag"></audio>
-				<span id="id-music" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-music"></i>
-				</span>
-			</li>
-			<?php } ?>
-			<li id="toolbar_item_zoom" title="<?=@$CONFIG["text_toolbar_item_zoom"]?>">
-				<span id="id-zoom" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-search-plus"></i>
-				</span>
-			</li>
-			<li id="toolbar_item_textselect" title="<?=@$CONFIG["text_toolbar_item_textselect"]?>">
-				<span id="id-textselect" class="btn btn-primary form-control toolbar-item">
-					<i class="fa fa-text-width"></i>
-				</span>
-			</li>
-		</ul>
-		<ul id="id-search-container" class="container input-append form-inline form-group">
-			<li id="id-q-li">
-				<input id="id-q" placeholder="" type="text" class="form-control search-query toolbar-item" />
-			</li>
-			<li id="id-go-li">
-				<span id="id-go" class="form-control btn btn-primary toolbar-item top-form-button"><?=$CONFIG["text_go"]?></span>
-			</li>			
-			<li id="id-found-li">
-				<output id="id-found" class="form-control text toolbar-item"></output>
-			</li>
-			<li id="id-prev-li">
-				<span id="id-prev" class="form-control btn btn-primary toolbar-item top-form-button"></span>
-			</li>
-			<li id="id-next-li">
-				<span id="id-next" class="form-control btn btn-primary toolbar-item top-form-button"></span>
-			</li>
-			<li id="id-page-number-li">
-				<label for="id-page-number" class="toolbar-item">
-					<?=$CONFIG["text_page_number"]?>
-				</label>
-				<input id="id-page-number" class="form-control toolbar-item" />
-			</li>
-		</ul>
-	</nav>
+	<?php if ($CONFIG["page_sound"]){ ?>
+		<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
+	<?php } ?>
+	<audio id="music_tag"></audio>
 
 	<script>
 		var CONFIG = <?=json_encode(config_for_js())?>;
@@ -278,80 +210,17 @@ require_once "config.php";
 		var sound_active = localStorage.getItem("sound_active") === null ? true : localStorage.getItem("sound_active")=="1";
 		var music_active = localStorage.getItem("music_active") === null ? CONFIG["music_default"] : localStorage.getItem("music_active")=="1";
 		var current_music_url = CONFIG["music_url"],last_music_url;
-		var textselect_active = false;
-		var requestFullScreenMethod = CONFIG["toolbar_item_fullscreen"] && (document.body.requestFullScreen || document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.msRequestFullScreen);
 		var autofit_text_running;
-		
-		if (CONFIG["toolbar_item_fullscreen"] && !requestFullScreenMethod){
-			// when there is no fullscreen option, override settings
-			console.log("Full screen not available");
-			CONFIG["toolbar_item_fullscreen"] = false;
-		}
+</script>
+<script src="toolbar.js"></script>
+<script>
 
-		if (CONFIG["toolbar_item_homepage"] && !CONFIG["url_homepage"]){
-			// when there is no homepage url, override settings
-			CONFIG["toolbar_item_homepage"] = false;
-		}
-
-		swal.setDefaults(CONFIG["swal_options"]);
-
-		// taken from: http://stackoverflow.com/a/7525760/3356679
-		function launch_fullscreen() {
-			try{
-				//requestFullScreenMethod.call(document.querySelector('#zoom_container'));
-				requestFullScreenMethod.call(document.body);
-			}catch(e){
-				swal({
-					title: CONFIG["text_hit_f11"],
-				});
-			}
-		}
-		
-		function launch_print() {
-			var $print_container = $('#print_container').empty();
-			var views = $book.turn('view');
-			var added;
-			for(var i=0;i<views.length;i++){
-				var $page_content = $('.p' + views[i] + ' .page_content');
-				if ($page_content.length){
-					$page_content.clone().appendTo($print_container).prop('style','');
-					added=1;
-				}
-			}
-			if (added){
-				window.print();
-			} else {
-				swal({
-					title: CONFIG["text_nothing_to_print"],
-				});				
-			}
-		}
-
-		function textselect_toggle(){
-			textselect_active = !textselect_active;
-			$('#id-textselect').toggleClass('active',textselect_active);
-			$body.toggleClass('textselect',textselect_active);
-		}
-
-		function sound_toggle(){
-			sound_active = !sound_active;
-			localStorage.setItem("sound_active",sound_active? 1:0)
-			sound_handler();
-		}
-		function sound_handler(){
-			$('#id-sound').toggleClass('active',sound_active);
-			$('#id-sound>i').toggleClass('fa-volume-up',sound_active).toggleClass('fa-volume-off',!sound_active);
-		}
-
-		function music_toggle(){
-			music_active = !music_active;
-			localStorage.setItem("music_active",music_active? 1:0)
-			music_handler();
-		}
+		['left', 'right', 'top', 'bottom'].forEach(function(navid) {
+			if (/\w/.test(CONFIG['tb_list_' + navid]))
+				$body.append(tb_generate(CONFIG['tb_list_' + navid], navid,navid.indexOf('o')>=0? 'tb-h':'tb-v'));
+		});
 
 		function music_handler(){
-			<?php if ($CONFIG["toolbar_item_music"]){ ?>
-			$('#id-music').toggleClass('active',music_active);
 			if (music_active){
 				if (last_music_url!=current_music_url){
 					$music_tag[0].src = last_music_url = current_music_url;
@@ -364,33 +233,7 @@ require_once "config.php";
 					$music_tag[0].pause();
 				}});
 			}
-		<?php } ?>
 		}
-
-		function zoom_toggle(){
-			if (zoom_active){
-				$zoom_elem.panzoom("reset").panzoom("destroy");
-				zoom_active=0;
-			} else {
-				$zoom_elem.panzoom({
-					minScale: 0.5,
-					maxScale: 5.0,
-					increment: 0.1,
-				}).panzoom('zoom', true);
-				$body.on('mousewheel.focal', function(ev) {
-					ev.preventDefault();
-					var delta = ev.delta || ev.originalEvent.wheelDelta;
-					var zoomOut = delta ? delta < 0 : ev.originalEvent.deltaY > 0;
-					$zoom_elem.panzoom('zoom', zoomOut, {
-						increment: 0.1,
-						animate: false,
-						focal: ev
-					});
-				});
-				zoom_active = 1;
-			}
-			$('#id-zoom').toggleClass('active',zoom_active);
-		}//zoom_toggle
 
 		// create a new jQuery element out of a <template> element of id '#tmpl_'+name
 		function tmpl(name,id){
@@ -415,17 +258,6 @@ require_once "config.php";
 			},2000);
 		}//show_peel_corner
 
-		// disable/enable prev/next buttons
-		function set_buttons_state(){
-			if (search_results.length){
-				$('#id-next').toggleClass('disabled',search_position>=search_results.length-1);
-				$('#id-prev').toggleClass('disabled',search_position<=0);
-			} else {
-				$('#id-next').toggleClass('disabled',current_page()>=numpages);
-				$('#id-prev').toggleClass('disabled',current_page()<=1);
-			}
-		}//set_buttons_state
-
 		// check if page cannot be moved to
 		function is_page_skip_me(page){
 			return turn_display_mode=='single' && !!$('.p'+page+'.skip_me').length;
@@ -447,6 +279,10 @@ require_once "config.php";
 					}
 				}
 			}
+			if (page == 'last')
+				page = numpages - 1;
+			if (page == 'first')
+				page = 1;
 			if (turn_display_mode == 'single'){
 				var direction = current_page()>page ? -1 : 1;
 				// skipping empty pages when need to
@@ -472,24 +308,45 @@ require_once "config.php";
 			return $book.turn('page');
 		}
 
+		function current_pagenum(){
+			var current = current_page() - cover_pages_before;
+			return current<0 || current>total_pagenum() ? false : current;
+		}
+
+		function go_to_pagenum(page){
+			if (isFinite(page))
+				go_to_page(cover_pages_before + page);
+			else
+				go_to_page(page);
+		}
+
+		function total_pagenum(){
+			return numpages - cover_pages_before - cover_pages_after;
+		}
+
+		function total_page(){
+			return numpages;
+		}
+
 		// populate search results text
 		function set_found_text(results_or_text){
 			if (typeof results_or_text == 'string') {
-				$('#id-found').html(results_or_text);
+				$('#tb-item-nav-found').html(results_or_text);
 			} else if (typeof results_or_text == 'number') {
 				if (results_or_text>0){
-					$('#id-found').html(CONFIG["text_found"].replace('%s',results_or_text));
+					$('#tb-item-nav-found').html(CONFIG["text_found"].replace('%s',results_or_text));
 				} else {
-					$('#id-found').html(CONFIG["text_not_found"]);
+					$('#tb-item-nav-found').html(CONFIG["text_not_found"]);
 				}
 			} else {
-				$('#id-found').html("");
+				$('#tb-item-nav-found').html("");
 			}
 		}//set_found_text
 
 		// set status of currently searching
 		function set_searching_state(state){
-			$('#id-go').toggleClass('disabled',state).html( state? CONFIG["text_searching"]:CONFIG["text_go"] );
+			$('#tb-item-nav-go').toggleClass('disabled',state);
+			$('#tb-item-nav-go .tb-icon').toggleClass('fa-refresh fa-spin',state).toggleClass('fa-search',!state);
 		}
 
 		// handle search query
@@ -531,7 +388,7 @@ require_once "config.php";
 				var url='ajax.php?f=list&cfg='+CUSTOM_CONFIG_NAME+'&q='+encodeURI(q||'');
 				var ajax_object = ajax(url,function(data){
 					if (data.error){
-						$('#id-found').text(data.error);
+						$('#tb-item-nav-found').text(data.error);
 						return;
 					}
 					populate_search_results(data);
@@ -571,7 +428,6 @@ require_once "config.php";
 				// go to first result
 				go_to_search_position();
 			}
-			set_buttons_state();
 		}//populate_search_results
 
 		function go_to_search_position(){
@@ -606,13 +462,17 @@ require_once "config.php";
 				if ((next_or_prev=='next' && search_position<search_results.length-1)
 					|| (next_or_prev=='previous' && search_position>0 )){
 						search_position += next_or_prev == 'next' ? 1 : -1;
-					go_to_search_position();
 				}
+				// last/first search result
+				if (next_or_prev=='first' || next_or_prev=='last'){
+						search_position = next_or_prev == 'last' ? search_results.length-1 : 0;
+				}
+				go_to_search_position();
 			} else {
 				// next/prev page
 				go_to_page(next_or_prev);
 			}
-			set_buttons_state();
+			tb_updateState();
 		}//search_next_prev
 
 		function load_music_files(){
@@ -650,10 +510,13 @@ require_once "config.php";
 						go_to_page(3);
 					}
 				}
-				set_buttons_state();
 				if (callback){
 					callback();
 				}
+				if (typeof book_loaded_hook == 'function'){
+					book_loaded_hook();
+				}
+				setTimeout(tb_updateState,100);
 			});
 		}//load_book
 
@@ -943,12 +806,11 @@ require_once "config.php";
 				// bug: showing peel disables the scrolling
 				show_peel_corner();
 			}
-			$('#id-page-number').val(page);
+			$('#id-pagenum').val(page);
 			music_handler();
-			sound_handler();
-			set_buttons_state();	
 			autofit_text();
-			handle_scrollable_pages();			
+			handle_scrollable_pages();
+			tb_updateState();
 		}//turned
 
 		// event to run when book is ready (called by build_book)
@@ -1206,36 +1068,11 @@ require_once "config.php";
 			$('#id-q').prop('placeholder',CONFIG["text_search"]).val((CONFIG["remember_last_search"] && localStorage.getItem('turn_reader_q') ) || '' );
 			$('#id-q').keypress(function(e) {
 				if(e.which == 13) {
-					$('#id-go').click();
-				}
-			});
-			
-			// toolbar toggles
-			$('#toolbar li').each(function(){
-				var k = this.id;
-				if (CONFIG[k]===true){
-					$(this).show();
-				} else if (CONFIG[k]===false){
-					$(this).hide();
+					$('#tb-item-nav-go').click();
 				}
 			});
 
-			// toolbar actions
-			$('#id-fullscreen').click(launch_fullscreen);
-			$('#id-print').click(launch_print);
-			$('#id-sound').click(sound_toggle);
-			$('#id-music').click(music_toggle);
-			$('#id-zoom').click(zoom_toggle);
-			$('#id-textselect').click(textselect_toggle);
-
-			$('#id-go').click(handle_search);
-			$('#id-prev').html(CONFIG["text_prev"]).click(function(){
-				search_next_prev('previous');
-			});
-			$('#id-next').html(CONFIG["text_next"]).click(function(){
-				search_next_prev('next');
-			});
-			$('#id-page-number').change(function(){
+			$('#id-pagenum').change(function(){
 				var n = 1*this.value;
 				if (n>0 && n<numpages){
 					go_to_page(n);

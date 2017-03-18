@@ -1,3 +1,4 @@
-- OOP rather than global vars
-- Mobile support for toolbar, with the burger icon
+- OOP instead of global vars
+- Mobile support for toolbars
 - Test generated index on end of book
+- Manage: D&D interface for toolbar items

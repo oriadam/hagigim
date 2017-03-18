@@ -16,18 +16,18 @@ read_from_config_file($CUSTOM_CONFIG_FN);
 
 // load custom config, if any
 if (!empty($_GET['cfg']) && strpos($_GET['cfg'],'/')===FALSE) {
-	$name = $_GET['cfg'];
-	$fn = "$CUSTOM_PATH/config-$name.json";
+	$k = $_GET['cfg'];
+	$fn = "$CUSTOM_PATH/config-$k.json";
 	if (file_exists($fn)){
 		$CUSTOM_CONFIG_FN = $fn;
-		$CUSTOM_CONFIG_NAME = $name;
+		$CUSTOM_CONFIG_NAME = $k;
 		read_from_config_file($CUSTOM_CONFIG_FN);
 	}  else if (!empty($_REQUEST['addcfg'])){
 		$CUSTOM_CONFIG_FN = $fn;
-		$CUSTOM_CONFIG_NAME = $name;
+		$CUSTOM_CONFIG_NAME = $k;
 		file_put_contents($CUSTOM_CONFIG_FN,'{}');
-		file_put_contents("$CUSTOM_PATH/style-$CUSTOM_CONFIG_NAME.css","@import url('style-default.css');\n");
-		file_put_contents("$CUSTOM_PATH/script-$CUSTOM_CONFIG_NAME.js","//function process_page_hook(page, page_element, page_content, title){}");
+		file_put_contents("$CUSTOM_PATH/style-$CUSTOM_CONFIG_NAME.css",file_get_contents('custom-style-init.css'));
+		file_put_contents("$CUSTOM_PATH/script-$CUSTOM_CONFIG_NAME.js",file_get_contents('custom-script-init.js'));
 	}
 }
 
@@ -38,6 +38,7 @@ define('MYLOG_PATH', __DIR__ . '/' . $CONFIG['log_filename']);
 define('CACHETYPE_LIST', 'list');
 define('CACHETYPE_FILE', 'googledoc_html');
 define('CONFIG_OPTIONS_FN','config-options.json');
+define('CONFIG_OPTIONS_FOR_JS_FN','config-options-for-js.json');
 
 // google auth constants:
 define('APPLICATION_NAME', 'Drive API PHP Quickstart');
@@ -57,8 +58,13 @@ function read_from_config_file($fn){
 function config_for_js(){
 	global $CONFIG;
 	$copy = array();
-	foreach($CONFIG["options_for_js"] as $name){
-		$copy[$name]=$CONFIG[$name];
+	$list = json_decode(file_get_contents(CONFIG_OPTIONS_FOR_JS_FN), true);
+	foreach($list as $k){
+		$copy[$k]=$CONFIG[$k];
+	}
+	foreach($CONFIG as $k => $v){
+		if (preg_match('/^text_|_tb_|^tb_/',$k))
+			$copy[$k]=$CONFIG[$k];
 	}
 	return $copy;
 }

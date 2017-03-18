@@ -1,87 +1,105 @@
 body {
-    padding-left: 20px;
+	padding-left: 20px;
+	padding-bottom: 100px;
 }
 
 .not-really-here {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
+	opacity: 0;
+	position: absolute;
+	z-index: -1;
 }
 
 .act {
-    width: 250px;
-    text-align: center;
-    margin-left: 20px;
+	width: 250px;
+	text-align: center;
+	margin-left: 20px;
 }
 
 #form_wrapper {
-    -max-width: 900px;
+	-max-width: 900px;
 }
 
 .form-label {
-    width: 300px;
-    vertical-align: top;
+	width: 300px;
+	vertical-align: top;
 }
 
 .form-group {
-    margin: 4px 0;
-    background: #fefefe;
+	margin: 4px 0;
+	background: #fefefe;
 }
 
 .form-group:nth-child(odd) {
-    background: #fbfbfb;
+	background: #fbfbfb;
 }
 
 html .configuration .form-control,
 html .configuration textarea,
-html .configuration .CodeMirror {
-    display: inline-block;
-    width: 400px !important;
+html .configuration .CodeMirror,
+output {
+	display: inline-block;
+	width: 400px !important;
 }
 
 html .configuration textarea,
 html .configuration .CodeMirror {
-    height: 100px;
-    border: 1px solid #eee;
+	height: 100px;
+	border: 1px solid #eee;
 }
 
 .form-group {
-    display: block !important;
-    margin-left: 20px;
+	display: block !important;
+	margin-left: 20px;
 }
 
 #submits {
-    padding-top: 5px;
-    padding-bottom: 20px;
-    background: #fff;
-    position: fixed;
-    bottom: 0;
-    left: 0;
+	padding-top: 5px;
+	padding-bottom: 20px;
+	background: #fff;
+	position: fixed;
+	bottom: 0;
+	left: 0;
 }
 
 #inputs {
-    padding-bottom: 100px;
+	padding-bottom: 100px;
 }
 
 #submits .btn {
-    width: 400px;
+	width: 400px;
 }
 
 .configFilename {
-    margin: 0 10px;
+	margin: 0 10px;
 }
 
 .configFilename.active {}
 
 #cfg_selected {
-    font-size: 88%;
-    margin: 10px 10px;
+	font-size: 88%;
+	margin: 10px 10px;
 }
 
 #cfg_selected:before {
-    content: " Current: ";
+	content: " Current: ";
 }
 
 #cfg_selected a {
-    display: block;
+	display: inline-block;
+}
+
+#inputs .h4 {
+	margin-top: 10px;
+	margin-left: 0;
+}
+
+#inputs .h4 label {
+	font-weight: normal;
+	color: #114;
+}
+
+#inputs [data-key="text_found_in"] input,
+#inputs [data-key="text_pagenum_in"] input,
+#inputs [data-key="text_pagenum_none"] input {
+	direction: ltr;
 }

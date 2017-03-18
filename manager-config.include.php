@@ -39,6 +39,14 @@ foreach($options as $k=>$v){
 }
 ?>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.js"></script>
+<script>
+    var switchery_settings = {
+        color: '#337ab7'
+    };
+</script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/mode/xml/xml.min.js"></script>
@@ -89,13 +97,10 @@ foreach (glob("custom/config-*.json") as $filename) {
     </div>
 </div>
 <div id="cfg_selected">
-    <?=$CUSTOM_CONFIG_NAME?> <?=$CUSTOM_CONFIG_FN?> <a target="_blank" href="/?cfg=<?=$CUSTOM_CONFIG_NAME?>">Go to that book</a>
+    <?=$CUSTOM_CONFIG_NAME?> <?=$CUSTOM_CONFIG_FN?> <a class="btn btn-default btn-xs" target="_blank" href="/?cfg=<?=$CUSTOM_CONFIG_NAME?>">View the book</a>
 </div>
 
-<h3><a href="?f=edit&fn=style-<?=$CUSTOM_CONFIG_NAME?>.css">Edit Custom style.css</a></h3>
-<h3><a href="?f=edit&fn=script-<?=$CUSTOM_CONFIG_NAME?>.js">Edit Custom script.js</a></h3>
 
-<h3>Configuration:</h3>
 <form id='frm' method='POST'><input name='configjson' type='hidden'/></form>
 <div id="form_wrapper" class="configuration form-container form-inline">
     <div id="inputs"></div>
@@ -105,6 +110,10 @@ foreach (glob("custom/config-*.json") as $filename) {
         <a id="cancel" class='form-control btn btn-default' href='?'>Exit without saving</a>
     </div>
 </div>
+
+<a class="btn btn-default btn-large" href="?f=edit&fn=style-<?=$CUSTOM_CONFIG_NAME?>.css">Edit Custom style.css</a>
+<a class="btn btn-default btn-large" href="?f=edit&fn=script-<?=$CUSTOM_CONFIG_NAME?>.js">Edit Custom script.js</a>
+
 <script>
     $('#cfg_add').click(function(ev){
         var bad = /[^a-z0-9_\-]/g;
@@ -142,6 +151,8 @@ foreach (glob("custom/config-*.json") as $filename) {
             var $label = $('<label class="form-label" for="'+id+'">').html(option.name);
             var $group = $('<div class="form-group" data-key="'+key+'">');
             $group.append($label);
+            if (option.cls)
+                $group.addClass(option.cls);
             var current_value = updated[key];
             if (option.options){
                 // select box mode - options
@@ -178,11 +189,21 @@ foreach (glob("custom/config-*.json") as $filename) {
                         }
                     });
                     $group.append($input);
-                } else if (option.type == 'html' || option.type == 'textarea') {
+                } else if (option.type == 'html' || option.type == 'textarea' || option.type.indexOf('text/')===0 ) {
                     var $input = $('<textarea id="'+id+'" class="form-control">').text(current_value).change(function(){
                         update(key,$input.val());
                     });
                     $group.append($input);
+                } else if (option.type == 'boolean'){
+                    var $input = $('<input id="'+id+'" type="checkbox" class="js-switch" ' + (current_value?'checked':'') + '>').change(function(){
+                        update(key,$input[0].checked);
+                        console.log('chg ',key,$input[0].checked);
+                    });
+                    $group.append($input);
+                } else if (option.type == "configuration title") {
+                    $group.addClass('h4 conf-title');
+                    if (option.output)
+                        $group.append($('<output>').html(option.output));
                 } else {
                     console.log("ERROR: Unknown type at ",option);
                 }
@@ -231,6 +252,10 @@ foreach (glob("custom/config-*.json") as $filename) {
         myCodeMirror[i] = CodeMirror.fromTextArea(html_fields[i],codeMirrorOptions);
         myCodeMirror[i].on('change',$(html_fields[i]).change());
     }
+
+    $('.js-switch').each(function() {
+        var switchery = new Switchery(this,switchery_settings);
+    });
     
 </script>
 <style>
