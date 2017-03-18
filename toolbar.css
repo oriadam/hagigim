@@ -1,5 +1,5 @@
 #body .tb-nav {
-	z-index: 1000;
+	z-index: 5000;
 	white-space: nowrap;
 	padding: 2px 2px;
 	margin: 0;
