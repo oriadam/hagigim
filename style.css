@@ -344,3 +344,11 @@ body {
 .page_outer_wrap {
 	/*transform: rotate(-0.01deg) translate3d(-1px, 1px, 990px);*/
 }
+
+#body .modal-backdrop {
+	z-index: 2040;
+}
+
+#body .modal {
+	z-index: 2050;
+}

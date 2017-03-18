@@ -28,7 +28,7 @@ var tb_items = {
 		},
 		// toggle: true, // TODO: detect fullscreen 
 		visible: function(item) {
-			return item.enterFullScreen; // when there is no fullscreen option in browser, hide the toolbar item
+			return item.enterFullScreen && !$('body').is('.mobile'); // when there is no fullscreen option in browser, hide the toolbar item
 		},
 		active: function(item) {
 			return item.elem === document.body && (document.currentFullScreenElement || document.fullscreenElement || document.webkitCurrentFullScreenElement || document.webkitFullscreenElement || document.mozCurrentFullScreenElement || document.mozFullscreenElement || document.msCurrentFullScreenElement || document.msFullscreenElement);
@@ -173,6 +173,9 @@ var tb_items = {
 		enabled: function(item) {
 			return !!$('#id-q').val();
 		},
+		visible: function(item) {
+			return !$('body').is('.mobile');
+		}
 	},
 
 	'nav-found': {
@@ -190,6 +193,9 @@ var tb_items = {
 		enabled: function(item) {
 			return search_results.length ? search_position > 0 : current_page() > 1;
 		},
+		visible: function(item) {
+			return !$('body').is('.mobile');
+		}
 	},
 
 	'nav-prev': {
@@ -220,6 +226,9 @@ var tb_items = {
 		enabled: function(item) {
 			return search_results.length ? search_position < search_results.length - 1 : current_page() < numpages - 1;
 		},
+		visible: function(item) {
+			return !$('body').is('.mobile');
+		}
 	},
 
 	'nav-pagenum': {
@@ -240,7 +249,7 @@ var tb_items = {
 		update: function(item) {
 			var current = current_pagenum && total_pagenum && current_pagenum();
 			if (current) {
-				CONFIG["text_pagenum_in"].replace('%s1', current).replace('%s2', total_pagenum())
+				item.$el.html(CONFIG["text_pagenum_in"].replace('%s1', current).replace('%s2', total_pagenum()));
 			} else {
 				item.$el.html(CONFIG["text_pagenum_none"]);
 			}
