@@ -1,7 +1,8 @@
 var icon_forward = CONFIG["rtl"] ? 'backward' : 'forward';
 var icon_backward = CONFIG["rtl"] ? 'forward' : 'backward';
+var tb_items = {};
 
-var tb_items = {
+var tb_items_config = {
 	'fullscreen': {
 		icon: 'fa-external-link-square',
 		f: function(item) {
@@ -66,7 +67,8 @@ var tb_items = {
 	},
 
 	'sound': {
-		icon: 'fa-volume-off',
+		icon: 'fa',
+		icon_inactive: 'fa-volume-off',
 		icon_active: 'fa-volume-up',
 		f: function(item) {
 			sound_active = !sound_active;
@@ -83,6 +85,7 @@ var tb_items = {
 
 	'music': {
 		icon: 'fa-music',
+		icon_inactive: 'line-through',
 		f: function(item) {
 			music_active = !music_active;
 			localStorage.setItem("music_active", music_active ? 1 : 0)
@@ -148,6 +151,41 @@ var tb_items = {
 			return CONFIG["url_homepage"]; // when there is no homepage url set, hide the toolbar item
 		},
 	},
+
+	'addthis': {
+		icon: 'fa-share-alt',
+		init: function(item) {
+			if (CONFIG["addthis_code"]) {
+				item.$wrapper = $('<div id="addthis_container" class="addthis_inline_share_toolbox">').hide().appendTo($body);
+				$body.append('<script src="https://s7.addthis.com/js/300/addthis_widget.js' + CONFIG["addthis_code"] + '"></script>');
+			}
+		},
+		f: function(item) {
+			console.log(item);
+			item.currentToggleState = !item.currentToggleState;
+			if (item.currentToggleState) {
+				var rect = item.$el[0].getBoundingClientRect();
+				var id = item.$nav[0].id;
+				var halfwidth = item.$wrapper.width() / 2;
+				item.$wrapper.css({
+					position: 'fixed',
+					left: id == 'tb-right' ? 'auto' : id == 'tb-left' ? rect.right : (rect.left - halfwidth),
+					right: id == 'tb-right' ? rect.width : 'auto',
+					top: id == 'tb-bottom' ? 'auto' : id == 'tb-top' ? rect.height : rect.top,
+					bottom: id == 'tb-bottom' ? rect.height : 'auto'
+				});
+			}
+			item.$wrapper.fadeToggle(item.currentToggleState);
+		},
+		toggle: true,
+		active: function(item) {
+			return item.currentToggleState;
+		},
+		visible: function(item) {
+			return item.$wrapper;
+		},
+	},
+
 
 	/////////
 	// SEARCH 
@@ -269,7 +307,8 @@ function tb_generate(list, id, cls) {
 	list.forEach(function(k) {
 		var item, title, $li, $span, $inside_span, $icon;
 		if (!k) return;
-		item = tb_items[k];
+		item = $.extend({}, tb_items_config[k]);
+		tb_items[k] = item;
 		if (!item) {
 			console.log('ERROR: BAD TOOLBAR ITEM "' + k + '" in ' + id);
 			return;
@@ -282,6 +321,8 @@ function tb_generate(list, id, cls) {
 		if (item.cls)
 			$li.addClass(item.cls);
 		item.$li = $li;
+		item.$nav = $nav;
+		item.$ul = $ul;
 		$span = $('<span class="btn btn-primary form-control tb-item">').attr('id', 'tb-item-' + k);
 		item.$el = $span;
 		if (item.f)
@@ -299,6 +340,8 @@ function tb_generate(list, id, cls) {
 				$inside_span.append($icon);
 			else
 				$inside_span = $icon;
+		} else {
+			$icon = $('');
 		}
 		if (item.init)
 			$(window).on('load', function() {
@@ -308,7 +351,9 @@ function tb_generate(list, id, cls) {
 			if (item.active) {
 				var active = !!item.active(item);
 				if (item.icon_inactive)
-					$icon.toggleClass(item.icon, !active).toggleClass(item.icon_active, active);
+					$icon.toggleClass(item.icon_inactive, !active);
+				if (item.icon_active)
+					$icon.toggleClass(item.icon_active, active);
 				$span.toggleClass('active', active);
 			}
 			if (item.visible) {

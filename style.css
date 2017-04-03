@@ -352,3 +352,7 @@ body {
 #body .modal {
 	z-index: 2050;
 }
+
+.line-through {
+	text-decoration: line-through;
+}
