@@ -135,3 +135,15 @@ html .tb-item.form-control {
 	margin: 0 auto;
 	bottom: 0;
 }
+
+.tb_diagonal_strikethrough {
+	position: relative;
+}
+
+.tb_diagonal_strikethrough:after {
+	content: "\2572";
+	position: absolute;
+	top: -1px;
+	left: 4px;
+	cancel-margin-right: -75%;
+}

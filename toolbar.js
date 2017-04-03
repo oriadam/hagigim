@@ -68,7 +68,7 @@ var tb_items_config = {
 
 	'sound': {
 		icon: 'fa',
-		icon_inactive: 'fa-volume-off',
+		icon_inactive: 'fa-volume-off ' + (CONFIG["tb_diagonal_strikethrough"] ? 'tb_diagonal_strikethrough' : ''),
 		icon_active: 'fa-volume-up',
 		f: function(item) {
 			sound_active = !sound_active;
@@ -85,7 +85,7 @@ var tb_items_config = {
 
 	'music': {
 		icon: 'fa-music',
-		icon_inactive: 'line-through',
+		icon_inactive: (CONFIG["tb_diagonal_strikethrough"] ? 'tb_diagonal_strikethrough' : ''),
 		f: function(item) {
 			music_active = !music_active;
 			localStorage.setItem("music_active", music_active ? 1 : 0)

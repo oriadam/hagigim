@@ -41,7 +41,7 @@ Each item element can have the following optional properties.
 **Adding AddThis sharing service:**
 
 + Go to AddThis.com, sign up or log in to your account
-+ Go to Tools, add:
++ Go to Tools and add:
   + Share Button
   + Type: Inline
   + Share Counters: Your preference. Recommended: None

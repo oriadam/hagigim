@@ -183,6 +183,10 @@
 		"name": "Navigate from side of pages",
 		"type": "boolean"
 	},
+	"tb_diagonal_strikethrough": {
+		"name": "Stikethrough ╲ turned-off buttons",
+		"type": "boolean"
+	},
 	"autofit_text": {
 		"name": "AutoFit font size to page",
 		"type": "boolean"
