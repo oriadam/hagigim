@@ -13,6 +13,9 @@ require_once "config.php";
 	<meta id="og_image" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 	<?php } ?>
+	<?php if ($CONFIG["addthis_code"]) { ?>
+		<script src="https://s7.addthis.com/js/300/addthis_widget.js<?=$CONFIG["addthis_code"]?>"></script>
+	<?php } ?>
 	<!-- turnjs does not support jquery 3, so use 2 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> 
 	<!-- turnjs does not support jquery 3, so use 2 -->
@@ -309,25 +312,41 @@ require_once "config.php";
 			consolelog('go_to_page(',page,') to ',page);
 		}//go_to_page
 
+		// get objects of the pages in current view (if any)
+		function current_pages_docs(){
+			var a = [];
+			var view = $book.turn('view');
+			for (var i=0;i<view.length;i++){
+				var idx = page_number_to_page_index(view[i]);
+				if (book_list[idx]){
+					a[a.length] = book_list[idx];
+					a[a.length-1].page_number = view[i];
+					a[a.length-1].idx = idx;
+				}
+			}
+			return a;
+		}
+
 		function handle_title(){
 			if (CONFIG["text_window_title_content"]){
 				var rx = /\%page_title/;
 				var title = '';
 				if (rx.test(CONFIG["text_window_title_content"])){
-					var view = $book.turn('view');
-					for (var i=0;i<view.length;i++){
-						var idx = page_number_to_page_index(view[i]);
-						if (book_list[idx] && book_list[idx].name){
+					var docs = current_pages_docs();
+					for (var i=0;i<docs.length;i++){
+						if (docs[i].name){
 							if (title)
 								title += CONFIG["text_window_title_separator"];
-							title += book_list[idx].name;
+							title += docs[i].name;
 						}
 					}
 				}
 				document.title = CONFIG["text_window_title_content"].replace(rx,title || '');
 				var meta = document.querySelector('#og_title');
-				meta.name = "title";
-				meta.content = document.title;
+				if (meta){
+					meta.name = "title";
+					meta.content = document.title;
+				}
 			}
 			<?php if ($CONFIG["generate_og_image"]) { ?>
 				// add share image

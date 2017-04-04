@@ -156,30 +156,64 @@ var tb_items_config = {
 		icon: 'fa-share-alt',
 		init: function(item) {
 			if (CONFIG["addthis_code"]) {
-				item.$wrapper = $('<div class="addthis_inline_share_toolbox">').hide().appendTo($body);
-				$body.append('<script src="https://s7.addthis.com/js/300/addthis_widget.js' + CONFIG["addthis_code"] + '"></script>');
+				//$.getScript('https://s7.addthis.com/js/300/addthis_widget.js' + CONFIG["addthis_code"] + '&async=1', function() {
+				addthis.addEventListener('addthis.menu.share', function() {
+					bootbox.hideAll();
+				});
+				//});
 			}
 		},
 		f: function(item) {
-			item.currentToggleState = !item.currentToggleState;
-			if (item.currentToggleState) {
-				var rect = item.$el[0].getBoundingClientRect();
-				var id = item.$nav[0].id;
-				var halfwidth = item.$wrapper.width() / 2;
-				item.$wrapper[0].className = "addthis_inline_share_toolbox in-" + id; // remove all other classes and add the one for current nav
-				item.$wrapper.css({
-					position: 'fixed',
-					left: id == 'tb-right' ? 'auto' : id == 'tb-left' ? rect.right : (rect.left - halfwidth),
-					right: id == 'tb-right' ? rect.width : 'auto',
-					top: id == 'tb-bottom' ? 'auto' : id == 'tb-top' ? rect.height : rect.top,
-					bottom: id == 'tb-bottom' ? rect.height : 'auto'
-				});
+			if ($('.modal-dialog:visible').length)
+				return;
+			var docs = current_pages_docs();
+			if (!docs || !docs.length)
+				return;
+			var onHide = function() {
+				console.log('onEscape');
+				$('.addthis_inline_share_toolbox').appendTo('body');
+				return true;
 			}
-			item.$wrapper.fadeToggle(item.currentToggleState);
-		},
-		toggle: true,
-		active: function(item) {
-			return item.currentToggleState;
+			var onClick = function() {
+				var $this = $(this);
+				$('.share_doc_select_item').removeClass('btn-primary');
+				$this.addClass('btn-primary');
+				var doc = $this.data('doc');
+				var new_url_search = '?id=' + doc.id;
+				document.title = doc.name;
+				if (location.search != new_url_search)
+					window.history.pushState({ "id": doc.id }, "", new_url_search);
+				var img = 'https://drive.google.com/thumbnail?authuser=0&sz=w320&id=' + doc.id;
+				var anchor = document.createElement('a');
+				anchor.href = new_url_search;
+				addthis_share = {
+					url: anchor.href,
+					title: doc.name,
+					media: img,
+				};
+				$('.addthis_inline_share_toolbox').remove();
+				$('.addthis_wrapper').append('<div class="addthis_inline_share_toolbox">');
+				addthis.layers.refresh();
+			};
+			var wrapper = $('<div>');
+			var container = $('<div class="share_doc_select_container">').appendTo(wrapper);
+			for (var i = 0; i < docs.length; i++) {
+				var item = $('<div class="share_doc_select_item btn btn-default">')
+					.attr('data-doc', JSON.stringify(docs[i]))
+					.text(docs[i].name)
+					.click(onClick);
+				container.append(item);
+			}
+			wrapper.append('<div class="addthis_wrapper">');
+			item.bootbox_dialog = bootbox.dialog({
+				title: CONFIG["text_share_dialog"],
+				message: wrapper[0],
+				backdrop: true,
+				closeButton: true,
+				onEscape: true
+			}).on('hidden.bs.modal', onHide);
+			if (docs.length == 1)
+				$('.share_doc_select_item').click();
 		},
 		visible: function(item) {
 			return CONFIG["addthis_code"];

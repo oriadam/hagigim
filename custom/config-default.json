@@ -11,7 +11,6 @@
 	"hard_cover": true,
 	"mobile_width": 950,
 	"single_page_mode": "mobile",
-	"generate_og_image": true,
 	"autofit_text": true,
 	"autofit_text_min": 14,
 	"autofit_text_max": 26,
@@ -71,6 +70,7 @@
 	"text_hit_f11": "יש להקיש F11 למסך מלא",
 	"text_nothing_to_print": "אין מה להדפיס",
 	"text_enter_pagenum": "לאיזה עמוד לעבור",
+	"text_share_dialog": "שיתוף",
 	"search_or_filter": "search",
 	"remember_last_search": true,
 	"custom_css": ""

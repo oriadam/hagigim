@@ -1,5 +1,5 @@
 #body .tb-nav {
-	z-index: 5000;
+	z-index: 1040;
 	white-space: nowrap;
 	padding: 2px 2px;
 	margin: 0;
@@ -148,18 +148,20 @@ html .tb-item.form-control {
 	cancel-margin-right: -75%;
 }
 
-.addthis_inline_share_toolbox.in-tb-right {
-	margin-right: 4px;
+.share_doc_select_container {
+	text-align: center;
 }
 
-.addthis_inline_share_toolbox.in-tb-left {
-	margin-left: 4px;
+.share_doc_select_item {
+	display: inline-block;
+	cursor: pointer;
+	width: calc(50% - 10px);
+	margin: 0;
+	padding: 0;
+	text-align: center;
 }
 
-.addthis_inline_share_toolbox.in-tb-top {
-	margin-top: 4px;
-}
-
-.addthis_inline_share_toolbox.in-tb-bottom {
-	margin-bottom: 4px;
+.addthis_wrapper {
+	text-align: center;
+	margin-top: 10px;
 }

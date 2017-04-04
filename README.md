@@ -44,13 +44,7 @@ Each item element can have the following optional properties.
 + Go to Tools and add:
   + Share Button
   + Type: Inline
-  + Share Counters: Your preference. Recommended: None
-  + Social Networks: Select any networks you want
-  + Design:
-    + Style: Modern Responsive
-    + Button Size: Small
-    + Rounded Corners: 2
-    + ✅ Hide network names
+  + Configure them however you see fit
 
 + Make sure there are not other tools except one inline
 + Save and copy the code

@@ -55,11 +55,6 @@
 		"type": "text"
 	},
 
-	"generate_og_image": {
-		"name": "Generate book image for OpenGraph/Facebook sharing",
-		"type": "boolean"
-	},
-
 	"prevent_corner_peels_on_mobile_to_allow_scrolling": {
 		"name": "Turn pages on mobile",
 		"options": {
