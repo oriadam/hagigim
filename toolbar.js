@@ -156,17 +156,17 @@ var tb_items_config = {
 		icon: 'fa-share-alt',
 		init: function(item) {
 			if (CONFIG["addthis_code"]) {
-				item.$wrapper = $('<div id="addthis_container" class="addthis_inline_share_toolbox">').hide().appendTo($body);
+				item.$wrapper = $('<div class="addthis_inline_share_toolbox">').hide().appendTo($body);
 				$body.append('<script src="https://s7.addthis.com/js/300/addthis_widget.js' + CONFIG["addthis_code"] + '"></script>');
 			}
 		},
 		f: function(item) {
-			console.log(item);
 			item.currentToggleState = !item.currentToggleState;
 			if (item.currentToggleState) {
 				var rect = item.$el[0].getBoundingClientRect();
 				var id = item.$nav[0].id;
 				var halfwidth = item.$wrapper.width() / 2;
+				item.$wrapper[0].className = "addthis_inline_share_toolbox in-" + id; // remove all other classes and add the one for current nav
 				item.$wrapper.css({
 					position: 'fixed',
 					left: id == 'tb-right' ? 'auto' : id == 'tb-left' ? rect.right : (rect.left - halfwidth),
@@ -182,7 +182,7 @@ var tb_items_config = {
 			return item.currentToggleState;
 		},
 		visible: function(item) {
-			return item.$wrapper;
+			return CONFIG["addthis_code"];
 		},
 	},
 

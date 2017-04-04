@@ -6,8 +6,13 @@ require_once "config.php";
 ?>
 <html>
 <head>
-	<title><?=$CONFIG["text_window_title"]?></title>
+	<title><?=htmlentities($CONFIG["text_window_title"])?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+	<?php if ($CONFIG["generate_og_image"]) { ?>
+	<meta id="og_title" />
+	<meta id="og_image" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+	<?php } ?>
 	<!-- turnjs does not support jquery 3, so use 2 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> 
 	<!-- turnjs does not support jquery 3, so use 2 -->
@@ -211,6 +216,7 @@ require_once "config.php";
 		var music_active = localStorage.getItem("music_active") === null ? CONFIG["music_default"] : localStorage.getItem("music_active")=="1";
 		var current_music_url = CONFIG["music_url"],last_music_url;
 		var autofit_text_running;
+		var enable_pushstate;
 </script>
 <script src="toolbar.js"></script>
 <script>
@@ -302,6 +308,52 @@ require_once "config.php";
 			pages_depth_turning();
 			consolelog('go_to_page(',page,') to ',page);
 		}//go_to_page
+
+		function handle_title(){
+			if (CONFIG["text_window_title_content"]){
+				var rx = /\%page_title/;
+				var title = '';
+				if (rx.test(CONFIG["text_window_title_content"])){
+					var view = $book.turn('view');
+					for (var i=0;i<view.length;i++){
+						var idx = page_number_to_page_index(view[i]);
+						if (book_list[idx] && book_list[idx].name){
+							if (title)
+								title += CONFIG["text_window_title_separator"];
+							title += book_list[idx].name;
+						}
+					}
+				}
+				document.title = CONFIG["text_window_title_content"].replace(rx,title || '');
+				var meta = document.querySelector('#og_title');
+				meta.name = "title";
+				meta.content = document.title;
+			}
+			<?php if ($CONFIG["generate_og_image"]) { ?>
+				// add share image
+				var meta = document.querySelector('#og_image');
+				meta.name = 'og:image';
+				html2canvas(document.querySelector('#book_container'), {
+					onrendered: function(canvas) {
+						meta.content = canvas.toDataURL();
+					}
+				});
+			<?php } ?>
+		}
+
+		function handle_pushstate(page){
+			if (enable_pushstate) {
+				var new_url_search = '?p='+page;
+				if (location.search!=new_url_search)
+					window.history.pushState({"page":page},"", new_url_search);
+			}
+		}
+		
+		window.onpopstate = function(e){
+			if(e.state){
+				go_to_page(e.state.page);
+			}
+		};
 
 		// wrapper for $book.turn('page')
 		function current_page() {
@@ -484,6 +536,20 @@ require_once "config.php";
 			});
 		}
 
+		function get_page_from_location_search(){
+			var rx,match;
+			rx = /\bp=(\d+)\b/;
+			if (rx.test(location.search)){
+				match = location.search.match(rx);
+				return (1*match[1]) || false;
+			}
+			rx = /\bid=([^%&]+)\b/;
+			if (rx.test(location.search)){
+				match = location.search.match(rx);
+				return id_to_page(match[1]);
+			}
+		}
+
 		// load a book according to a search query using ajax
 		// used: filter mode + on first run
 		function load_book(q,callback) {
@@ -505,17 +571,23 @@ require_once "config.php";
 					if (CONFIG["show_peel_corner"]) {
 						show_peel_corner();
 					}
-					if (!CONFIG["start_with_closed_book"]){
+					var p = get_page_from_location_search();
+					if (p){
+						// start on page from url
+						go_to_page(p);
+					} else if (!CONFIG["start_with_closed_book"]){
 						// start on first page
 						go_to_page(3);
 					}
 				}
+				handle_title();
 				if (callback){
 					callback();
 				}
 				if (typeof book_loaded_hook == 'function'){
 					book_loaded_hook();
 				}
+				enable_pushstate = 1;
 				setTimeout(tb_updateState,100);
 			});
 		}//load_book
@@ -556,11 +628,16 @@ require_once "config.php";
 
 		// return page number for displaying page number
 		function page_index_to_display_number(i){
-			return 1 + i;
+			return i + 1;
 		}
 		// return page number for a page element index
 		function page_index_to_page_number(i){
-			return 1 + i + cover_pages_before;
+			return i + 1 + cover_pages_before;
+		}
+
+		// return page index for a page number
+		function page_number_to_page_index(i){
+			return i - 1 - cover_pages_before;
 		}
 
 		// populate the book. based on book_list. removes previous content if any.
@@ -811,6 +888,8 @@ require_once "config.php";
 			autofit_text();
 			handle_scrollable_pages();
 			tb_updateState();
+			handle_pushstate(page);
+			handle_title();
 		}//turned
 
 		// event to run when book is ready (called by build_book)

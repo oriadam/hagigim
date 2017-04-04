@@ -55,6 +55,11 @@
 		"type": "text"
 	},
 
+	"generate_og_image": {
+		"name": "Generate book image for OpenGraph/Facebook sharing",
+		"type": "boolean"
+	},
+
 	"prevent_corner_peels_on_mobile_to_allow_scrolling": {
 		"name": "Turn pages on mobile",
 		"options": {
@@ -237,7 +242,13 @@
 	},
 
 	"text_window_title": {
-		"name": "Text: Window title"
+		"name": "Text: Window title for no content pages"
+	},
+	"text_window_title_content": {
+		"name": "Text: Window title for content pages<br><small>You can use <i>%page_title</i></small>"
+	},
+	"text_window_title_separator": {
+		"name": "Text: Window title separator"
 	},
 	"text_top_single_pages": {
 		"name": "Text on top of page on single mode"
@@ -247,6 +258,9 @@
 	},
 	"text_top_odd_pages": {
 		"name": "Text on top of odd pages"
+	},
+	"text_share_dialog": {
+		"name": "Text on the share dialog screen"
 	},
 	"text_hr_read_more": {
 		"name": "Clickable text for hidden footnotes"

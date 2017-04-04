@@ -147,3 +147,19 @@ html .tb-item.form-control {
 	left: 4px;
 	cancel-margin-right: -75%;
 }
+
+.addthis_inline_share_toolbox.in-tb-right {
+	margin-right: 4px;
+}
+
+.addthis_inline_share_toolbox.in-tb-left {
+	margin-left: 4px;
+}
+
+.addthis_inline_share_toolbox.in-tb-top {
+	margin-top: 4px;
+}
+
+.addthis_inline_share_toolbox.in-tb-bottom {
+	margin-bottom: 4px;
+}
