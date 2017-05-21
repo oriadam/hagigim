@@ -66,7 +66,7 @@
 	"text_found": "Found %s pages",
 	"text_found_in": "%s1 / %s2",
 	"text_pagenum_in": "%s1 / %s2",
-	"text_pagenum_none": "<i class=\"tb-icon fa fa-hashtag\"></i>",
+	"text_pagenum_none":"\u25CF",
 	"text_not_found": "No results",
 	"text_top_single_pages": "Text on top of page on single mode",
 	"text_top_even_pages": "Text on top of even pages",
@@ -78,9 +78,9 @@
 	"search_or_filter": "filter",
 	"remember_last_search": true,
 	"tb_list_top": "",
-	"tb_list_bottom": "nav-q,nav-go,nav-found,nav-first,nav-prev,nav-pagenum,nav-next,nav-last",
+	"tb_list_bottom": "nav-q,nav-go,nav-result-prev,nav-found,nav-result-next,nav-page-first,nav-page-prev,nav-pagenum,nav-page-next,nav-page-last",
 	"tb_list_left": "fullscreen,textselect,zoom,sound,music",
-	"tb_list_right": "homepage,addthis,print",
+	"tb_list_right": "homepage,addthis,print0",
 
 	"custom_css": "#example{width:auto}",
 	"list": {

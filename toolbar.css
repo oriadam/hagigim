@@ -106,6 +106,31 @@ html .tb-item.form-control {
 	padding: 0 2px;
 }
 
+#q-wrap {
+	position: relative;
+}
+
+#q-clear:after {
+	content: "✕";
+	color: #444;
+}
+#q-clear {
+	position: absolute;
+	cursor: pointer;
+	visibility: hidden;
+}
+#q-wrap:hover #q-clear,
+#q-clear:hover {
+	visibility: visible;
+}
+.ltr #q-clear { right: 3px;}
+.rtl #q-clear { left: 3px;}
+
+.pagenum-dialog {
+	top:auto;
+	bottom:5px;
+}
+
 
 /* collapse menu, from: https://css-tricks.com/responsive-menu-concepts/ */
 

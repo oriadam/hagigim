@@ -2,6 +2,7 @@
 @import url('loading.css');
 @import url('toolbar.css');
 @import url('index.css');
+.rtl,
 .form-group {
 	direction: rtl;
 }
@@ -295,19 +296,38 @@ body {
 	margin-top: -6px;
 }
 
+.media-print,
+#print_container {
+	display: none;
+}
+
+.print_footer {
+	font-size:10px;
+	color:#000;
+	white-space: nowrap;
+}
+
 @media screen {
+	.media-print,
 	#print_container {
 		display: none;
 	}
 }
 
 @media print {
+	.media-print ,
+	#print_container {
+		display: inline-block;
+	}
+
 	.first_content_line {
 		font-size: 130%;
 		font-weight: bold;
 	}
 	.page_top,
-	body>*:not(#print_container) {
+	.tb-nav
+	/* body>*:not(#print_container) */
+	{
 		display: none;
 	}
 	#print_container {
@@ -324,9 +344,10 @@ body {
 	margin: 20px auto 0;
 	display: block;
 	overflow: hidden;
-	width: 182px;
+	width: 351px;
 	height: 32px;
 	position: relative;
+	transform:scale(0.7);
 }
 
 .music_pop iframe {

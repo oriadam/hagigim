@@ -9,9 +9,9 @@ require_once "config.php";
 	<title><?=htmlentities($CONFIG["text_window_title"])?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
 	<?php if ($CONFIG["generate_og_image"]) { ?>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 	<meta id="og_title" />
 	<meta id="og_image" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 	<?php } ?>
 	<?php if ($CONFIG["addthis_code"]) { ?>
 		<script src="https://s7.addthis.com/js/300/addthis_widget.js<?=$CONFIG["addthis_code"]?>"></script>
@@ -94,6 +94,7 @@ require_once "config.php";
 				</div>
 				<div class="page_content_wrapper">
 					<div class="page_content"></div>
+					<div class="media-print print_footer"></div>
 				</div>
 				<?php if ($CONFIG["show_page_number"]) { ?>
 				<div class="page_number_wrapper">
@@ -234,12 +235,20 @@ require_once "config.php";
 				if (last_music_url!=current_music_url){
 					$music_tag[0].src = last_music_url = current_music_url;
 					$music_tag.stop()[0].volume = 1;
-					$music_tag[0].play();
+					try {
+						$music_tag[0].play();
+					}catch(e){
+						console.error(e);
+					}
 				}
 			} else if (last_music_url) {
 				last_music_url = null;
 				$music_tag.animate({volume: 0, duration:200,complete:function(){
-					$music_tag[0].pause();
+					try {
+						$music_tag[0].pause();
+					}catch(e){
+						console.error(e);
+					}
 				}});
 			}
 		}
@@ -524,10 +533,14 @@ require_once "config.php";
 		}
 
 		// next/prev buttons
-		function search_next_prev(next_or_prev){
+		function search_next_prev(next_or_prev,search_or_page){
+			if (!search_or_page)
+				search_or_page = search_results.length ? 's' : 'p';
+			if (search_or_page == 's' && !search_results.length)
+				return;
 			if (next_or_prev=='prev')
 				next_or_prev='previous';
-			if (search_results.length){
+			if (search_or_page == 's'){
 				search_results_clicked = true;
 				// next/prev search result
 				if ((next_or_prev=='next' && search_position<search_results.length-1)
@@ -1053,6 +1066,7 @@ require_once "config.php";
 					}
 					var page_content = element.find('.page_content');
 					page_content.html(data.content);
+					element.find('.print_footer').html(location.href+' ' + document.title);
 					$('#flipbook .p'+page).empty().append(element);
 
 					process_page(page,element,page_content,title);
@@ -1168,6 +1182,9 @@ require_once "config.php";
 				if(e.which == 13) {
 					$('#tb-item-nav-go').click();
 				}
+			});
+			$('#q-clear').click(function(){
+				$('#id-q').val('');
 			});
 
 			$('#id-pagenum').change(function(){

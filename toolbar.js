@@ -41,7 +41,7 @@ var tb_items_config = {
 		},
 	},
 
-	'print': {
+	'print1': {
 		icon: 'fa-print',
 		f: function(item) {
 			var $print_container = $('#print_container').empty();
@@ -63,6 +63,38 @@ var tb_items_config = {
 					closeButton: false,
 				});
 			}
+		},
+	},
+
+	'print2': {
+		icon: 'fa-print',
+		f: function(item) {
+			html2canvas(document.querySelector('#book_container'), {
+				onrendered: function(canvas) 
+				{  
+					var dataUrl = canvas.toDataURL(); //attempt to save base64 string to server using this var  
+					var windowContent = '<!DOCTYPE html>';
+					windowContent += '<html>'
+					windowContent += '<body>'
+					windowContent += '<img src="' + dataUrl + '">';
+					windowContent += '</body>';
+					windowContent += '</html>';
+					var printWin = window.open('','','width=340,height=260');
+					printWin.document.open();
+					printWin.document.write(windowContent);
+					printWin.document.close();
+					printWin.focus();
+					printWin.print();
+					printWin.close();
+				}
+			});
+		},
+	},
+
+	'print0': {
+		icon: 'fa-print',
+		f: function(item) {
+			window.print();
 		},
 	},
 
@@ -226,7 +258,7 @@ var tb_items_config = {
 	/////////
 
 	'nav-q': {
-		html: '<input id="id-q" placeholder="" type="text" class="form-control search-query" />',
+		html: '<span id="q-wrap"><input id="id-q" placeholder="" type="text" class="form-control search-query" /><span id="q-clear"></span></span>',
 	},
 
 	'nav-go': {
@@ -302,11 +334,79 @@ var tb_items_config = {
 			return !$('body').is('.mobile');
 		}
 	},
+	
+	'nav-page-first': {
+		icon: 'fa-fast-' + icon_backward,
+		f: function(item) {
+			search_next_prev('first','p');
+		},
+		enabled: function(item) {
+			return current_page() > 1;
+		},
+		visible: function(item) {
+			return !$('body').is('.mobile');
+		}
+	},
+
+	'nav-page-prev': {
+		icon: 'fa-step-' + icon_backward,
+		f: function(item) {
+			search_next_prev('previous','p');
+		},
+		enabled: function(item) {
+			return current_page() > 1;
+		},
+	},
+
+	'nav-page-next': {
+		icon: 'fa-step-' + icon_forward,
+		f: function(item) {
+			search_next_prev('next','p');
+		},
+		enabled: function(item) {
+			return current_page() < numpages - 1;
+		},
+	},
+
+	'nav-page-last': {
+		icon: 'fa-fast-' + icon_forward,
+		f: function(item) {
+			search_next_prev('last','p');
+		},
+		enabled: function(item) {
+			return current_page() < numpages - 1;
+		},
+		visible: function(item) {
+			return !$('body').is('.mobile');
+		}
+	},
+
+	'nav-result-prev': {
+		icon: 'fa-arrow-circle-up',
+		f: function(item) {
+			search_next_prev('previous','s');
+		},
+		enabled: function(item) {
+			return search_results.length && search_position > 0;
+		},
+	},
+
+	'nav-result-next': {
+		icon: 'fa-arrow-circle-down',
+		f: function(item) {
+			search_next_prev('next','s');
+		},
+		enabled: function(item) {
+			return search_results.length && search_position < search_results.length - 1;
+		},
+	},
 
 	'nav-pagenum': {
 		cls: 'tb-padding',
 		f: function(item) {
 			bootbox.prompt({
+				size: 'small',
+				className: 'pagenum-dialog',
 				title: CONFIG["text_enter_pagenum"],
 				inputType: 'number',
 				backdrop: true,

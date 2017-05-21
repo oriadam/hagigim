@@ -29,7 +29,7 @@ if (!empty($_POST['configjson'])){
 		// create backup
 		//copy($CUSTOM_CONFIG_FN,"$CUSTOM_CONFIG_FN.backup.json");
 		// write new configuration to config.json
-		file_put_contents($CUSTOM_CONFIG_FN,json_encode($copy,JSON_PRETTY_PRINT));
+		file_put_contents($CUSTOM_CONFIG_FN,json_encode($copy,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
 	}
 }
 
