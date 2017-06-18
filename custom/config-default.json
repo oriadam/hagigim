@@ -74,5 +74,6 @@
     "search_or_filter": "search",
     "remember_last_search": false,
     "custom_css": "",
-    "text_pagenum_none": "&middot;"
+ 	"bookmark_color": "#265c8a",
+   "text_pagenum_none": "&middot;"
 }

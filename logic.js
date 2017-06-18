@@ -360,7 +360,6 @@
 			{
 				bookmarks.push(pages[0]);
 			}
-			bookmarks.sort();
 			localStorage.setItem('bookmarks',JSON.stringify(bookmarks));
 		}
 
@@ -371,10 +370,10 @@
 
 		function load_bookmarks(){
 			bookmarks = JSON.parse(localStorage.getItem('bookmarks')||'[]');
-			bookmarks.sort();
 		}
 
 		function show_bookmarks(){
+			bookmarks.sort(function sortNumber(a,b) {return a - b;});
 			$('#bookmarks').css($book_parent.position()).width($book_parent.width()).height($book_parent.height());
 			bookmarks.forEach(show_bookmark);
 		}
