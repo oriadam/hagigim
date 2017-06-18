@@ -34,9 +34,10 @@ if (!empty($_POST['configjson'])){
 }
 
 $updated = array();
-foreach($options as $k=>$v){
-	$updated[$k]=$CONFIG[$k];
-}
+foreach($options as $k=>$v)
+	if (!$v["skip"])
+		$updated[$k]=$CONFIG[$k];
+
 ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css" />
@@ -144,9 +145,11 @@ foreach (glob("custom/config-*.json") as $filename) {
 	var counter = 0;
 	if (options) {
 		Object.keys(options).forEach(function(key){
+			var option = options[key];
+			if (option.skip)
+				return;
 			counter++;
 			var id='id'+counter;
-			var option = options[key];
 			option.name = option.name || fcwords(key.replace(/_/g,' '));
 			var $label = $('<label class="form-label" for="'+id+'">').html(option.name);
 			var $group = $('<div class="form-group" data-key="'+key+'">');
@@ -180,7 +183,7 @@ foreach (glob("custom/config-*.json") as $filename) {
 			} else {
 				// open text mode - no options
 				option.type = option.type || 'text';
-				if (option.type == 'text' || option.type == 'number'){
+				if (option.type == 'text' || option.type == 'number' || option.type == 'color'){
 					var $input = $('<input id="'+id+'" class="form-control" type="'+option.type+'">').val(current_value).change(function(){
 						if (option.type == 'number'){
 							update(key,1*$input.val());

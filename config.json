@@ -80,7 +80,7 @@
 	"tb_list_top": "",
 	"tb_list_bottom": "nav-q,nav-go,nav-result-prev,nav-found,nav-result-next,nav-page-first,nav-page-prev,nav-pagenum,nav-page-next,nav-page-last",
 	"tb_list_left": "fullscreen,textselect,zoom,sound,music",
-	"tb_list_right": "homepage,addthis,print0",
+	"tb_list_right": "homepage,bookmark,addthis,print0",
 
 	"custom_css": "#example{width:auto}",
 	"list": {
@@ -95,6 +95,7 @@
 		"fields": "files(createdTime,id,modifiedTime,name,starred),kind,nextPageToken"
 	},
 	"max_results": 9999,
+	"bookmark_color": "#986794",
 
 	"See turnjs options here:": "http://www.turnjs.com/#api",
 	"turn_options": {

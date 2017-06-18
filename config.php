@@ -34,17 +34,16 @@ if (!empty($_GET['cfg']) && strpos($_GET['cfg'],'/')===FALSE) {
 // constants:
 define('MANAGER_FLAG', 'manager_mode_activated');
 define('CACHE_PATH', __DIR__ . '/cache');
-define('MYLOG_PATH', __DIR__ . '/' . $CONFIG['log_filename']);
+define('MYLOG_PATH', __DIR__ . '/logs/' . $CONFIG['log_filename']);
 define('CACHETYPE_LIST', 'list');
 define('CACHETYPE_FILE', 'googledoc_html');
 define('CONFIG_OPTIONS_FN','config-options.json');
-define('CONFIG_OPTIONS_FOR_JS_FN','config-options-for-js.json');
 
 // google auth constants:
 define('APPLICATION_NAME', 'Drive API PHP Quickstart');
-define('CREDENTIALS_PATH', __DIR__ . '/google_credentials.json');
-define('REFRESH_TOKEN_PATH', __DIR__ . '/google_credentials_refresh.json');
-define('CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json');
+define('CREDENTIALS_PATH', __DIR__ . '/cache/google_credentials.json');
+define('REFRESH_TOKEN_PATH', __DIR__ . '/cache/google_credentials_refresh.json');
+define('CLIENT_SECRET_PATH', __DIR__ . '/cache/client_secret.json');
 
 function read_from_config_file($fn){
 	global $CONFIG;
@@ -58,14 +57,10 @@ function read_from_config_file($fn){
 function config_for_js(){
 	global $CONFIG;
 	$copy = array();
-	$list = json_decode(file_get_contents(CONFIG_OPTIONS_FOR_JS_FN), true);
-	foreach($list as $k){
-		$copy[$k]=$CONFIG[$k];
-	}
-	foreach($CONFIG as $k => $v){
-		if (preg_match('/^text_|_tb_|^tb_/',$k))
+	$all = json_decode(file_get_contents(CONFIG_OPTIONS_FN), true);
+	foreach($all as $k => $v)
+		if (!empty($v['js']) || preg_match('/^text_|_tb_|^tb_/',$k))
 			$copy[$k]=$CONFIG[$k];
-	}
 	return $copy;
 }
 

@@ -204,6 +204,7 @@ body {
 	margin: 0;
 	z-index: 1000;
 	overflow: hidden;
+	position: relative;
 }
 
 #book_container>div {
@@ -376,4 +377,25 @@ body {
 
 .line-through {
 	text-decoration: line-through;
+}
+
+.bookmark_ribbon {
+	content: "";
+    position: absolute;
+    display: block;
+    border: 10px solid #000;
+	cursor: pointer;
+	z-index: 1;
+}
+
+.bookmark_ribbon.r {
+    border-right-color: transparent;
+}
+
+.bookmark_ribbon.l {
+    border-left-color: transparent;
+}
+
+#bookmarks {
+	position: absolute;
 }

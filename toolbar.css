@@ -190,3 +190,16 @@ html .tb-item.form-control {
 	text-align: center;
 	margin-top: 10px;
 }
+
+.modal-header button.close {
+	font-size:28px;
+    float: none;
+    position: absolute;
+    top: 0;
+}
+.rtl .modal-header button.close {
+    right: 5px;
+}
+.ltr .modal-header button.close {
+    left: 5px;
+}

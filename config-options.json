@@ -7,6 +7,7 @@
 	"google_drive_query": {},
 
 	"rtl": {
+		"js": true,
 		"name": "Language Direction",
 		"options": {
 			"Left-to-right": false,
@@ -15,6 +16,7 @@
 	},
 
 	"generate_index": {
+		"js": true,
 		"name": "Auto generated index",
 		"options": {
 			"Off": false,
@@ -23,6 +25,7 @@
 		}
 	},
 	"index_lines_per_page": {
+		"js": true,
 		"type": "number",
 		"min": 20,
 		"max": 50,
@@ -30,6 +33,7 @@
 	},
 
 	"start_with_closed_book": {
+		"js": true,
 		"name": "Start at",
 		"options": {
 			"Front cover": true,
@@ -38,11 +42,13 @@
 	},
 
 	"url_homepage": {
+		"js": true,
 		"name": "Homepage URL for `home` button",
 		"type": "text"
 	},
 
 	"fullscreen_selector": {
+		"js": true,
 		"name": "Fullscreen view for `fullscreen` button",
 		"options": {
 			"Entire window": "body",
@@ -51,11 +57,13 @@
 	},
 
 	"addthis_code": {
+		"js": true,
 		"name": "AddThis inline code for `addthis` button",
 		"type": "text"
 	},
 
 	"prevent_corner_peels_on_mobile_to_allow_scrolling": {
+		"js": true,
 		"name": "Turn pages on mobile",
 		"options": {
 			"On": false,
@@ -64,10 +72,12 @@
 	},
 
 	"remember_last_search": {
+		"js": true,
 		"type": "boolean"
 	},
 
 	"search_or_filter": {
+		"js": true,
 		"name": "Search mode",
 		"options": {
 			"Show entire book and navigate through search results": "search",
@@ -86,6 +96,7 @@
 	},
 
 	"console_debug": {
+		"js": true,
 		"name": "Show debug notes on JS console",
 		"type": "boolean"
 	},
@@ -96,23 +107,26 @@
 	},
 
 	"page_sound": {
+		"js": true,
 		"type": "boolean"
 	},
 	"music_url": {
+		"js": true,
 		"name": "Background music URL (ogg/mp3)"
 	},
 	"music_default": {
+		"js": true,
 		"name": "Background music default state",
 		"type": "boolean"
 	},
 
-	"title for graphics": {
-		"name": "Graphical options",
+	"title for design": {
+		"name": "Design",
 		"type": "configuration title"
 	},
 
-
 	"single_page_mode": {
+		"js": true,
 		"name": "Pages in view",
 		"options": {
 			"Double on Desktop, Single on Mobile": "mobile",
@@ -145,41 +159,51 @@
 	},
 
 	"hard_cover": {
+		"js": true,
 		"type": "boolean"
 	},
 	"show_peel_corner": {
+		"js": true,
 		"name": "Fold a corner after 2 seconds",
 		"type": "boolean"
 	},
 	"show_page_number": {
+		"js": true,
 		"name": "Show page numbers",
 		"type": "boolean"
 	},
 	"show_page_title": {
+		"js": true,
 		"name": "Add page titles",
 		"type": "boolean"
 	},
 	"remove_first_row_if_identical_to_page_title": {
+		"js": true,
 		"name": "Remove first line if same as title",
 		"type": "boolean"
 	},
 	"bold_first_content_line": {
+		"js": true,
 		"name": "Bigger first line",
 		"type": "boolean"
 	},
 	"hr_to_read_more": {
+		"js": true,
 		"name": "Convert footnotes to `read more` link",
 		"type": "boolean"
 	},
 	"middle_gradient": {
+		"js": true,
 		"name": "Shadow in the middle of the book",
 		"type": "boolean"
 	},
 	"pages_depth": {
+		"js": true,
 		"name": "Book pages depth effect",
 		"type": "boolean"
 	},
 	"browse_via_pages_depth": {
+		"js": true,
 		"name": "Navigate from side of pages",
 		"type": "boolean"
 	},
@@ -188,10 +212,12 @@
 		"type": "boolean"
 	},
 	"autofit_text": {
+		"js": true,
 		"name": "AutoFit font size to page",
 		"type": "boolean"
 	},
 	"autofit_text_min": {
+		"js": true,
 		"name": "AutoFit min font size",
 		"type": "number",
 		"min": 6,
@@ -199,6 +225,7 @@
 		"step": 1
 	},
 	"autofit_text_max": {
+		"js": true,
 		"name": "AutoFit max font size",
 		"type": "number",
 		"min": 20,
@@ -213,11 +240,13 @@
 		"step": 1
 	},
 	"max_book_width": {
+		"js": true,
 		"name": "Book max width",
 		"type": "number",
 		"step": 1
 	},
 	"pages_depth_paper_thickness": {
+		"js": true,
 		"name": "Book pages depth: Paper thickness",
 		"type": "number",
 		"min": 0,
@@ -225,10 +254,23 @@
 		"step": 0.01
 	},
 	"pages_depth_max_width": {
+		"js": true,
 		"name": "Book pages depth: Max width",
 		"type": "number",
 		"min": 0,
 		"step": 5
+	},
+	"bookmark_color": {
+		"js": true,
+		"type": "color"
+	},
+	"mobile_width": {
+		"js": true,
+		"name": "Screen width for mobile mode",
+		"type": "number",
+		"min": 500,
+		"max": 2000,
+		"step": 50
 	},
 
 	"title for text": {
@@ -391,6 +433,16 @@
 	},
 	"tb_list_right": {
 		"name": "Items in toolbar right"
+	},
+
+	"turn_options": {
+		"js": true,
+		"type":"skip"
+	},
+	
+	"textfit_options": {
+		"js": true,
+		"type":"skip"
 	}
 
 }

@@ -252,6 +252,18 @@ var tb_items_config = {
 		},
 	},
 
+	'bookmark': {
+		icon: 'fa',
+		icon_inactive: 'fa-bookmark-o',
+		icon_active: 'fa-bookmark',
+		f: function(item) {
+			toggle_bookmark();
+		},
+		toggle: true,
+		active: function(item) {
+			return is_bookmarked();
+		},
+	},
 
 	/////////
 	// SEARCH 
