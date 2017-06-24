@@ -387,7 +387,7 @@
 			if (!$cur.data('runonce'))
 				$cur.data('runonce',1).click(toggle_bookmark);
 
-			$cur.toggleClass('active',is_curpage).prop('title',CONFIG["text_bookmark"].replace('%s',current_page())).show();
+			$cur.toggleClass('active',is_curpage).prop('title',CONFIG["text_bookmark"].replace('%s',page_index_to_display_number(page_number_to_page_index(current_page())))).show();
 		}
 
 		function show_bookmark(page,index) {
@@ -396,7 +396,7 @@
 			var $elem = $('#'+id);
 
 			if (!$('#'+id).length)
-				$elem = $('<div id="' + id + '" class="bookmark_ribbon" data-page="' + page + '" title="' + page_index_to_display_number(page_number_to_page_index(page)) + '">').appendTo($bookmarks);
+				$elem = $('<div id="' + id + '" class="bookmark_ribbon" data-page="' + page + '">').appendTo($bookmarks);
 			var pages = current_pages();
 			if (page == pages[0] || page == pages[1]){
 				$elem.hide();
@@ -411,7 +411,7 @@
 					$elem.css('left','').css('right',-10-$('#pages_depth_r').width());
 				$elem.css('top',10 + (25 * index)).click(bookmark_click).toggleClass('r',side=='right').toggleClass('l',side=='left').show();
 			}
-			$elem.prop('title',CONFIG["text_bookmark"].replace('%s',page));
+			$elem.prop('title',CONFIG["text_bookmark"].replace('%s',page_index_to_display_number(page_number_to_page_index(page))));
 		}
 
 		function hide_bookmark(page) {
