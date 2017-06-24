@@ -419,7 +419,7 @@ var tb_items_config = {
 			bootbox.prompt({
 				size: 'small',
 				className: 'pagenum-dialog',
-				title: CONFIG["text_enter_pagenum"],
+				title: CONFIG["text_enter_pagenum"] || ' ',
 				inputType: 'number',
 				backdrop: true,
 				closeButton: false,

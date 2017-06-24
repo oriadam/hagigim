@@ -986,6 +986,14 @@
 						try{
 							data = JSON.parse(msg);
 						}catch(e){
+							if (msg.indexOf('<')===0){
+								msg = DOMPurify.sanitize(msg);
+								bootbox.alert({
+									message: 'We are sorry, a server error occurred: ' + msg,
+									backdrop: true,
+									closeButton: false,
+								});
+							}
 							console.log("AJAX Parse Error: ", msg, url);
 							return callback({error:msg});
 						}

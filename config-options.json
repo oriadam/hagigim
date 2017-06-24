@@ -350,6 +350,9 @@
 	"text_not_found": {
 		"name": "Text: No results found"
 	},
+	"text_enter_pagenum": {
+		"name": "Text: Enter a page number"
+	},
 	"text_tb_item_nav-next": {
 		"name": "Button tooltip: Next page or search result"
 	},
