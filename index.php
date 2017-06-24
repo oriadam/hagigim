@@ -180,7 +180,9 @@ require_once "config.php";
 		}
 		?>
 	</div>
-	<div id="bookmarks"></div>
+	<div id="bookmarks">
+		<div id="curpage_bookmark" class="bookmark_ribbon r"></div>
+	</div>
 
 	<?php if ($CONFIG["page_sound"]){ ?>
 		<audio id="page_sound"><source src="page.ogg" type="audio/ogg"><source src="page.wav" type="audio/wav"></audio>
@@ -231,6 +233,7 @@ require_once "config.php";
 		var current_music_url = CONFIG["music_url"],last_music_url;
 		var autofit_text_running;
 		var enable_pushstate;
+		var bookmarks;
 </script>
 <script src="toolbar.js"></script>
 <script src="logic.js"></script>

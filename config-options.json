@@ -282,10 +282,10 @@
 		"name": "Text: Window title for no content pages"
 	},
 	"text_window_title_content": {
-		"name": "Text: Window title for content pages<br><small>You can use <i>%page_title</i></small>"
+		"name": "Window title for content pages<br><small>You can use <i>%page_title</i></small>"
 	},
 	"text_window_title_separator": {
-		"name": "Text: Window title separator"
+		"name": "Window title page name separator, like ;  - or a space"
 	},
 	"text_top_single_pages": {
 		"name": "Text on top of page on single mode"
@@ -303,10 +303,13 @@
 		"name": "Clickable text for hidden footnotes"
 	},
 	"text_hit_f11": {
-		"name": "Text 'Hit F11 for fullscreen'"
+		"name": "Text: 'Hit F11 for fullscreen'"
 	},
 	"text_nothing_to_print": {
-		"name": "Text 'Nothing to print'"
+		"name": "Text: 'Nothing to print'"
+	},
+	"text_bookmark": {
+		"name": "Text: 'Bookmark for page %s'"
 	},
 	"text_tb_item_homepage": {
 		"name": "Button tooltip: homepage"

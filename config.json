@@ -75,12 +75,13 @@
 	"text_enter_pagenum": "Go to page number",
 	"text_share_dialog": "Share",
 	"text_nothing_to_print": "Nothing to print",
+	"text_bookmark": "Bookmark for page %s",
 	"search_or_filter": "filter",
 	"remember_last_search": true,
 	"tb_list_top": "",
 	"tb_list_bottom": "nav-q,nav-go,nav-result-prev,nav-found,nav-result-next,nav-page-first,nav-page-prev,nav-pagenum,nav-page-next,nav-page-last",
 	"tb_list_left": "fullscreen,textselect,zoom,sound,music",
-	"tb_list_right": "homepage,bookmark,addthis,print0",
+	"tb_list_right": "homepage,addthis,print0",
 
 	"custom_css": "#example{width:auto}",
 	"list": {

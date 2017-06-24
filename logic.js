@@ -361,6 +361,7 @@
 				bookmarks.push(pages[0]);
 			}
 			localStorage.setItem('bookmarks',JSON.stringify(bookmarks));
+			curpage_bookmark();
 		}
 
 		function is_bookmarked(){
@@ -376,17 +377,30 @@
 			bookmarks.sort(function sortNumber(a,b) {return a - b;});
 			$('#bookmarks').css($book_parent.position()).width($book_parent.width()).height($book_parent.height());
 			bookmarks.forEach(show_bookmark);
+			curpage_bookmark();
+		}
+
+		function curpage_bookmark() {
+			var $cur = $('#curpage_bookmark');
+			var is_curpage = is_bookmarked();
+
+			if (!$cur.data('runonce'))
+				$cur.data('runonce',1).click(toggle_bookmark);
+
+			$cur.toggleClass('active',is_curpage).prop('title',CONFIG["text_bookmark"].replace('%s',current_page())).show();
 		}
 
 		function show_bookmark(page,index) {
 			var id = 'bm-'+page;
 			var $bookmarks = $('#bookmarks');
 			var $elem = $('#'+id);
+
 			if (!$('#'+id).length)
 				$elem = $('<div id="' + id + '" class="bookmark_ribbon" data-page="' + page + '" title="' + page_index_to_display_number(page_number_to_page_index(page)) + '">').appendTo($bookmarks);
 			var pages = current_pages();
-			if (page == pages[0] || page == pages[1])
+			if (page == pages[0] || page == pages[1]){
 				$elem.hide();
+			}
 			else
 			{
 				var after = page > pages[0] && page > pages[1];
@@ -397,6 +411,7 @@
 					$elem.css('left','').css('right',-10-$('#pages_depth_r').width());
 				$elem.css('top',10 + (25 * index)).click(bookmark_click).toggleClass('r',side=='right').toggleClass('l',side=='left').show();
 			}
+			$elem.prop('title',CONFIG["text_bookmark"].replace('%s',page));
 		}
 
 		function hide_bookmark(page) {
@@ -733,6 +748,8 @@
 					console.error(e);
 				}
 			}
+
+			$('#curpage_bookmark').hide();
 
 		}//turning
 

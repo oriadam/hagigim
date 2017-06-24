@@ -384,6 +384,7 @@ body {
     position: absolute;
     display: block;
     border: 10px solid #000;
+	width: 27px;
 	cursor: pointer;
 	z-index: 1;
 }
@@ -394,6 +395,16 @@ body {
 
 .bookmark_ribbon.l {
     border-left-color: transparent;
+}
+
+#curpage_bookmark {
+	left: 50%;
+	top: 5px;
+	z-index: 1000;
+	width: 68px;
+}
+#curpage_bookmark:not(.active) {
+	opacity:0.4;
 }
 
 #bookmarks {
