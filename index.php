@@ -181,7 +181,6 @@ require_once "config.php";
 		?>
 	</div>
 	<div id="bookmarks">
-		<div id="curpage_bookmark" class="bookmark_ribbon r"></div>
 	</div>
 
 	<?php if ($CONFIG["page_sound"]){ ?>
