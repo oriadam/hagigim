@@ -383,11 +383,15 @@
 		function curpage_bookmark() {
 			var $cur = $('#curpage_bookmark');
 			var is_curpage = is_bookmarked();
+			var visible = !!current_pagenum();
+			var display_page = current_pagenum && total_pagenum && page_index_to_display_number(page_number_to_page_index(current_page()));
 
 			if (!$cur.data('runonce'))
 				$cur.data('runonce',1).click(toggle_bookmark);
+			
+			var $even_page = $('.p'+current_pages()[0]+'.even,.p'+current_pages[1]+'.even');
 
-			$cur.toggleClass('active',is_curpage).prop('title',CONFIG["text_bookmark"].replace('%s',page_index_to_display_number(page_number_to_page_index(current_page())))).show();
+			$cur.toggleClass('active',is_curpage).prop('title',CONFIG["text_bookmark"].replace('%s',display_page)).toggle(visible).appendTo($even_page);
 		}
 
 		function show_bookmark(page,index) {
@@ -406,9 +410,9 @@
 				var after = page > pages[0] && page > pages[1];
 				var side = direction.charAt(after ? 2 : 0) == 'l' ? 'left' : 'right';
 				if (side == 'left')
-					$elem.css('right','').css('left',-10-$('#pages_depth_l').width());
+					$elem.css('right','').css('left',-13-$('#pages_depth_l').width());
 				else
-					$elem.css('left','').css('right',-10-$('#pages_depth_r').width());
+					$elem.css('left','').css('right',-13-$('#pages_depth_r').width());
 				$elem.css('top',10 + (25 * index)).click(bookmark_click).toggleClass('r',side=='right').toggleClass('l',side=='left').show();
 			}
 			$elem.prop('title',CONFIG["text_bookmark"].replace('%s',page_index_to_display_number(page_number_to_page_index(page))));

@@ -398,10 +398,10 @@ body {
 }
 
 #curpage_bookmark {
-	left: 50%;
+	left: 0;
 	top: 5px;
-	z-index: 1000;
-	width: 68px;
+	z-index: 1;
+	width: 90px;
 }
 #curpage_bookmark:not(.active) {
 	opacity:0.4;
