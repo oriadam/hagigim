@@ -3,7 +3,7 @@ Display beautiful digital books based on Google Drive
 
 **Setup:**
 
-1. Setup Google v3 API for PHP<br>
+1. Setup Google v3 API for PHP, Web Server<br>
 <https://developers.google.com/drive/v3/web/quickstart/php><br>
 When done you will have the file `client_secret.json` and a folder `vendor` with all required libraries.
 
