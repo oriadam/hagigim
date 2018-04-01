@@ -35,7 +35,7 @@ if (!empty($_POST['configjson'])){
 
 $updated = array();
 foreach($options as $k=>$v)
-	if (!$v["skip"])
+	if (empty($v["skip"]))
 		$updated[$k]=$CONFIG[$k];
 
 ?>
