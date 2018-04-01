@@ -19,6 +19,7 @@ Click Edit Configuration.<br>
 
 * Requires PHP 5.5 or higher
 * JSON files must be strict - meaning **no comments, no ending commas**.
+* Doc files must have view permission to the Google user, and must be in Google-Doc format (not Word).
 * Before first run please visit the `manager.php` page, validate Google API, test and reset cache folders.
 * You can add additional config files in custom folder, for example `custom/config-xxx.json`; and access custom configs via search query `"?cfg=xxx"`.
 The `custom/config-default.json` file is loaded first in any case.
