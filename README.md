@@ -17,6 +17,7 @@ Click Edit Configuration.<br>
 
 **Notes:**
 
+* Before uploading the DOCX files to Google Drive folder make sure to check automatic conversion of DOCX files to Google Drive files.
 * Requires PHP 5.5 or higher
 * JSON files must be strict - meaning **no comments, no ending commas**.
 * Doc files must have view permission to the Google user, and must be in Google-Doc format (not Word).
@@ -50,3 +51,12 @@ Each item element can have the following optional properties.
 + Make sure there are not other tools except one inline
 + Save and copy the code
 + On the management panel find "AddThis Inline Code" and paste the code
+
+
+**Adding an audio MP3 file that will be added to the page**
++ Go to the Google Drive folder and upload an MP3 or OGG file that has the exact same name as the DOCX file. For example "127.docx" and "127.ogg"
+
+**Adding footnotes***
++ Edit the file with Google Docs, go to Insert>Footnote
+
+
